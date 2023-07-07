@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   Future<void> login() async {
-    bool success = await AppSecurity.instance?.login(usernameController.text, passwordController.text) ?? false;
+    bool success = await AppSecurity.instance.login(usernameController.text, passwordController.text);
     if (success) {
       openHome();
     }

@@ -16,15 +16,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  bool initialized = false;
-
   _MyAppState(){
-    AppSecurity appSecurity = AppSecurity();
-    appSecurity.init().then((value) {
-      setState(() {
-        initialized = true;
-      });
-    });
+    AppSecurity.instance.init().then((value) => {setState(() {})});
   }
 
   @override
@@ -36,7 +29,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
         useMaterial3: true,
       ),
-      home: initialized ? (AppSecurity.instance?.isLoggedIn() ?? false ? const HomeScreen(title: 'Title') : const LoginScreen()) : const Text('Loading'),
+      home: AppSecurity.instance.isLoggedIn() ? const HomeScreen(title: 'Title') : const LoginScreen(),
     );
   }
 }
