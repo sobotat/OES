@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:oes/Src/Objects/User.dart';
 import 'package:oes/Src/RestApi/Temp/UserDAOTemp.dart';
 import 'package:oes/Src/RestApi/UserDAO.dart';
@@ -17,6 +19,15 @@ class AppSecurity {
   Future<bool> login(String username, String password) async {
     user = await userDAO.login(username, password);
     return user == null ? false : true;
+  }
+
+  Future<void> logout() async {
+    if (user == null) {
+      return;
+    }
+
+    await userDAO.logout();
+    user = null;
   }
 
   bool isLoggedIn(){

@@ -9,6 +9,7 @@
 # 2b. Build Multi Arc
 # docker buildx create --name mybuilder
 # docker buildx use mybuilder
+# docker buildx ls
 # docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t oes-web .
 
 # 3. To Run Docker

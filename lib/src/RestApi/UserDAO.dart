@@ -10,4 +10,8 @@ class UserDAO {
     throw UnimplementedError();
   }
 
+  Future<void> logout() async {
+    throw UnimplementedError();
+  }
+
 }

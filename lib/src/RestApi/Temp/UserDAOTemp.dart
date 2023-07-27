@@ -27,4 +27,12 @@ class UserDAOTemp implements UserDAO {
     return null;
   }
 
+  @override
+  Future<void> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove('username');
+    prefs.remove('password');
+  }
+
 }

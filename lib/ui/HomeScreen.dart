@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oes/ui/LoginScreen.dart';
+import 'package:oes/config/AppTheme.dart';
+import 'package:oes/ui/Sign-In.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _incrementCounter() {
     setState(() {
       _counter++;
+      AppTheme.activeThemeMode.themeMode = AppTheme.activeThemeMode.themeMode == ThemeMode.system ? ThemeMode.light : AppTheme.activeThemeMode.themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
@@ -23,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        elevation: 10,
+        shadowColor: Colors.black12,
         title: Text(widget.title),
       ),
       body: Center(
