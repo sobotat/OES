@@ -1,30 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/config/DarkTheme.dart';
 import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  LicenseRegistry.addLicense(() async* {
+    final licenseOutfit = await rootBundle.loadString('google_fonts/Outfit/OFL.txt');
+    final licenseFlowCircular = await rootBundle.loadString('google_fonts/FlowCircular/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], licenseOutfit);
+    yield LicenseEntryWithLineBreaks(['google_fonts'], licenseFlowCircular);
+  });
+
+  AppSecurity.instance.init();
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-
-  _MyAppState(){
-    AppSecurity.instance.init().then((value) => {setState(() {})});
-  }
-
-
 
   @override
   Widget build(BuildContext context) {

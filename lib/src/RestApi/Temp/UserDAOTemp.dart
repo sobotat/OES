@@ -11,6 +11,8 @@ class UserDAOTemp implements UserDAO {
 
     String username = prefs.getString('username') ?? '';
     String password = prefs.getString('password') ?? '';
+    await Future.delayed(const Duration(seconds: 2));
+
     return (username != '' && password != '') ? User(username, password) : null;
   }
 

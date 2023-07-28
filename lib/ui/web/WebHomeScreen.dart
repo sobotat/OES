@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 
@@ -44,10 +45,11 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
         ],
         elevation: 0,
       ),
-      body: const Center(
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: Text('This will be main web page', style: TextStyle(fontWeight: FontWeight.bold),))
+            Center(child: Text('This will be main web page', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.getActiveTheme().primary))),
           ],
         ),
       ),
@@ -66,7 +68,15 @@ class NameBanner extends StatelessWidget {
       flex: 2,
       child: Padding(
         padding: EdgeInsets.all(10),
-        child: Text('OES - Online E-learning System', style: TextStyle(fontSize: 24),),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(5),
+              child: Icon(Icons.add_chart),
+            ),
+            Text('Online E-learning System', style: TextStyle(fontSize: 22),),
+          ],
+        ),
       )
     );
   }
@@ -90,35 +100,45 @@ class _UserWidgetState extends State<_UserWidget> {
         horizontal: 5,
         vertical: 10,
       ),
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            if (AppSecurity.instance.isLoggedIn()){
-              context.goNamed('sign-out');
-            }else {
-              context.goNamed('sign-in', queryParameters: {'path':'/'});
-            }
-          });
-        },
-        borderRadius: BorderRadius.circular(10),
-        child: Ink(
-          decoration: BoxDecoration(
+      child: ListenableBuilder(
+        listenable: AppSecurity.instance,
+        builder: (BuildContext context, Widget? child) {
+          debugPrint('Auth [${AppSecurity.instance.isLoggedIn()}]');
+          return InkWell(
+            onTap: () {
+              setState(() {
+                if (AppSecurity.instance.isLoggedIn()){
+                  context.goNamed('sign-out');
+                }else {
+                  context.goNamed('sign-in', queryParameters: {'path':'/'});
+                }
+              });
+            },
             borderRadius: BorderRadius.circular(10),
-            color: AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400],
-          ),
-          width: widget.maxWidth == -1 ? 100 : widget.maxWidth,
-          height: widget.maxHeight == -1 ? double.infinity : widget.maxHeight,
-          child: OverflowBox(
-            minWidth: 0,
-            minHeight: 0,
-            maxWidth: double.infinity,
-            maxHeight: widget.maxHeight == -1 ? double.infinity : widget.maxHeight,
-            child: Text(
-              AppSecurity.instance.user?.username ?? 'Not Logged',
-              style: TextStyle(fontSize: 15),
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: AppSecurity.instance.isInit ? AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400] : Colors.grey,
+              ),
+              width: widget.maxWidth == -1 ? 100 : widget.maxWidth,
+              height: widget.maxHeight == -1 ? double.infinity : widget.maxHeight,
+              child: OverflowBox(
+                minWidth: 0,
+                minHeight: 0,
+                maxWidth: double.infinity,
+                maxHeight: widget.maxHeight == -1 ? double.infinity : widget.maxHeight,
+                child: Text(
+                  AppSecurity.instance.user?.username ?? 'Not Logged',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: AppTheme.getActiveTheme().calculateTextColor((AppSecurity.instance.isInit ? AppSecurity.instance.isLoggedIn() ? Colors.green[400] ?? Colors.green : Colors.red[400] ?? Colors.red : Colors.grey)),
+                    fontFamily: AppSecurity.instance.isInit ? Theme.of(context).textTheme.bodyMedium!.fontFamily : GoogleFonts.flowCircular().fontFamily,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

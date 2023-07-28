@@ -17,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _incrementCounter() {
     setState(() {
       _counter++;
-      AppTheme.activeThemeMode.themeMode = AppTheme.activeThemeMode.themeMode == ThemeMode.system ? ThemeMode.light : AppTheme.activeThemeMode.themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
