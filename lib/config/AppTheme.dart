@@ -12,7 +12,8 @@ abstract class AppTheme {
   Color get secondary { return Colors.white; }
   Color get accent { return Colors.white; }
   Color get background { return Colors.white; }
-  Color get textColor { return Colors.white; }
+  Color get textColorLight { return Colors.white; }
+  Color get textColorDark { return Colors.black; }
 
   ThemeData getTheme(context) {
     throw UnimplementedError();
@@ -29,6 +30,14 @@ abstract class AppTheme {
   static AppTheme getActiveTheme(){
     bool isDarkMode = AppTheme.isDarkMode();
     return isDarkMode ? DarkTheme.instance : LightTheme.instance;
+  }
+
+  static Brightness calculateBackgroundBrightness(Color background) {
+    return background.computeLuminance() >= 0.5 ? Brightness.light : Brightness.dark;
+  }
+
+  Color calculateTextColor(Color background){
+    return calculateBackgroundBrightness(background) == Brightness.dark ? textColorLight : textColorDark;
   }
 }
 
