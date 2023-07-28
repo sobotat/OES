@@ -10,7 +10,7 @@
 # docker buildx create --name mybuilder
 # docker buildx use mybuilder
 # docker buildx ls
-# docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t oes-web .
+# docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t oes-web --push .
 
 # 3. To Run Docker
 # docker run -d --restart unless-stopped -p 8003:80 oes-web
