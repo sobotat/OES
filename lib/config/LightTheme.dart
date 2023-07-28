@@ -8,11 +8,11 @@ class LightTheme extends AppTheme {
   static final AppTheme instance = LightTheme();
 
   @override
-  Color get primary { return const Color.fromRGBO(127, 174, 215, 1); }
+  Color get primary { return const Color.fromRGBO(102, 197, 233, 1); }
   @override
-  Color get secondary { return const Color.fromRGBO(216, 230, 243, 1); }
+  Color get secondary { return const Color.fromRGBO(220, 231, 239, 1); }
   @override
-  Color get accent { return const Color.fromRGBO(62, 132, 193, 1); }
+  Color get accent { return const Color.fromRGBO(0, 131, 187, 1); }
   @override
   Color get background { return const Color.fromRGBO(250, 250, 250, 1); }
   @override

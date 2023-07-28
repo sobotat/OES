@@ -8,11 +8,11 @@ class DarkTheme extends AppTheme {
   static final AppTheme instance = DarkTheme();
 
   @override
-  Color get primary { return const Color.fromRGBO(127, 174, 215, 1); }
+  Color get primary { return const Color.fromRGBO(102, 197, 233, 1); }
   @override
-  Color get secondary { return const Color.fromRGBO(12, 26, 39, 1); }
+  Color get secondary { return const Color.fromRGBO(16, 27, 35, 1); }
   @override
-  Color get accent { return const Color.fromRGBO(139, 181, 218, 1); }
+  Color get accent { return const Color.fromRGBO(0, 118, 168, 1); }
   @override
   Color get background { return const Color.fromRGBO(5, 5, 5, 1); }
   @override
