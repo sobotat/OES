@@ -9,6 +9,8 @@ import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   LicenseRegistry.addLicense(() async* {
     final licenseOutfit = await rootBundle.loadString('google_fonts/Outfit/OFL.txt');
     final licenseFlowCircular = await rootBundle.loadString('google_fonts/FlowCircular/OFL.txt');
@@ -16,12 +18,13 @@ void main() {
     yield LicenseEntryWithLineBreaks(['google_fonts'], licenseFlowCircular);
   });
 
-  AppSecurity.instance.init();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key}) {
+    AppSecurity.instance.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,36 +73,3 @@ class WebMain extends StatelessWidget {
     );
   }
 }
-
-class OtherMain extends StatefulWidget {
-  const OtherMain({super.key});
-
-  @override
-  State<OtherMain> createState() => _OtherMainState();
-}
-
-class _OtherMainState extends State<OtherMain> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppSecurity.instance.isLoggedIn() ? Colors.greenAccent : Colors.redAccent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FilledButton(
-            onPressed: () => context.goNamed('main'),
-            child: const Text('Main Screen'),
-          ),
-          FilledButton(
-            onPressed: () {
-              AppSecurity.instance.logout();
-              context.goNamed('sign-in');
-            },
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-

@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/ui/HomeScreen.dart';
-import 'package:oes/ui/Sign-In.dart';
+import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/main.dart';
-import 'package:oes/ui/Sign-Out.dart';
+import 'package:oes/ui/security/Sign-Out.dart';
 import 'package:oes/ui/web/WebHomeScreen.dart';
 
 import '../src/AppSecurity.dart';
@@ -27,20 +27,12 @@ class AppRouter {
         name: '/',
         redirect: (context, state) {
           if (!kIsWeb) {
-            return '/other';
+            return '/main';
           }
           return null;
         },
         builder: (context, state) {
           return const WebHomeScreen();
-        },
-      ),
-      GoRoute(
-        path: '/other',
-        name: 'other',
-        redirect: authCheckRedirect,
-        builder: (context, state) {
-          return const OtherMain();
         },
       ),
       GoRoute(
@@ -65,6 +57,15 @@ class AppRouter {
         builder: (context, state) {
           return const HomeScreen(title: 'Main');
         },
+        routes: [
+          GoRoute(
+            path: 'test',
+            name: 'test',
+            builder: (context, state) {
+              return const WebHomeScreen();
+            },
+          ),
+        ],
       ),
     ],
   );

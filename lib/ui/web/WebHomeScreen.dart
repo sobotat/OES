@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/Button.dart';
 
 class WebHomeScreen extends StatefulWidget {
   const WebHomeScreen({super.key});
@@ -23,27 +24,24 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(
+        leading: null,
+        flexibleSpace: width >= overflow ? Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 5,
             vertical: 0,
           ),
-          child: Center(
-            child: Row(
-              children: [
-                const NameBanner(),
-                Expanded(
-                  flex: width >= overflow ? 2 : 0,
-                  child: width >= overflow ? _LargeMenu() : Container(),
-                ),
-              ],
-            ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _LargeMenu(),
+            ],
           ),
-        ),
+        ) : null,
+        title: const _NameBanner(),
         actions: [
           width < overflow ? _SmallMenu(): Container(),
         ],
-        elevation: 0,
+        elevation: 10,
       ),
       body: Center(
         child: Column(
@@ -57,27 +55,81 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
   }
 }
 
-class NameBanner extends StatelessWidget {
-  const NameBanner({
+class _NameBanner extends StatelessWidget {
+  const _NameBanner({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
-      flex: 2,
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Row(
+    return Builder(
+      builder: (context) {
+        return MediaQuery.of(context).size.width >= 950 ?  const Row(
           children: [
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(10),
               child: Icon(Icons.add_chart),
             ),
             Text('Online E-learning System', style: TextStyle(fontSize: 22),),
           ],
+        ) :
+        const Text('OES', style: TextStyle(fontSize: 22),
+        );
+      }
+    );
+  }
+}
+
+class _SmallMenu extends StatelessWidget {
+  const _SmallMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        cardColor: Colors.red
+      ),
+      child: PopupMenuButton<int>(
+        constraints: const BoxConstraints(
+          minWidth: 250,
         ),
-      )
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            enabled: false,
+            value: 1,
+            child: _UserWidget(maxWidth: 300, maxHeight: 40,),
+          ),
+          const PopupMenuItem(
+            enabled: false,
+            value: 1,
+            child: _GoToMain(),
+          ),
+          const PopupMenuItem(
+            enabled: false,
+            value: 1,
+            child: _ChangeThemeButton(),
+          ),
+        ],
+        offset: const Offset(0, 100),
+        color: Colors.grey,
+        elevation: 2,
+      ),
+    );
+  }
+}
+
+class _LargeMenu extends StatelessWidget {
+  const _LargeMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(child: _GoToMain(), width: 150,),
+        SizedBox(child: _ChangeThemeButton(), width: 150),
+        SizedBox(child: _UserWidget(), width: 150,),
+      ],
     );
   }
 }
@@ -102,10 +154,10 @@ class _UserWidgetState extends State<_UserWidget> {
       ),
       child: ListenableBuilder(
         listenable: AppSecurity.instance,
-        builder: (BuildContext context, Widget? child) {
-          debugPrint('Auth [${AppSecurity.instance.isLoggedIn()}]');
-          return InkWell(
-            onTap: () {
+        builder: (context, child) {
+          return Button(
+            text: AppSecurity.instance.user?.username ?? 'Not Logged',
+            onClick: (context) {
               setState(() {
                 if (AppSecurity.instance.isLoggedIn()){
                   context.goNamed('sign-out');
@@ -114,85 +166,13 @@ class _UserWidgetState extends State<_UserWidget> {
                 }
               });
             },
-            borderRadius: BorderRadius.circular(10),
-            child: Ink(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: AppSecurity.instance.isInit ? AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400] : Colors.grey,
-              ),
-              width: widget.maxWidth == -1 ? 100 : widget.maxWidth,
-              height: widget.maxHeight == -1 ? double.infinity : widget.maxHeight,
-              child: OverflowBox(
-                minWidth: 0,
-                minHeight: 0,
-                maxWidth: double.infinity,
-                maxHeight: widget.maxHeight == -1 ? double.infinity : widget.maxHeight,
-                child: Text(
-                  AppSecurity.instance.user?.username ?? 'Not Logged',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: AppTheme.getActiveTheme().calculateTextColor((AppSecurity.instance.isInit ? AppSecurity.instance.isLoggedIn() ? Colors.green[400] ?? Colors.green : Colors.red[400] ?? Colors.red : Colors.grey)),
-                    fontFamily: AppSecurity.instance.isInit ? Theme.of(context).textTheme.bodyMedium!.fontFamily : GoogleFonts.flowCircular().fontFamily,
-                  ),
-                ),
-              ),
-            ),
+            minWidth: 200,
+            maxWidth: double.infinity,
+            backgroundColor: AppSecurity.instance.isInit ? AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400] : Colors.grey,
+            fontFamily: AppSecurity.instance.isInit ? Theme.of(context).textTheme.bodyMedium!.fontFamily : GoogleFonts.flowCircular().fontFamily,
           );
         },
       ),
-    );
-  }
-}
-
-class _SmallMenu extends StatelessWidget {
-  const _SmallMenu({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<int>(
-
-      itemBuilder: (context) => [
-        const PopupMenuItem(
-          value: 1,
-          child: _UserWidget(maxWidth: 300, maxHeight: 40,),
-        ),
-        const PopupMenuItem(
-          value: 1,
-          child: _ChangeThemeButton(),
-        ),
-        const PopupMenuItem(
-          value: 1,
-          child: _GoToMain(),
-        ),
-        const PopupMenuItem(
-          value: 2,
-          child: Row(
-            children: [
-              Icon(Icons.chrome_reader_mode),
-              Text("Nothing")
-            ],
-          ),
-        ),
-      ],
-      offset: const Offset(0, 100),
-      color: Colors.grey,
-      elevation: 2,
-    );
-  }
-}
-
-class _LargeMenu extends StatelessWidget {
-  const _LargeMenu({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        SizedBox(child: _ChangeThemeButton(), width: 150),
-        SizedBox(child: _GoToMain(), width: 150,),
-        SizedBox(child: _UserWidget(), width: 150,),
-      ],
     );
   }
 }
@@ -209,15 +189,13 @@ class _GoToMain extends StatelessWidget {
         horizontal: 5,
         vertical: 10,
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-                onPressed: () { context.goNamed('main'); },
-                child: const Text('Enter')
-            ),
-          ),
-        ],
+      child: Button(
+        text: 'Enter',
+        minWidth: 200,
+        maxWidth: double.infinity,
+        onClick: (context) {
+          context.goNamed('main');
+        },
       ),
     );
   }
@@ -238,19 +216,15 @@ class _ChangeThemeButtonState extends State<_ChangeThemeButton> {
         horizontal: 5,
         vertical: 10,
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    AppTheme.activeThemeMode.changeThemeMode();
-                  });
-                },
-                child: Text( getActiveThemeModeName() )
-            ),
-          ),
-        ],
+      child: Button(
+        text: getActiveThemeModeName(),
+        minWidth: 200,
+        maxWidth: double.infinity,
+        onClick: (context) {
+          setState(() {
+            AppTheme.activeThemeMode.changeThemeMode();
+          });
+        },
       ),
     );
   }

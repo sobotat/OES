@@ -9,11 +9,16 @@ class AppSecurity extends ChangeNotifier {
 
   UserDAO userDAO = UserDAOTemp();
   User? user;
-  bool isInit = false;
+  bool _isInit = false;
+  bool get isInit => _isInit;
 
   Future<void> init() async {
+    if (_isInit) {
+      return;
+    }
+
     user = await userDAO.getUser();
-    isInit = true;
+    _isInit = true;
     notifyListeners();
   }
 

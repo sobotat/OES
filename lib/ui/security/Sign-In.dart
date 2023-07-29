@@ -15,6 +15,20 @@ class _SignInState extends State<SignIn> {
 
   _SignInState({this.path = '/'});
 
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero,() {
+      AppSecurity.instance.addListener(() {
+        if(AppSecurity.instance.isLoggedIn()) {
+          context.goNamed(path);
+        }
+      });
+    });
+  }
+
   final String path;
 
   final usernameController = TextEditingController();

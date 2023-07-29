@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
-import 'package:oes/ui/Sign-In.dart';
+import 'package:oes/ui/security/Sign-In.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -42,10 +43,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 10,
+            ),
+            child: FloatingActionButton(
+              heroTag: '1',
+              onPressed: _incrementCounter,
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ),
+          ),
+          FloatingActionButton(
+            heroTag: '2',
+            onPressed: () {
+              context.goNamed('test');
+            },
+            child: const Icon(Icons.adb_sharp),
+          ),
+        ],
       ),
     );
   }
