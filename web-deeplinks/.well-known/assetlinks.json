@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.oes.oes",
+    "sha256_cert_fingerprints":
+    ["FB:F5:E6:A6:B1:76:1E:25:C3:D5:36:6B:13:2E:2F:21:37:0E:6E:9B:B9:DA:B5:37:97:D3:54:72:D3:8D:34:11"]
+  }
+}]
