@@ -6,7 +6,8 @@ import 'LightTheme.dart';
 
 abstract class AppTheme {
 
-  static ActiveAppTheme activeThemeMode = ActiveAppTheme(ThemeMode.system);
+  static final ActiveAppTheme activeThemeMode = ActiveAppTheme(ThemeMode.system);
+  static final PlatformListener platformListener = PlatformListener();
 
   Color get primary { return Colors.white; }
   Color get secondary { return Colors.white; }
@@ -62,5 +63,14 @@ class ActiveAppTheme extends ChangeNotifier {
     } else {
       themeMode = ThemeMode.system;
     }
+  }
+}
+
+class PlatformListener extends ChangeNotifier {
+  PlatformListener(){
+    SchedulerBinding.instance.platformDispatcher.onPlatformBrightnessChanged = () {
+      WidgetsBinding.instance.handlePlatformBrightnessChanged();
+      notifyListeners();
+    };
   }
 }

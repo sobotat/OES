@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/ui/assets/buttons/Button.dart';
+import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 
 class WebHomeScreen extends StatefulWidget {
   const WebHomeScreen({super.key});
@@ -24,24 +25,21 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: null,
-        flexibleSpace: width >= overflow ? Container(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        elevation: 2,
+        flexibleSpace: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 5,
             vertical: 0,
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _LargeMenu(),
+              width >= overflow ? const _LargeMenu() : const _SmallMenu(),
             ],
           ),
-        ) : null,
+        ),
         title: const _NameBanner(),
-        actions: [
-          width < overflow ? _SmallMenu(): Container(),
-        ],
-        elevation: 10,
       ),
       body: Center(
         child: Column(
@@ -64,16 +62,14 @@ class _NameBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        return MediaQuery.of(context).size.width >= 950 ?  const Row(
+        return Row(
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(10),
               child: Icon(Icons.add_chart),
             ),
-            Text('Online E-learning System', style: TextStyle(fontSize: 22),),
+            Text(MediaQuery.of(context).size.width >= 950 ? 'Online E-Learning System' : 'OES', style: TextStyle(fontSize: 22),),
           ],
-        ) :
-        const Text('OES', style: TextStyle(fontSize: 22),
         );
       }
     );
@@ -85,34 +81,39 @@ class _SmallMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        cardColor: Colors.red
-      ),
-      child: PopupMenuButton<int>(
-        constraints: const BoxConstraints(
-          minWidth: 250,
-        ),
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            enabled: false,
-            value: 1,
-            child: _UserWidget(maxWidth: 300, maxHeight: 40,),
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          PopupMenuButton<int>(
+            constraints: const BoxConstraints(
+              minWidth: 250,
+            ),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                enabled: false,
+                value: 1,
+                child: _UserWidget(maxWidth: 300, maxHeight: 40,),
+              ),
+              const PopupMenuItem(
+                enabled: false,
+                value: 1,
+                child: _GoToMain(),
+              ),
+            ],
+            offset: const Offset(0, 100),
+            color: Colors.grey,
+            elevation: 2,
+            child: SizedBox(
+              width: 100,
+              child: Button(
+                text: 'Menu',
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
           ),
-          const PopupMenuItem(
-            enabled: false,
-            value: 1,
-            child: _GoToMain(),
-          ),
-          const PopupMenuItem(
-            enabled: false,
-            value: 1,
-            child: _ChangeThemeButton(),
-          ),
+          const ThemeModeButton(),
         ],
-        offset: const Offset(0, 100),
-        color: Colors.grey,
-        elevation: 2,
       ),
     );
   }
@@ -123,13 +124,21 @@ class _LargeMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        SizedBox(child: _GoToMain(), width: 150,),
-        SizedBox(child: _ChangeThemeButton(), width: 150),
-        SizedBox(child: _UserWidget(), width: 150,),
-      ],
+    return const Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 150,
+            child: _GoToMain(),
+          ),
+          SizedBox(
+            width: 150,
+            child: _UserWidget(),
+          ),
+          ThemeModeButton(),
+        ],
+      ),
     );
   }
 }
@@ -168,7 +177,7 @@ class _UserWidgetState extends State<_UserWidget> {
             },
             minWidth: 200,
             maxWidth: double.infinity,
-            backgroundColor: AppSecurity.instance.isInit ? AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400] : Colors.grey,
+            backgroundColor: AppSecurity.instance.isInit ? AppTheme.getActiveTheme().secondary : Colors.grey, // AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400]
             fontFamily: AppSecurity.instance.isInit ? Theme.of(context).textTheme.bodyMedium!.fontFamily : GoogleFonts.flowCircular().fontFamily,
           );
         },
@@ -191,39 +200,11 @@ class _GoToMain extends StatelessWidget {
       ),
       child: Button(
         text: 'Enter',
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         minWidth: 200,
         maxWidth: double.infinity,
         onClick: (context) {
           context.goNamed('main');
-        },
-      ),
-    );
-  }
-}
-
-class _ChangeThemeButton extends StatefulWidget {
-  const _ChangeThemeButton({super.key});
-
-  @override
-  State<_ChangeThemeButton> createState() => _ChangeThemeButtonState();
-}
-
-class _ChangeThemeButtonState extends State<_ChangeThemeButton> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 5,
-        vertical: 10,
-      ),
-      child: Button(
-        text: getActiveThemeModeName(),
-        minWidth: 200,
-        maxWidth: double.infinity,
-        onClick: (context) {
-          setState(() {
-            AppTheme.activeThemeMode.changeThemeMode();
-          });
         },
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
+import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,8 +27,27 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 10,
-        shadowColor: Colors.black12,
+        elevation: 2,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        flexibleSpace: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 5,
+            vertical: 0,
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ThemeModeButton(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         title: Text(widget.title),
       ),
       body: Center(
@@ -62,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               context.goNamed('test');
             },
-            child: const Icon(Icons.adb_sharp),
+            child: const Icon(AppIcons.icon_darkmode),
           ),
         ],
       ),

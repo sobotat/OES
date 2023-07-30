@@ -3,26 +3,30 @@ import '../../../config/AppTheme.dart';
 
 class Button extends StatelessWidget {
   const Button({
-    required this.text,
-    required this.onClick,
+    this.icon,
+    this.text = '',
+    this.onClick,
     this.minWidth,
     this.minHeight,
     this.maxWidth,
     this.maxHeight,
+    this.iconSize,
     this.textColor,
     this.backgroundColor,
     this.fontFamily,
     this.borderRadius,
     super.key
   });
-
+  
+  final IconData? icon;
   final String text;
-  final Function(BuildContext context) onClick;
+  final Function(BuildContext context)? onClick;
 
   final double? maxWidth;
   final double? maxHeight;
   final double? minWidth;
   final double? minHeight;
+  final double? iconSize;
 
   final Color? textColor;
   final Color? backgroundColor;
@@ -33,9 +37,10 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color activeBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary;
+    Color activeTextColor = textColor ?? AppTheme.getActiveTheme().calculateTextColor(activeBackgroundColor);
 
     return InkWell(
-      onTap: () { onClick(context); },
+      onTap: onClick != null ? () { onClick!(context); } : null,
       borderRadius: borderRadius ?? BorderRadius.circular(10),
       child: Container(
         constraints: BoxConstraints(
@@ -54,13 +59,30 @@ class Button extends StatelessWidget {
             minHeight: 0,
             maxWidth: double.infinity,
             maxHeight: double.infinity,
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 15,
-                color: textColor ?? AppTheme.getActiveTheme().calculateTextColor(activeBackgroundColor),
-                fontFamily: fontFamily,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                icon != null ? Padding(
+                  padding: const EdgeInsets.only(
+                    left: 5,
+                    right: 5,
+                    top: 1,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: activeTextColor,
+                    size: iconSize,
+                  ),
+                ) : Container(),
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: activeTextColor,
+                    fontFamily: fontFamily,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
