@@ -5,6 +5,7 @@ class Button extends StatelessWidget {
   const Button({
     this.icon,
     this.text = '',
+    this.toolTip,
     this.onClick,
     this.minWidth,
     this.minHeight,
@@ -20,6 +21,7 @@ class Button extends StatelessWidget {
   
   final IconData? icon;
   final String text;
+  final String? toolTip;
   final Function(BuildContext context)? onClick;
 
   final double? maxWidth;
@@ -42,47 +44,50 @@ class Button extends StatelessWidget {
     return InkWell(
       onTap: onClick != null ? () { onClick!(context); } : null,
       borderRadius: borderRadius ?? BorderRadius.circular(10),
-      child: Container(
-        constraints: BoxConstraints(
-          minWidth: minWidth ?? maxWidth ?? 200,
-          minHeight: minHeight ?? maxHeight ?? 35,
-          maxWidth: maxWidth ?? 200,
-          maxHeight: maxHeight ?? 35,
-        ),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: borderRadius ?? BorderRadius.circular(10),
-            color: activeBackgroundColor,
+      child: Tooltip(
+        message: toolTip ?? '',
+        child: Container(
+          constraints: BoxConstraints(
+            minWidth: minWidth ?? maxWidth ?? 200,
+            minHeight: minHeight ?? maxHeight ?? 35,
+            maxWidth: maxWidth ?? 200,
+            maxHeight: maxHeight ?? 35,
           ),
-          child: OverflowBox(
-            minWidth: 0,
-            minHeight: 0,
-            maxWidth: double.infinity,
-            maxHeight: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                icon != null ? Padding(
-                  padding: const EdgeInsets.only(
-                    left: 5,
-                    right: 5,
-                    top: 1,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: borderRadius ?? BorderRadius.circular(10),
+              color: activeBackgroundColor,
+            ),
+            child: OverflowBox(
+              minWidth: 0,
+              minHeight: 0,
+              maxWidth: double.infinity,
+              maxHeight: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  icon != null ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 5,
+                      right: 5,
+                      top: 1,
+                    ),
+                    child: Icon(
+                      icon,
+                      color: activeTextColor,
+                      size: iconSize,
+                    ),
+                  ) : Container(),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: activeTextColor,
+                      fontFamily: fontFamily,
+                    ),
                   ),
-                  child: Icon(
-                    icon,
-                    color: activeTextColor,
-                    size: iconSize,
-                  ),
-                ) : Container(),
-                Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: activeTextColor,
-                    fontFamily: fontFamily,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -26,8 +26,11 @@ class _UserInfoButtonState extends State<UserInfoButton> {
       child: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, child) {
+          var user = AppSecurity.instance.user;
+
           return Button(
-            text: AppSecurity.instance.user?.username ?? 'Not Logged',
+            text: user != null ? '${user.firstName} ${user.lastName}' : 'Not Logged',
+            toolTip: user != null ? 'Sign-Out' : 'Sign-In',
             onClick: (context) {
               setState(() {
                 if (AppSecurity.instance.isLoggedIn()){

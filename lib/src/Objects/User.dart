@@ -1,7 +1,14 @@
 
 class User {
-  String username = '';
-  String password = '';
+  User({
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    this.token,
+  });
 
-  User(this.username, this.password);
+  String firstName;
+  String lastName;
+  String username;
+  String? token;
 }

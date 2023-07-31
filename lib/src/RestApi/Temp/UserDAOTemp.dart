@@ -11,9 +11,8 @@ class UserDAOTemp implements UserDAO {
 
     String username = prefs.getString('username') ?? '';
     String password = prefs.getString('password') ?? '';
-    await Future.delayed(const Duration(seconds: 2));
 
-    return (username != '' && password != '') ? User(username, password) : null;
+    return (username != '' && password != '') ? login(username, password) : null;
   }
 
   @override
@@ -23,8 +22,14 @@ class UserDAOTemp implements UserDAO {
 
       prefs.setString('username', username);
       prefs.setString('password', password);
+      await Future.delayed(const Duration(seconds: 2));
 
-      return User('admin', 'admin');
+      return User(
+        firstName:'Karel',
+        lastName:'Novak',
+        username:username,
+        token: '123456789'
+      );
     }
     return null;
   }
