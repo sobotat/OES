@@ -26,6 +26,7 @@ class _ThemeModeButtonState extends State<ThemeModeButton> {
             return Button(
               icon: AppTheme.isDarkMode() ? AppIcons.icon_darkmode : AppIcons.icon_lightmode,
               iconSize: 18,
+              toolTip: "${AppTheme.isDarkMode() ? 'Dark Mode' : 'Light Mode'}${AppTheme.activeThemeMode.themeMode == ThemeMode.system ? ' (System)' : ''}",
               backgroundColor: AppTheme.activeThemeMode.themeMode == ThemeMode.system ? AppTheme.getActiveTheme().accent : AppTheme.getActiveTheme().secondary,
               text: '',
               onClick: (context) {
