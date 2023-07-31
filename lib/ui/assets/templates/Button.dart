@@ -6,6 +6,7 @@ class Button extends StatelessWidget {
     this.icon,
     this.text = '',
     this.toolTip,
+    this.toolTipWaitDuration,
     this.onClick,
     this.minWidth,
     this.minHeight,
@@ -22,6 +23,7 @@ class Button extends StatelessWidget {
   final IconData? icon;
   final String text;
   final String? toolTip;
+  final Duration? toolTipWaitDuration;
   final Function(BuildContext context)? onClick;
 
   final double? maxWidth;
@@ -46,6 +48,7 @@ class Button extends StatelessWidget {
       borderRadius: borderRadius ?? BorderRadius.circular(10),
       child: Tooltip(
         message: toolTip ?? '',
+        waitDuration: toolTipWaitDuration ?? const Duration(milliseconds: 500),
         child: Container(
           constraints: BoxConstraints(
             minWidth: minWidth ?? maxWidth ?? 200,
