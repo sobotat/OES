@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -94,10 +95,22 @@ class _SmallMenu extends StatelessWidget {
               minWidth: 250,
             ),
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 enabled: false,
                 value: 1,
-                child: UserInfoButton(),
+                child: ListenableBuilder(
+                  listenable: AppSecurity.instance,
+                  builder: (context, child) {
+                    return Row(
+                      children: [
+                        const Expanded(
+                            child: UserInfoButton()
+                        ),
+                        AppSecurity.instance.isLoggedIn() ? const SignOutButton() : Container(),
+                      ],
+                    );
+                  },
+                ),
               ),
               const PopupMenuItem(
                 enabled: false,
@@ -116,7 +129,11 @@ class _SmallMenu extends StatelessWidget {
               ),
             ),
           ),
-          const ThemeModeButton(),
+          const Row(
+            children: [
+              ThemeModeButton(),
+            ],
+          ),
         ],
       ),
     );
@@ -128,20 +145,26 @@ class _LargeMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 150,
-            child: _GoToMain(),
+    return ListenableBuilder(
+      listenable: AppSecurity.instance,
+      builder: (context, child) {
+        return Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                width: 150,
+                child: _GoToMain(),
+              ),
+              UserInfoButton(
+                width: 150,
+              ),
+              AppSecurity.instance.isLoggedIn() ? const SignOutButton() : Container(),
+              ThemeModeButton(),
+            ],
           ),
-          UserInfoButton(
-            width: 150,
-          ),
-          ThemeModeButton(),
-        ],
-      ),
+        );
+      },
     );
   }
 }

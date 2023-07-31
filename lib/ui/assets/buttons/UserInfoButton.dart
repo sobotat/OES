@@ -31,10 +31,10 @@ class UserInfoButton extends StatelessWidget {
 
             return Button(
               text: user != null ? '${user.firstName} ${user.lastName}' : 'Not Logged',
-              toolTip: user != null ? 'Sign-Out' : 'Sign-In',
+              toolTip: user != null ? 'User Detail' : 'Sign-In',
               onClick: (context) {
                 if (AppSecurity.instance.isLoggedIn()){
-                  context.goNamed('sign-out');
+                  context.goNamed('user-detail');
                 }else {
                   context.goNamed('sign-in', queryParameters: {'path':'/'});
                 }

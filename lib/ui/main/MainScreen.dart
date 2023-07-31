@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/ui/assets/Gradient.dart';
+import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/security/Sign-In.dart';
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       UserInfoButton(
                         width: 150,
                       ),
+                      SignOutButton(),
                       ThemeModeButton(),
                     ],
                   ),
@@ -107,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
               bottom: 10,
             ),
             child: FloatingActionButton(
-              heroTag: '1',
+              heroTag: '2',
               onPressed: () {
                 context.goNamed('user-detail');
               },
@@ -115,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           FloatingActionButton(
-            heroTag: '2',
+            heroTag: '3',
             onPressed: () {
               context.goNamed('test');
             },

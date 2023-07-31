@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:oes/config/AppIcons.dart';
+import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 
@@ -8,28 +11,307 @@ class UserDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          elevation: 2,
-          actions: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 5,
-                vertical: 0,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        elevation: 2,
+        actions: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 0,
+            ),
+            child: ListenableBuilder(
+              listenable: AppSecurity.instance,
+              builder: (context, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const UserInfoButton(
+                      width: 150,
+                    ),
+                    AppSecurity.instance.isLoggedIn() ? const SignOutButton() : Container(),
+                    const ThemeModeButton(),
+                  ],
+                );
+              },
+            ),
+          )
+        ],
+        title: const Text('User Detail'),
+      ),
+      body: Builder(
+        builder: (context) {
+          var width = MediaQuery.of(context).size.width;
+          var overflow = 950;
+
+          return ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(30),
+                child: FractionallySizedBox(
+                  widthFactor: 0.8,
+                  child: _UserInfo()
+                ),
+              )
+            ],
+          );
+        }
+      ),
+    );
+  }
+}
+
+class _UserInfo extends StatelessWidget {
+  _UserInfo({
+    super.key,
+  });
+
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: AppSecurity.instance,
+      builder: (context, child) {
+        _firstNameController.text = AppSecurity.instance.user?.firstName ?? '';
+        _lastNameController.text = AppSecurity.instance.user?.lastName ?? '';
+        _usernameController.text = AppSecurity.instance.user?.username ?? '';
+        _passwordController.text = '*****.****.****';
+
+        return Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 50,
+          ),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.secondary
+          ),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(10),
+                child: _ProfilePhoto(),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  UserInfoButton(
-                    width: 150,
-                  ),
-                  ThemeModeButton(),
-                ],
+              _FirstAndLastNameRow(firstNameController: _firstNameController, lastNameController: _lastNameController),
+              _UsernameAndPasswordRow(usernameController: _usernameController, passwordController: _passwordController)
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _UsernameAndPasswordRow extends StatelessWidget {
+  const _UsernameAndPasswordRow({
+    super.key,
+    required TextEditingController usernameController,
+    required TextEditingController passwordController,
+  }) : _usernameController = usernameController, _passwordController = passwordController;
+
+  final TextEditingController _usernameController;
+  final TextEditingController _passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return Column(
+      children: [
+        width > overflow ? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _Username(usernameController: _usernameController),
+            _Password(passwordController: _passwordController),
+          ],
+        ) : Container(),
+        width > overflow ? Container() : _Username(usernameController: _usernameController, fill: true,),
+        width > overflow ? Container() : _Password(passwordController: _passwordController, fill: true,),
+      ],
+    );
+  }
+}
+
+class _Password extends StatelessWidget {
+  const _Password({
+    super.key,
+    required this.passwordController,
+    this.fill = false,
+  });
+
+  final TextEditingController passwordController;
+  final bool fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 30,
+        vertical: 5,
+      ),
+      child: FractionallySizedBox(
+        widthFactor: fill ? 0.9 : null,
+        child: SizedBox(
+          width: fill ? null : 200,
+          child: TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              label: Text('Password'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Username extends StatelessWidget {
+  const _Username({
+    super.key,
+    required this.usernameController,
+    this.fill = false,
+  });
+
+  final TextEditingController usernameController;
+  final bool fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 30,
+        vertical: 5,
+      ),
+      child: FractionallySizedBox(
+        widthFactor: fill ? 0.9 : null,
+        child: SizedBox(
+          width: fill ? null : 200,
+          child: TextField(
+            controller: usernameController,
+            decoration: const InputDecoration(
+              label: Text('Username'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FirstAndLastNameRow extends StatelessWidget {
+  const _FirstAndLastNameRow({
+    super.key,
+    required TextEditingController firstNameController,
+    required TextEditingController lastNameController,
+  }) : _firstNameController = firstNameController, _lastNameController = lastNameController;
+
+  final TextEditingController _firstNameController;
+  final TextEditingController _lastNameController;
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return Column(
+      children: [
+        width > overflow ? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _FirstName(firstNameController: _firstNameController),
+            _LastName(lastNameController: _lastNameController),
+          ],
+        ) : Container(),
+        width > overflow ? Container() : _FirstName(firstNameController: _firstNameController, fill: true),
+        width > overflow ? Container() : _LastName(lastNameController: _lastNameController, fill: true),
+      ],
+    );
+  }
+}
+
+class _FirstName extends StatelessWidget {
+  const _FirstName({
+    super.key,
+    required this.firstNameController,
+    this.fill = false,
+  });
+
+  final TextEditingController firstNameController;
+  final bool fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 30,
+        vertical: 5,
+      ),
+      child: FractionallySizedBox(
+        widthFactor: fill ? 0.9 : null,
+        child: SizedBox(
+            width: fill ? null : 200,
+            child: TextField(
+              controller: firstNameController,
+              decoration: const InputDecoration(
+                label: Text('First Name')
               ),
             )
-          ],
-          title: Text('User Detail'),
         ),
+      ),
+    );
+  }
+}
+
+class _LastName extends StatelessWidget {
+  const _LastName({
+    super.key,
+    required this.lastNameController,
+    this.fill = false,
+  });
+
+  final TextEditingController lastNameController;
+  final bool fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 30,
+        vertical: 5,
+      ),
+      child: FractionallySizedBox(
+        widthFactor: fill ? 0.9 : null,
+        child: SizedBox(
+          width: fill ? null : 200,
+          child: TextField(
+            controller: lastNameController,
+            decoration: const InputDecoration(
+                label: Text('Last Name')
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfilePhoto extends StatelessWidget {
+  const _ProfilePhoto({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 200,
+      height: 200,
+      child: Icon(AppIcons.icon_profile, size: 200,)
     );
   }
 }
