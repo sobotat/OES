@@ -4,6 +4,7 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/ui/assets/Gradient.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
+import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -43,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      UserInfoButton(
+                        width: 150,
+                      ),
                       ThemeModeButton(),
                     ],
                   ),
@@ -88,14 +92,26 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
+            padding: const EdgeInsets.only(
+              bottom: 10,
             ),
             child: FloatingActionButton(
               heroTag: '1',
               onPressed: _incrementCounter,
               tooltip: 'Increment',
               child: const Icon(Icons.add),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 10,
+            ),
+            child: FloatingActionButton(
+              heroTag: '1',
+              onPressed: () {
+                context.goNamed('user-detail');
+              },
+              child: const Icon(AppIcons.icon_profile),
             ),
           ),
           FloatingActionButton(

@@ -136,9 +136,8 @@ class _LargeMenu extends StatelessWidget {
             width: 150,
             child: _GoToMain(),
           ),
-          SizedBox(
+          UserInfoButton(
             width: 150,
-            child: UserInfoButton(),
           ),
           ThemeModeButton(),
         ],

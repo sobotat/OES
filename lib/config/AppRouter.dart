@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:oes/ui/HomeScreen.dart';
+import 'package:oes/ui/main/MainScreen.dart';
+import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/main.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
@@ -63,6 +64,13 @@ class AppRouter {
             name: 'test',
             builder: (context, state) {
               return const WebHomeScreen();
+            },
+          ),
+          GoRoute(
+            path: 'user-detail',
+            name: 'user-detail',
+            builder: (context, state) {
+              return const UserDetailScreen();
             },
           ),
         ],
