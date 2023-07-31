@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
-import 'package:oes/main.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
 import 'package:oes/ui/web/WebHomeScreen.dart';
 
@@ -15,8 +15,11 @@ class AppRouter {
   static final instance = AppRouter();
 
   GoRouterRedirect authCheckRedirect = (context, state) {
-    if(!AppSecurity.instance.isLoggedIn()) {
-      return '/sign-in?path=${state.name}';
+    if(AppSecurity.instance.isInit) {
+      if (!AppSecurity.instance.isLoggedIn()) {
+        debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
+        return '/sign-in?path=${state.name}';
+      }
     }
     return null;
   };
