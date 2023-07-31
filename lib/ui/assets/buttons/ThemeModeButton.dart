@@ -21,7 +21,7 @@ class _ThemeModeButtonState extends State<ThemeModeButton> {
           vertical: 10,
         ),
         child: ListenableBuilder(
-          listenable: AppTheme.platformListener,
+          listenable: AppTheme.activeThemeMode,
           builder: (context, child) {
             return Button(
               icon: AppTheme.isDarkMode() ? AppIcons.icon_darkmode : AppIcons.icon_lightmode,

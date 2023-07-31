@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
+import 'package:oes/ui/assets/Gradient.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 
@@ -51,17 +52,34 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        child: SizedBox(
+          height: 200,
+          width: 350,
+          child: GradientContainer(
+            colors: [
+              AppTheme.getActiveTheme().primary,
+              AppTheme.getActiveTheme().accent,
+            ],
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SelectableText(
+                    'You have pushed the button this many times:',
+                    style: TextStyle(
+                      color: AppTheme.getActiveTheme().calculateTextColor(AppTheme.getActiveTheme().primary),
+                    ),
+                  ),
+                  Text(
+                    '$_counter',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppTheme.getActiveTheme().calculateTextColor(AppTheme.getActiveTheme().primary),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          ),
         ),
       ),
       floatingActionButton: Column(

@@ -7,7 +7,6 @@ import 'LightTheme.dart';
 abstract class AppTheme {
 
   static final ActiveAppTheme activeThemeMode = ActiveAppTheme(ThemeMode.system);
-  static final PlatformListener platformListener = PlatformListener();
 
   Color get primary { return Colors.white; }
   Color get secondary { return Colors.white; }
@@ -44,9 +43,14 @@ abstract class AppTheme {
 
 class ActiveAppTheme extends ChangeNotifier {
 
-  ActiveAppTheme(this._themeMode);
-  ThemeMode _themeMode;
+  ActiveAppTheme(this._themeMode){
+    SchedulerBinding.instance.platformDispatcher.onPlatformBrightnessChanged = () {
+      WidgetsBinding.instance.handlePlatformBrightnessChanged();
+      notifyListeners();
+    };
+  }
 
+  ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
 
   set themeMode(ThemeMode value) {
@@ -63,14 +67,5 @@ class ActiveAppTheme extends ChangeNotifier {
     } else {
       themeMode = ThemeMode.system;
     }
-  }
-}
-
-class PlatformListener extends ChangeNotifier {
-  PlatformListener(){
-    SchedulerBinding.instance.platformDispatcher.onPlatformBrightnessChanged = () {
-      WidgetsBinding.instance.handlePlatformBrightnessChanged();
-      notifyListeners();
-    };
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
+import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class WebHomeScreen extends StatefulWidget {
@@ -68,7 +70,7 @@ class _NameBanner extends StatelessWidget {
               padding: EdgeInsets.all(10),
               child: Icon(Icons.add_chart),
             ),
-            Text(MediaQuery.of(context).size.width >= 950 ? 'Online E-Learning System' : 'OES', style: TextStyle(fontSize: 22),),
+            Text(MediaQuery.of(context).size.width >= 950 ? 'Online E-Learning System' : 'OES', style: const TextStyle(fontSize: 22),),
           ],
         );
       }
@@ -93,7 +95,7 @@ class _SmallMenu extends StatelessWidget {
               const PopupMenuItem(
                 enabled: false,
                 value: 1,
-                child: _UserWidget(maxWidth: 300, maxHeight: 40,),
+                child: UserInfoButton(),
               ),
               const PopupMenuItem(
                 enabled: false,
@@ -134,53 +136,10 @@ class _LargeMenu extends StatelessWidget {
           ),
           SizedBox(
             width: 150,
-            child: _UserWidget(),
+            child: UserInfoButton(),
           ),
           ThemeModeButton(),
         ],
-      ),
-    );
-  }
-}
-
-class _UserWidget extends StatefulWidget {
-  const _UserWidget({this.maxWidth=-1, this.maxHeight=-1, super.key});
-
-  final double maxWidth;
-  final double maxHeight;
-
-  @override
-  State<_UserWidget> createState() => _UserWidgetState();
-}
-
-class _UserWidgetState extends State<_UserWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 5,
-        vertical: 10,
-      ),
-      child: ListenableBuilder(
-        listenable: AppSecurity.instance,
-        builder: (context, child) {
-          return Button(
-            text: AppSecurity.instance.user?.username ?? 'Not Logged',
-            onClick: (context) {
-              setState(() {
-                if (AppSecurity.instance.isLoggedIn()){
-                  context.goNamed('sign-out');
-                }else {
-                  context.goNamed('sign-in', queryParameters: {'path':'/'});
-                }
-              });
-            },
-            minWidth: 200,
-            maxWidth: double.infinity,
-            backgroundColor: AppSecurity.instance.isInit ? AppTheme.getActiveTheme().secondary : Colors.grey, // AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400]
-            fontFamily: AppSecurity.instance.isInit ? Theme.of(context).textTheme.bodyMedium!.fontFamily : GoogleFonts.flowCircular().fontFamily,
-          );
-        },
       ),
     );
   }
