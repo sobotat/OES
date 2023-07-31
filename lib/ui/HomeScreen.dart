@@ -30,25 +30,27 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 2,
         backgroundColor: Theme.of(context).colorScheme.background,
-        flexibleSpace: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 5,
-            vertical: 0,
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ThemeModeButton(),
-                  ],
+        actions: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 0,
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ThemeModeButton(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
         title: Text(widget.title),
       ),
       body: Center(

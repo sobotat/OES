@@ -29,18 +29,20 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 2,
-        flexibleSpace: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 5,
-            vertical: 0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              width >= overflow ? const _LargeMenu() : const _SmallMenu(),
-            ],
-          ),
-        ),
+        actions: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                width >= overflow ? const _LargeMenu() : const _SmallMenu(),
+              ],
+            ),
+          )
+        ],
         title: const _NameBanner(),
       ),
       body: Center(
