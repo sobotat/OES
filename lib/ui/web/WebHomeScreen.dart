@@ -48,30 +48,41 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       ),
       body: Container(
         alignment: Alignment.topCenter,
-        child: Column(
+        child: ListView(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 20,
-              ),
-              child: SizedBox(
-                height: 500,
-                child: GradientContainer(
-                  borderRadius: BorderRadius.zero,
-                  colors: [
-                    Theme.of(context).extension<AppCustomColors>()!.accent,
-                    Theme.of(context).colorScheme.background,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  child: const Text('Online E-Learning System'),
+            SizedBox(
+              height: 500,
+              child: GradientContainer(
+                borderRadius: BorderRadius.zero,
+                colors: [
+                  Theme.of(context).colorScheme.secondary,
+                  Theme.of(context).extension<AppCustomColors>()!.accent,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                child: Text(width > overflow ? 'Online E-Learning System' : 'Online\nE-Learning\nSystem',
+                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                    fontSize: 50,
+                    letterSpacing: 15,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
+                  ),
+                  textAlign: TextAlign.center
                 ),
               ),
             ),
-            Container(
-              color: Colors.red,
-              alignment: Alignment.topCenter,
-              child: Text('Hello'),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(100),
+                color: Theme.of(context).extension<AppCustomColors>()!.accent,
+                alignment: Alignment.topCenter,
+                child: Text('Some smart text why to use it', 
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: 20,
+                    color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).extension<AppCustomColors>()!.accent, context),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
