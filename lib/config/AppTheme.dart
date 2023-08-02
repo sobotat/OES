@@ -94,3 +94,43 @@ class ActiveAppTheme extends ChangeNotifier {
     }
   }
 }
+
+class AppCustomColors extends ThemeExtension<AppCustomColors> {
+
+  const AppCustomColors({
+    required this.accent,
+    required this.textColorLight,
+    required this.textColorDark,
+  });
+
+  final Color accent;
+  final Color textColorLight;
+  final Color textColorDark;
+
+  @override
+  ThemeExtension<AppCustomColors> copyWith({
+    Color? accent,
+    Color? textColorLight,
+    Color? textColorDark}) {
+
+    return AppCustomColors(
+        accent: accent ?? this.accent,
+        textColorLight: textColorLight ?? this.textColorLight,
+        textColorDark: textColorDark ?? this.textColorDark
+    );
+  }
+
+  @override
+  ThemeExtension<AppCustomColors> lerp(covariant ThemeExtension<AppCustomColors>? other, double t) {
+    if (other is! AppCustomColors) {
+      return this;
+    }
+
+    return AppCustomColors(
+        accent: Color.lerp(accent, other.accent, t) ?? other.accent,
+        textColorLight: Color.lerp(textColorLight, other.textColorLight, t) ?? other.textColorLight,
+        textColorDark: Color.lerp(textColorDark, other.textColorDark, t) ?? other.textColorDark
+    );
+  }
+
+}
