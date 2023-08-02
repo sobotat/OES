@@ -20,20 +20,15 @@ class UserDetailScreen extends StatelessWidget {
               horizontal: 5,
               vertical: 0,
             ),
-            child: ListenableBuilder(
-              listenable: AppSecurity.instance,
-              builder: (context, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const UserInfoButton(
-                      width: 150,
-                    ),
-                    AppSecurity.instance.isLoggedIn() ? const SignOutButton() : Container(),
-                    const ThemeModeButton(),
-                  ],
-                );
-              },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                UserInfoButton(
+                  width: 150,
+                ),
+                SignOutButton(),
+                ThemeModeButton(),
+              ],
             ),
           )
         ],
@@ -79,7 +74,7 @@ class _UserInfo extends StatelessWidget {
         _firstNameController.text = AppSecurity.instance.user?.firstName ?? '';
         _lastNameController.text = AppSecurity.instance.user?.lastName ?? '';
         _usernameController.text = AppSecurity.instance.user?.username ?? '';
-        _passwordController.text = '*****.****.****';
+        _passwordController.text = AppSecurity.instance.user == null ? '' : '*****.****.****';
 
         return Container(
           padding: const EdgeInsets.symmetric(

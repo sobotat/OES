@@ -10,29 +10,30 @@ class SignOutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 10,
-        ),
-        child: ListenableBuilder(
-          listenable: AppSecurity.instance,
-          builder: (context, child) {
-            return Button(
+    return ListenableBuilder(
+      listenable: AppSecurity.instance,
+      builder: (context, child) {
+        return AppSecurity.instance.isLoggedIn() ? SizedBox(
+          width: 50,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 10,
+            ),
+            child: Button(
               icon: AppIcons.icon_sign_out,
               iconSize: 18,
-              backgroundColor: AppSecurity.instance.isLoggedIn() ? Theme.of(context).colorScheme.secondary : Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               text: '',
               toolTip: 'Sign-out',
               onClick: (context) {
                 context.goNamed('sign-out');
               },
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        ) :
+        Container();
+      },
     );
   }
 }

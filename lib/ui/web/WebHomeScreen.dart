@@ -95,21 +95,16 @@ class _SmallMenu extends StatelessWidget {
               minWidth: 250,
             ),
             itemBuilder: (context) => [
-              PopupMenuItem(
+              const PopupMenuItem(
                 enabled: false,
                 value: 1,
-                child: ListenableBuilder(
-                  listenable: AppSecurity.instance,
-                  builder: (context, child) {
-                    return Row(
-                      children: [
-                        const Expanded(
-                            child: UserInfoButton()
-                        ),
-                        AppSecurity.instance.isLoggedIn() ? const SignOutButton() : Container(),
-                      ],
-                    );
-                  },
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: UserInfoButton()
+                    ),
+                    SignOutButton(),
+                  ],
                 ),
               ),
               const PopupMenuItem(
@@ -145,26 +140,21 @@ class _LargeMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: AppSecurity.instance,
-      builder: (context, child) {
-        return Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                width: 150,
-                child: _GoToMain(),
-              ),
-              UserInfoButton(
-                width: 150,
-              ),
-              AppSecurity.instance.isLoggedIn() ? const SignOutButton() : Container(),
-              ThemeModeButton(),
-            ],
+    return const Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 150,
+            child: _GoToMain(),
           ),
-        );
-      },
+          UserInfoButton(
+            width: 150,
+          ),
+          SignOutButton(),
+          ThemeModeButton(),
+        ],
+      ),
     );
   }
 }
