@@ -71,16 +71,14 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
                 ),
               ),
             ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(100),
-                color: Theme.of(context).extension<AppCustomColors>()!.accent,
-                alignment: Alignment.topCenter,
-                child: Text('Some smart text why to use it', 
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontSize: 20,
-                    color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).extension<AppCustomColors>()!.accent, context),
-                  ),
+            Container(
+              padding: const EdgeInsets.all(100),
+              color: Theme.of(context).extension<AppCustomColors>()!.accent,
+              alignment: Alignment.topCenter,
+              child: Text('Some smart text why to use it',
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontSize: 20,
+                  color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).extension<AppCustomColors>()!.accent, context),
                 ),
               ),
             ),
