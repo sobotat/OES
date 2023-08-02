@@ -155,7 +155,7 @@ class _Password extends StatelessWidget {
           child: TextField(
             controller: passwordController,
             obscureText: true,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               label: Text('Password'),
             ),
           ),

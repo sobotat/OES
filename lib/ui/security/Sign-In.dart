@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({this.path = '/', super.key});
@@ -41,10 +42,7 @@ class _SignInState extends State<SignIn> {
       return;
     }
 
-    openHome();
-  }
-
-  void openHome() {
+    if (!context.mounted) return;
     context.goNamed(path);
   }
 
@@ -85,11 +83,8 @@ class _SignInState extends State<SignIn> {
                         TextField(
                           controller: usernameController,
                           autofillHints: const [AutofillHints.username],
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Username',
-                            fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-                            hoverColor: Theme.of(context).inputDecorationTheme.hoverColor,
-                            focusColor: Theme.of(context).inputDecorationTheme.focusColor,
                           ),
 
                           textInputAction: TextInputAction.go,
@@ -99,11 +94,8 @@ class _SignInState extends State<SignIn> {
                           controller: passwordController,
                           obscureText: true,
                           autofillHints: const [AutofillHints.password],
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Password',
-                            fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-                            hoverColor: Theme.of(context).inputDecorationTheme.hoverColor,
-                            focusColor: Theme.of(context).inputDecorationTheme.focusColor,
                           ),
 
                           textInputAction: TextInputAction.go,
@@ -114,9 +106,9 @@ class _SignInState extends State<SignIn> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: FilledButton(
-                      onPressed:  () => login(),
-                      child: const Text('Sign-In'),
+                    child: Button(
+                      text: 'Sign-In',
+                      onClick: (context) => login(),
                     ),
                   ),
                 ],

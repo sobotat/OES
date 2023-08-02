@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignOut extends StatelessWidget {
   const SignOut({super.key});
@@ -18,9 +19,9 @@ class SignOut extends StatelessWidget {
                 style: TextStyle(fontSize: 40),
               ),
             ),
-            FilledButton(
-                onPressed: () => context.goNamed('/'),
-                child: const Text('Back To Home')
+            Button(
+              text: 'Back To Home',
+              onClick: (context) => context.goNamed('/'),
             ),
           ],
         ),

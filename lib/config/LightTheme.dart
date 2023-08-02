@@ -39,13 +39,24 @@ class LightTheme extends AppTheme {
         decorationColor: _textColorDark,
         displayColor: _textColorDark,
       )),
+      textSelectionTheme: TextSelectionThemeData(
+          cursorColor: _accent
+      ),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
         labelStyle: MaterialStateTextStyle.resolveWith(
-          (Set<MaterialState> states) {
-            final Color color = states.contains(MaterialState.focused) ? _secondary : _textColorDark;
+          (states) {
+            Color color = states.contains(MaterialState.focused) ? _primary : _textColorDark;
+            if (states.contains(MaterialState.hovered)) {
+              color = _accent;
+            }
+
             return TextStyle(color: color, letterSpacing: 1.3);
           },
         ),
+        floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+          (states) {
+            return TextStyle(color: _accent, letterSpacing: 1.3);
+        }),
         fillColor: _textColorDark,
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
