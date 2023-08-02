@@ -30,8 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
           Container(
             padding: const EdgeInsets.symmetric(
@@ -65,8 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 350,
           child: GradientContainer(
             colors: [
-              AppTheme.getActiveTheme().primary,
-              AppTheme.getActiveTheme().accent,
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).extension<AppCustomColors>()!.accent,
             ],
             child: Center(
               child: Column(
@@ -75,13 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   SelectableText(
                     'You have pushed the button this many times:',
                     style: TextStyle(
-                      color: AppTheme.getActiveTheme().calculateTextColor(AppTheme.getActiveTheme().primary),
+                      color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.primary, context),
                     ),
                   ),
                   Text(
                     '$_counter',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: AppTheme.getActiveTheme().calculateTextColor(AppTheme.getActiveTheme().primary),
+                      color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.primary, context),
                     ),
                   ),
                 ],

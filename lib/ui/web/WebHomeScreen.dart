@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/Gradient.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -28,8 +29,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        elevation: 2,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
           Container(
             padding: const EdgeInsets.symmetric(
@@ -46,11 +46,33 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
         ],
         title: const _NameBanner(),
       ),
-      body: Center(
+      body: Container(
+        alignment: Alignment.topCenter,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: Text('This will be main web page', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.getActiveTheme().primary))),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 20,
+              ),
+              child: SizedBox(
+                height: 500,
+                child: GradientContainer(
+                  borderRadius: BorderRadius.zero,
+                  colors: [
+                    Theme.of(context).extension<AppCustomColors>()!.accent,
+                    Theme.of(context).colorScheme.background,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  child: const Text('Online E-Learning System'),
+                ),
+              ),
+            ),
+            Container(
+              color: Colors.red,
+              alignment: Alignment.topCenter,
+              child: Text('Hello'),
+            ),
           ],
         ),
       ),
@@ -120,7 +142,7 @@ class _SmallMenu extends StatelessWidget {
               width: 100,
               child: Button(
                 text: 'Menu',
-                backgroundColor: Theme.of(context).colorScheme.secondary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -173,7 +195,7 @@ class _GoToMain extends StatelessWidget {
       ),
       child: Button(
         text: 'Enter',
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         minWidth: 200,
         maxWidth: double.infinity,
         onClick: (context) {

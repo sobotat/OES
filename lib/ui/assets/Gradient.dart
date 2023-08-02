@@ -8,12 +8,16 @@ class GradientContainer extends StatelessWidget {
     required this.colors,
     this.child,
     this.borderRadius,
+    this.begin = Alignment.topLeft,
+    this.end = Alignment.bottomRight,
     super.key
   });
   
   final Widget? child;
   final BorderRadius? borderRadius;
   final List<Color> colors;
+  final Alignment begin;
+  final Alignment end;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +37,8 @@ class GradientContainer extends StatelessWidget {
                     borderRadius: borderRadius ?? BorderRadius.circular(10),
                     gradient: LinearGradient(
                       colors: colors,
-                      begin: Alignment.topLeft,
-                      end:  Alignment.bottomRight,
+                      begin: begin,
+                      end:  end,
                     ),
                   ),
                 ),

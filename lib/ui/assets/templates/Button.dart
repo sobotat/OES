@@ -41,55 +41,59 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color activeBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary;
-    Color activeTextColor = textColor ?? AppTheme.getActiveTheme().calculateTextColor(activeBackgroundColor);
+    Color activeTextColor = textColor ?? AppTheme.getActiveTheme().calculateTextColor(activeBackgroundColor, context);
 
-    return InkWell(
-      onTap: onClick != null ? () { onClick!(context); } : null,
+    return Material(
+      elevation: 10,
       borderRadius: borderRadius ?? BorderRadius.circular(10),
-      child: Tooltip(
-        message: toolTip ?? '',
-        waitDuration: toolTipWaitDuration ?? const Duration(milliseconds: 500),
-        child: Container(
-          constraints: BoxConstraints(
-            minWidth: minWidth ?? maxWidth ?? 200,
-            minHeight: minHeight ?? maxHeight ?? 35,
-            maxWidth: maxWidth ?? 200,
-            maxHeight: maxHeight ?? 35,
-          ),
-          child: Ink(
-            decoration: BoxDecoration(
-              borderRadius: borderRadius ?? BorderRadius.circular(10),
-              color: activeBackgroundColor,
+      child: InkWell(
+        onTap: onClick != null ? () { onClick!(context); } : null,
+        borderRadius: borderRadius ?? BorderRadius.circular(10),
+        child: Tooltip(
+          message: toolTip ?? '',
+          waitDuration: toolTipWaitDuration ?? const Duration(milliseconds: 500),
+          child: Container(
+            constraints: BoxConstraints(
+              minWidth: minWidth ?? maxWidth ?? 200,
+              minHeight: minHeight ?? maxHeight ?? 35,
+              maxWidth: maxWidth ?? 200,
+              maxHeight: maxHeight ?? 35,
             ),
-            child: OverflowBox(
-              minWidth: 0,
-              minHeight: 0,
-              maxWidth: double.infinity,
-              maxHeight: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  icon != null ? Padding(
-                    padding: const EdgeInsets.only(
-                      left: 5,
-                      right: 5,
-                      top: 1,
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: borderRadius ?? BorderRadius.circular(10),
+                color: activeBackgroundColor,
+              ),
+              child: OverflowBox(
+                minWidth: 0,
+                minHeight: 0,
+                maxWidth: double.infinity,
+                maxHeight: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon != null ? Padding(
+                      padding: const EdgeInsets.only(
+                        left: 5,
+                        right: 5,
+                        top: 1,
+                      ),
+                      child: Icon(
+                        icon,
+                        color: activeTextColor,
+                        size: iconSize,
+                      ),
+                    ) : Container(),
+                    Text(
+                      text,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: activeTextColor,
+                        fontFamily: fontFamily,
+                      ),
                     ),
-                    child: Icon(
-                      icon,
-                      color: activeTextColor,
-                      size: iconSize,
-                    ),
-                  ) : Container(),
-                  Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: activeTextColor,
-                      fontFamily: fontFamily,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -23,7 +23,7 @@ class SignOutButton extends StatelessWidget {
             child: Button(
               icon: AppIcons.icon_sign_out,
               iconSize: 18,
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               text: '',
               toolTip: 'Sign-out',
               onClick: (context) {

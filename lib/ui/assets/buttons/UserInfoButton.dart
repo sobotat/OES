@@ -41,7 +41,7 @@ class UserInfoButton extends StatelessWidget {
               },
               minWidth: 200,
               maxWidth: double.infinity,
-              backgroundColor: AppSecurity.instance.isInit ? AppTheme.getActiveTheme().secondary : Colors.grey, // AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400]
+              backgroundColor: AppSecurity.instance.isInit ? Theme.of(context).colorScheme.primary : Colors.grey, // AppSecurity.instance.isLoggedIn() ? Colors.green[400] : Colors.red[400]
               fontFamily: AppSecurity.instance.isInit ? Theme.of(context).textTheme.bodyMedium!.fontFamily : GoogleFonts.flowCircular().fontFamily,
             );
           },

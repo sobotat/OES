@@ -7,18 +7,12 @@ class LightTheme extends AppTheme {
 
   static final AppTheme instance = LightTheme();
 
-  @override
-  Color get primary { return const Color.fromRGBO(241, 244, 249, 1); }
-  @override
-  Color get secondary { return const Color.fromRGBO(221, 231, 240, 1); }
-  @override
-  Color get accent { return const Color.fromRGBO(74, 118, 155, 1); }
-  @override
-  Color get background { return const Color.fromRGBO(250, 250, 250, 1); }
-  @override
-  Color get textColorLight { return const Color.fromRGBO(250, 250, 250, 1); }
-  @override
-  Color get textColorDark { return const Color.fromRGBO(5, 5, 5, 1); }
+  final Color _primary = const Color.fromRGBO(241, 244, 249, 1);
+  final Color _secondary = const Color.fromRGBO(221, 231, 240, 1);
+  final Color _accent = const Color.fromRGBO(74, 118, 155, 1);
+  final Color _background = const Color.fromRGBO(250, 250, 250, 1);
+  final Color _textColorLight = const Color.fromRGBO(250, 250, 250, 1);
+  final Color _textColorDark = const Color.fromRGBO(5, 5, 5, 1);
 
   @override
   ThemeData getTheme(context) {
@@ -27,40 +21,40 @@ class LightTheme extends AppTheme {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       colorScheme: ColorScheme.fromSeed(
         brightness: Brightness.light,
-        seedColor: primary,
-        primary: primary,
-        secondary: secondary,
-        background: background,
+        seedColor: _primary,
+        primary: _primary,
+        secondary: _secondary,
+        background: _background,
       ),
       extensions: [
         AppCustomColors(
-            accent: accent,
-            textColorLight: textColorLight,
-            textColorDark: textColorDark
+            accent: _accent,
+            textColorLight: _textColorLight,
+            textColorDark: _textColorDark
         ),
       ],
       useMaterial3: true,
       textTheme: GoogleFonts.outfitTextTheme(Theme.of(context).textTheme.apply(
-        bodyColor: textColorDark,
-        decorationColor: textColorDark,
-        displayColor: textColorDark,
+        bodyColor: _textColorDark,
+        decorationColor: _textColorDark,
+        displayColor: _textColorDark,
       )),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
         labelStyle: MaterialStateTextStyle.resolveWith(
           (Set<MaterialState> states) {
-            final Color color = states.contains(MaterialState.focused) ? secondary : textColorDark;
+            final Color color = states.contains(MaterialState.focused) ? _secondary : _textColorDark;
             return TextStyle(color: color, letterSpacing: 1.3);
           },
         ),
-        fillColor: textColorDark,
+        fillColor: _textColorDark,
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: textColorDark,
+            color: _textColorDark,
           )
         ),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: secondary,
+            color: _secondary,
           )
         ),
       ),

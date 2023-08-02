@@ -12,8 +12,7 @@ class UserDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        elevation: 2,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
           Container(
             padding: const EdgeInsets.symmetric(

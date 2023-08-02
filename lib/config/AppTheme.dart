@@ -9,13 +9,6 @@ abstract class AppTheme {
 
   static final ActiveAppTheme activeThemeMode = ActiveAppTheme(ThemeMode.system);
 
-  Color get primary { return Colors.white; }
-  Color get secondary { return Colors.white; }
-  Color get accent { return Colors.white; }
-  Color get background { return Colors.white; }
-  Color get textColorLight { return Colors.white; }
-  Color get textColorDark { return Colors.black; }
-
   ThemeData getTheme(context) {
     throw UnimplementedError();
   }
@@ -37,8 +30,9 @@ abstract class AppTheme {
     return background.computeLuminance() >= 0.5 ? Brightness.light : Brightness.dark;
   }
 
-  Color calculateTextColor(Color background){
-    return calculateBackgroundBrightness(background) == Brightness.dark ? textColorLight : textColorDark;
+  Color calculateTextColor(Color background, BuildContext context){
+    var customColors = Theme.of(context).extension<AppCustomColors>()!;
+    return calculateBackgroundBrightness(background) == Brightness.dark ? customColors.textColorLight : customColors.textColorDark;
   }
 }
 
