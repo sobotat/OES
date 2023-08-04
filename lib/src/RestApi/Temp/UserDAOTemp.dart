@@ -25,6 +25,7 @@ class UserDAOTemp implements UserDAO {
       await Future.delayed(const Duration(seconds: 2));
 
       return User(
+        id: 1,
         firstName:'Karel',
         lastName:'Novak',
         username:username,

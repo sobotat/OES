@@ -13,5 +13,4 @@ class UserDAO {
   Future<void> logout() async {
     throw UnimplementedError();
   }
-
 }
