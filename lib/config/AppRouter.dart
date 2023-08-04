@@ -59,7 +59,7 @@ class AppRouter {
         name: 'main',
         redirect: authCheckRedirect,
         builder: (context, state) {
-          return const HomeScreen(title: 'Main');
+          return const MainScreen();
         },
         routes: [
           GoRoute(
