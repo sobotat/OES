@@ -40,7 +40,8 @@ class DarkTheme extends AppTheme {
         displayColor: _textColorLight,
       )),
       textSelectionTheme: TextSelectionThemeData(
-        cursorColor: _accent
+        selectionColor: _primary,
+        cursorColor: _accent,
       ),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
         labelStyle: MaterialStateTextStyle.resolveWith(

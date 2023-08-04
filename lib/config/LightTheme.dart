@@ -40,7 +40,8 @@ class LightTheme extends AppTheme {
         displayColor: _textColorDark,
       )),
       textSelectionTheme: TextSelectionThemeData(
-          cursorColor: _accent
+          selectionColor: _accent,
+          cursorColor: _accent,
       ),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
         labelStyle: MaterialStateTextStyle.resolveWith(
