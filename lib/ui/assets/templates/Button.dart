@@ -84,14 +84,14 @@ class Button extends StatelessWidget {
                         size: iconSize,
                       ),
                     ) : Container(),
-                    Text(
+                    text != '' ? Text(
                       text,
                       style: TextStyle(
                         fontSize: 15,
                         color: activeTextColor,
                         fontFamily: fontFamily,
                       ),
-                    ),
+                    ) : Container(),
                   ],
                 ),
               ),
