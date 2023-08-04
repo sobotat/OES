@@ -62,7 +62,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
                 end: Alignment.bottomCenter,
                 child: Text(width > overflow ? 'Online E-Learning System' : 'Online\nE-Learning\nSystem',
                   style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                    fontSize: 50,
+                    fontSize: width > overflow ? 50 : 35,
                     letterSpacing: 15,
                     fontWeight: FontWeight.w500,
                     color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
