@@ -1,6 +1,9 @@
 import 'package:oes/Src/Objects/User.dart';
+import 'package:oes/src/RestApi/Temp/UserGatewayTemp.dart';
 
 class UserGateway {
+
+  static UserGateway gateway = UserGatewayTemp();
 
   Future<User?> getUser() async {
     throw UnimplementedError();
@@ -13,4 +16,6 @@ class UserGateway {
   Future<void> logout() async {
     throw UnimplementedError();
   }
+
+
 }

@@ -14,4 +14,14 @@ class User extends ObjectDO {
   String lastName;
   String username;
   String? token;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          username == other.username;
+
+  @override
+  int get hashCode => username.hashCode;
 }
