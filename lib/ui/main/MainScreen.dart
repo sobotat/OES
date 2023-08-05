@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/Objects/Course.dart';
+import 'package:oes/src/RestApi/CourseGateway.dart';
 import 'package:oes/ui/assets/Gradient.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
-import 'package:oes/ui/security/Sign-In.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -48,39 +49,7 @@ class MainScreen extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: ListView(
           children: [
-            Column(
-              children: [
-                const _Heading(
-                  headingText: 'Courses:',
-                ),
-                _Body(
-                  child: Builder(
-                    builder: (context) {
-                      List<Course> courses = [
-                        Course(id: 31, name: 'Python', shortName: 'P'),
-                        Course(id: 52, name: 'English', shortName: 'E', color: Colors.deepOrange),
-                        Course(id: 673, name: 'Java', shortName: 'J', color: Colors.green),
-                        Course(id: 1234, name: 'C#', shortName: 'C#'),
-                        Course(id: 225, name: 'Math', shortName: 'M', color: Colors.blue[900]),
-                      ];
-
-                      return SizedBox(
-                        height: (60.0 * courses.length),
-                        child: ListView.builder(
-                          itemCount: courses.length,
-                          itemBuilder: (context, index) {
-                            return _CourseItem(
-                              course: courses[index],
-                              height: 50,
-                            );
-                          },
-                        ),
-                      );
-                    }
-                  ),
-                )
-              ],
-            ),
+            _Courses(),
           ],
         ),
       ),
@@ -108,6 +77,63 @@ class MainScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _Courses extends StatefulWidget {
+  const _Courses({
+    super.key,
+  });
+
+  @override
+  State<_Courses> createState() => _CoursesState();
+}
+
+class _CoursesState extends State<_Courses> {
+
+  List<Course> courses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadCourses();
+  }
+
+  Future<void> loadCourses() async {
+    var user = AppSecurity.instance.user;
+    if (user != null) {
+      courses = await CourseGateway.gateway.getUserCourses(user);
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const _Heading(
+          headingText: 'Courses:',
+        ),
+        _Body(
+          child: Builder(
+            builder: (context) {
+              return SizedBox(
+                height: (60.0 * courses.length),
+                child: ListView.builder(
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) {
+                    return _CourseItem(
+                      course: courses[index],
+                      height: 50,
+                    );
+                  },
+                ),
+              );
+            }
+          ),
+        )
+      ],
     );
   }
 }
