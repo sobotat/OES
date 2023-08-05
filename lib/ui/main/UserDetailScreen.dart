@@ -352,7 +352,9 @@ class _ProfilePhotoState extends State<_ProfilePhoto> {
                             maxWidth: 150,
                             onClick: (context) {
                               Navigator.pop(context);
-                              icon = AppIcons.icon_teapot;
+                              setState(() {
+                                icon = AppIcons.icon_teapot;
+                              });
                             },
                           ),
                         )
@@ -366,7 +368,7 @@ class _ProfilePhotoState extends State<_ProfilePhoto> {
         child: Icon(
           icon,
           size: 200,
-          color: counter < 4 ? Theme.of(context).textTheme.displayMedium!.color : Colors.lightBlue,
+          color: counter < 4 ? Colors.white : Colors.lightBlue,
         )
       )
     );
