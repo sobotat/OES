@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:oes/Src/Objects/User.dart';
-import 'package:oes/Src/RestApi/Temp/UserDAOTemp.dart';
-import 'package:oes/Src/RestApi/UserDAO.dart';
+import 'package:oes/src/RestApi/Temp/UserGatewayTemp.dart';
+import 'package:oes/src/RestApi/UserGateway.dart';
 
 class AppSecurity extends ChangeNotifier {
 
   static final AppSecurity instance = AppSecurity();
 
-  UserDAO userDAO = UserDAOTemp();
+  UserGateway userDAO = UserGatewayTemp();
   User? user;
   bool _isInit = false;
   bool get isInit => _isInit;

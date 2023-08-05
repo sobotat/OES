@@ -1,6 +1,6 @@
 import 'package:oes/Src/Objects/User.dart';
 
-class UserDAO {
+class UserGateway {
 
   Future<User?> getUser() async {
     throw UnimplementedError();

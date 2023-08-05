@@ -1,9 +1,9 @@
 
 import 'package:oes/Src/Objects/User.dart';
-import 'package:oes/Src/RestApi/UserDAO.dart';
+import 'package:oes/src/RestApi/UserGateway.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserDAOTemp implements UserDAO {
+class UserGatewayTemp implements UserGateway {
 
   @override
   Future<User?> getUser() async {
