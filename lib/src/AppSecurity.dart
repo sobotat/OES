@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:oes/Src/Objects/User.dart';
-import 'package:oes/src/RestApi/Temp/UserGatewayTemp.dart';
 import 'package:oes/src/RestApi/UserGateway.dart';
 
 class AppSecurity extends ChangeNotifier {
 
   static final AppSecurity instance = AppSecurity();
 
-  UserGateway userDAO = UserGatewayTemp();
   User? user;
   bool _isInit = false;
   bool get isInit => _isInit;
@@ -17,13 +15,13 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    user = await userDAO.getUser();
+    user = await UserGateway.gateway.getUser();
     _isInit = true;
     notifyListeners();
   }
 
   Future<bool> login(String username, String password) async {
-    user = await userDAO.login(username, password);
+    user = await UserGateway.gateway.login(username, password);
     notifyListeners();
     return user == null ? false : true;
   }
@@ -33,7 +31,7 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    await userDAO.logout();
+    await UserGateway.gateway.logout();
     user = null;
     notifyListeners();
   }
