@@ -94,15 +94,10 @@ class _CoursesState extends State<_Courses> {
 
   List<Course> courses = [];
 
-  @override
-  void initState() {
-    super.initState();
-    loadCourses();
-  }
-
   Future<void> loadCourses() async {
     var user = AppSecurity.instance.user;
     if (user != null) {
+      debugPrint('Loading Courses');
       courses = await CourseGateway.gateway.getUserCourses(user);
       setState(() {});
     }
@@ -110,30 +105,36 @@ class _CoursesState extends State<_Courses> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const _Heading(
-          headingText: 'Courses:',
-        ),
-        _Body(
-          child: Builder(
-            builder: (context) {
-              return SizedBox(
-                height: (60.0 * courses.length),
-                child: ListView.builder(
-                  itemCount: courses.length,
-                  itemBuilder: (context, index) {
-                    return _CourseItem(
-                      course: courses[index],
-                      height: 50,
+    return ListenableBuilder(
+      listenable: AppSecurity.instance,
+      builder: (context, child) {
+        loadCourses();
+        return Column(
+          children: [
+            const _Heading(
+              headingText: 'Courses:',
+            ),
+            _Body(
+              child: Builder(
+                  builder: (context) {
+                    return SizedBox(
+                      height: (60.0 * courses.length),
+                      child: ListView.builder(
+                        itemCount: courses.length,
+                        itemBuilder: (context, index) {
+                          return _CourseItem(
+                            course: courses[index],
+                            height: 50,
+                          );
+                        },
+                      ),
                     );
-                  },
-                ),
-              );
-            }
-          ),
-        )
-      ],
+                  }
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }
