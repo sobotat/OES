@@ -4,6 +4,7 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 
 class UserDetailScreen extends StatelessWidget {
   const UserDetailScreen({super.key});
@@ -295,17 +296,79 @@ class _LastName extends StatelessWidget {
   }
 }
 
-class _ProfilePhoto extends StatelessWidget {
+class _ProfilePhoto extends StatefulWidget {
   const _ProfilePhoto({
     super.key,
   });
 
   @override
+  State<_ProfilePhoto> createState() => _ProfilePhotoState();
+}
+
+class _ProfilePhotoState extends State<_ProfilePhoto> {
+
+  int counter = 0;
+  IconData icon = AppIcons.icon_profile;
+
+  @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 200,
       height: 200,
-      child: Icon(AppIcons.icon_profile, size: 200,)
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            counter += 1;
+            if (counter < 3) {
+              return;
+            }
+
+            if (counter == 3) {
+              icon = Icons.ac_unit;
+              return;
+            }
+
+            if (counter < 5 || icon == AppIcons.icon_teapot) {
+              return;
+            }
+
+            showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => Dialog(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text('Are you a teapot?'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Button(
+                            text: 'Yes I\'m',
+                            maxWidth: 150,
+                            onClick: (context) {
+                              Navigator.pop(context);
+                              icon = AppIcons.icon_teapot;
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ));
+
+          });
+        },
+        child: Icon(
+          icon,
+          size: 200,
+          color: counter < 4 ? Theme.of(context).textTheme.displayMedium!.color : Colors.lightBlue,
+        )
+      )
     );
   }
 }

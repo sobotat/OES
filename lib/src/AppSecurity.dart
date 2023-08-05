@@ -39,5 +39,4 @@ class AppSecurity extends ChangeNotifier {
   bool isLoggedIn(){
     return user == null ? false : true;
   }
-
 }
