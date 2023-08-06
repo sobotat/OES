@@ -9,9 +9,7 @@ abstract class AppTheme {
 
   static final ActiveAppTheme activeThemeMode = ActiveAppTheme(ThemeMode.system);
 
-  ThemeData getTheme(context) {
-    throw UnimplementedError();
-  }
+  ThemeData getTheme(context);
 
   static bool isDarkMode() {
     if (activeThemeMode.themeMode == ThemeMode.system) {
