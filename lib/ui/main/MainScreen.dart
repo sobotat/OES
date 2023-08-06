@@ -98,6 +98,7 @@ class _CoursesState extends State<_Courses> {
 
   List<Course> courses = [];
   Function() listenerFunction = () {};
+  bool isInit = false;
 
   @override
   void initState() {
@@ -120,6 +121,7 @@ class _CoursesState extends State<_Courses> {
     if (user != null) {
       debugPrint('Loading Courses');
       courses = await CourseGateway.gateway.getUserCourses(user);
+      isInit = true;
 
       if (!context.mounted) return;
       setState(() {});
@@ -139,7 +141,7 @@ class _CoursesState extends State<_Courses> {
             _Body(
               child: Builder(
                   builder: (context) {
-                    return SizedBox(
+                    return isInit ? SizedBox(
                       height: (60.0 * courses.length),
                       child: ListView.builder(
                         itemCount: courses.length,
@@ -150,6 +152,17 @@ class _CoursesState extends State<_Courses> {
                           );
                         },
                       ),
+                    ) :
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).extension<AppCustomColors>()!.accent,
+                          ),
+                        ),
+                      ],
                     );
                   }
               ),
@@ -285,7 +298,6 @@ class _Body extends StatelessWidget {
         horizontal: width > overflow ? 50 : 5,
       ),
       constraints: const BoxConstraints(
-        minHeight: 200,
         maxHeight: 600,
       ),
       decoration: BoxDecoration(
