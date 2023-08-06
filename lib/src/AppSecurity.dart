@@ -21,7 +21,7 @@ class AppSecurity extends ChangeNotifier {
   }
 
   Future<bool> login(String username, String password) async {
-    user = await UserGateway.gateway.login(username, password);
+    user = await UserGateway.gateway.loginWithUsernameAndPassword(username, password);
     notifyListeners();
     return user == null ? false : true;
   }

@@ -9,39 +9,57 @@ class UserGatewayTemp implements UserGateway {
   Future<User?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String username = prefs.getString('username') ?? '';
-    String password = prefs.getString('password') ?? '';
+    String token = prefs.getString('token') ?? '';
 
-    return (username != '' && password != '') ? login(username, password) : null;
+    return (token != '') ? loginWithToken(token) : null;
   }
 
   @override
-  Future<User?> login(String username, String password) async {
+  Future<User?> loginWithUsernameAndPassword(String username, String password) async {
     await Future.delayed(const Duration(seconds: 2));
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (username.toLowerCase() == 'admin' && password.toLowerCase() == 'admin') {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      prefs.setString('username', username);
-      prefs.setString('password', password);
+      String token = '123456789';
+      prefs.setString('token', token);
 
       return User(
         id: 1,
         firstName:'Karel',
         lastName:'Novak',
         username:username,
-        token: '123456789'
+        token: token,
       );
     }
+
+    prefs.remove('token');
+    return null;
+  }
+
+  @override
+  Future<User?> loginWithToken(String token) async {
+    await Future.delayed(const Duration(seconds: 2));
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (token.toLowerCase() == '123456789') {
+      prefs.setString('token', token);
+
+      return User(
+          id: 1,
+          firstName:'Karel',
+          lastName:'Novak',
+          username: 'admin',
+          token: token,
+      );
+    }
+
+    prefs.remove('token');
     return null;
   }
 
   @override
   Future<void> logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.remove('username');
-    prefs.remove('password');
+    prefs.remove('token');
   }
-
 }
