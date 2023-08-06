@@ -171,11 +171,12 @@ class _CourseItem extends StatelessWidget {
   final Course course;
   final double? height;
 
-  void open() {
+  void open(BuildContext context) {
     debugPrint('Open course ${course.name}');
+    context.goNamed('course', pathParameters: {'id': course.id.toString()});
   }
 
-  void exit() {
+  void exit(BuildContext context) {
     debugPrint('Exit course ${course.name}');
   }
 
@@ -193,8 +194,8 @@ class _CourseItem extends StatelessWidget {
         elevation: 10,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
-          onLongPress: () => exit(),
-          onTap: () => open(),
+          onLongPress: () => exit(context),
+          onTap: () => open(context),
           borderRadius: BorderRadius.circular(10),
           child: Ink(
             height: height ?? 50,
@@ -243,7 +244,7 @@ class _CourseItem extends StatelessWidget {
                       child: Button(
                         text: 'Open',
                         maxWidth: 75,
-                        onClick: (context) => open(),
+                        onClick: (context) => open(context),
                       ),
                     ),
                     Padding(
@@ -252,7 +253,7 @@ class _CourseItem extends StatelessWidget {
                         text: 'Exit',
                         maxWidth: 75,
                         backgroundColor: Colors.red,
-                        onClick: (context) => exit(),
+                        onClick: (context) => exit(context),
                       ),
                     )
                   ],
