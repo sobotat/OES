@@ -8,4 +8,6 @@ abstract class CourseGateway {
   static CourseGateway gateway = CourseGatewayTemp();
 
   Future<List<Course>> getUserCourses(User user);
+
+  Future<Course?> getCourse(User user, int id);
 }

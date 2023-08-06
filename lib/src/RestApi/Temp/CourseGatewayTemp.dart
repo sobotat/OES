@@ -34,8 +34,19 @@ class CourseGatewayTemp implements CourseGateway {
   @override
   Future<List<Course>> getUserCourses(User user) {
     return Future.delayed(const Duration(seconds: 1), () {
-      var out = data[user];
       return data[user] ?? [];
+    });
+  }
+
+  @override
+  Future<Course?> getCourse(User user, int id) {
+    return Future.delayed(const Duration(seconds: 1), () {
+      if (data[user] == null) return null;
+
+      for (Course course in data[user] ?? []){
+        if(course.id == id) return course;
+      }
+     return null;
     });
   }
 
