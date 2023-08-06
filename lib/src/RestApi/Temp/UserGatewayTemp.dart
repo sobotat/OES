@@ -17,12 +17,13 @@ class UserGatewayTemp implements UserGateway {
 
   @override
   Future<User?> login(String username, String password) async {
+    await Future.delayed(const Duration(seconds: 2));
+
     if (username.toLowerCase() == 'admin' && password.toLowerCase() == 'admin') {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       prefs.setString('username', username);
       prefs.setString('password', password);
-      await Future.delayed(const Duration(seconds: 2));
 
       return User(
         id: 1,
