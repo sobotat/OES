@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/ui/assets/Gradient.dart';
+import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
+import 'package:oes/ui/assets/templates/Gradient.dart';
+import 'package:oes/ui/assets/templates/PopDialog.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -39,7 +41,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                width >= overflow ? const _LargeMenu() : const _SmallMenu(),
+                width >= overflow ? const _LargeMenu() : const SmallMenu(),
               ],
             ),
           )
@@ -112,60 +114,6 @@ class _NameBanner extends StatelessWidget {
   }
 }
 
-class _SmallMenu extends StatelessWidget {
-  const _SmallMenu({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          PopupMenuButton<int>(
-            constraints: const BoxConstraints(
-              minWidth: 250,
-            ),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                enabled: false,
-                value: 1,
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: UserInfoButton()
-                    ),
-                    SignOutButton(),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                enabled: false,
-                value: 1,
-                child: _GoToMain(),
-              ),
-            ],
-            offset: const Offset(0, 100),
-            color: Colors.grey,
-            elevation: 2,
-            child: SizedBox(
-              width: 100,
-              child: Button(
-                text: 'Menu',
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-          const Row(
-            children: [
-              ThemeModeButton(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _LargeMenu extends StatelessWidget {
   const _LargeMenu({super.key});
 
@@ -214,3 +162,39 @@ class _GoToMain extends StatelessWidget {
     );
   }
 }
+
+
+//PopupMenuButton<int>(
+//             constraints: const BoxConstraints(
+//               minWidth: 250,
+//             ),
+//             itemBuilder: (context) => [
+//               const PopupMenuItem(
+//                 enabled: false,
+//                 value: 1,
+//                 child: Row(
+//                   children: [
+//                     Expanded(
+//                         child: UserInfoButton()
+//                     ),
+//                     SignOutButton(),
+//                   ],
+//                 ),
+//               ),
+//               const PopupMenuItem(
+//                 enabled: false,
+//                 value: 1,
+//                 child: _GoToMain(),
+//               ),
+//             ],
+//             offset: const Offset(0, 100),
+//             color: Colors.grey,
+//             elevation: 2,
+//             child: SizedBox(
+//               width: 100,
+//               child: Button(
+//                 text: 'Menu',
+//                 backgroundColor: Theme.of(context).colorScheme.primary,
+//               ),
+//             ),
+//           )

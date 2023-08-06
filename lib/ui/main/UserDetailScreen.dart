@@ -4,6 +4,7 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
+import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class UserDetailScreen extends StatelessWidget {
@@ -11,6 +12,9 @@ class UserDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -20,7 +24,7 @@ class UserDetailScreen extends StatelessWidget {
               horizontal: 5,
               vertical: 0,
             ),
-            child: const Row(
+            child: width > overflow ? const Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 UserInfoButton(
@@ -29,7 +33,7 @@ class UserDetailScreen extends StatelessWidget {
                 SignOutButton(),
                 ThemeModeButton(),
               ],
-            ),
+            ) : const SmallMenu(),
           )
         ],
         title: const Text('User Detail'),
