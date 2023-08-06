@@ -6,7 +6,12 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignOutButton extends StatelessWidget {
-  const SignOutButton({super.key});
+  const SignOutButton({
+    this.padding,
+    super.key
+  });
+
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +21,7 @@ class SignOutButton extends StatelessWidget {
         return AppSecurity.instance.isLoggedIn() ? SizedBox(
           width: 50,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
+            padding: padding ?? const EdgeInsets.symmetric(
               horizontal: 5,
               vertical: 10,
             ),

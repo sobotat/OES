@@ -4,7 +4,12 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class ThemeModeButton extends StatefulWidget {
-  const ThemeModeButton({super.key});
+  const ThemeModeButton({
+    this.padding,
+    super.key
+  });
+
+  final EdgeInsets? padding;
 
   @override
   State<ThemeModeButton> createState() => _ThemeModeButtonState();
@@ -16,7 +21,7 @@ class _ThemeModeButtonState extends State<ThemeModeButton> {
     return SizedBox(
       width: 50,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: widget.padding ?? const EdgeInsets.symmetric(
           horizontal: 5,
           vertical: 10,
         ),

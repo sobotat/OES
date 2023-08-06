@@ -10,17 +10,19 @@ import 'package:oes/ui/assets/templates/Button.dart';
 class UserInfoButton extends StatelessWidget {
   const UserInfoButton({
     this.width,
+    this.padding,
     super.key,
   });
 
   final double? width;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: padding ?? const EdgeInsets.symmetric(
           horizontal: 5,
           vertical: 10,
         ),
