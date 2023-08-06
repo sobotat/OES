@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../config/AppTheme.dart';
 
 class Button extends StatelessWidget {
@@ -8,6 +9,7 @@ class Button extends StatelessWidget {
     this.toolTip,
     this.toolTipWaitDuration,
     this.onClick,
+    this.shouldPopOnClick = false,
     this.minWidth,
     this.minHeight,
     this.maxWidth,
@@ -25,6 +27,7 @@ class Button extends StatelessWidget {
   final String? toolTip;
   final Duration? toolTipWaitDuration;
   final Function(BuildContext context)? onClick;
+  final bool shouldPopOnClick;
 
   final double? maxWidth;
   final double? maxHeight;
@@ -47,7 +50,13 @@ class Button extends StatelessWidget {
       elevation: 10,
       borderRadius: borderRadius ?? BorderRadius.circular(10),
       child: InkWell(
-        onTap: onClick != null ? () { onClick!(context); } : null,
+        onTap: onClick != null ? () {
+          onClick!(context);
+
+          if (shouldPopOnClick) {
+            context.pop();
+          }
+        } : null,
         borderRadius: borderRadius ?? BorderRadius.circular(10),
         child: Tooltip(
           message: toolTip ?? '',

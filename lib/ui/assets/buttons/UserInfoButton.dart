@@ -11,9 +11,11 @@ class UserInfoButton extends StatelessWidget {
   const UserInfoButton({
     this.width,
     this.padding,
+    this.shouldPopOnClick = false,
     super.key,
   });
 
+  final bool shouldPopOnClick;
   final double? width;
   final EdgeInsets? padding;
 
@@ -34,6 +36,7 @@ class UserInfoButton extends StatelessWidget {
             return Button(
               text: user != null ? '${user.firstName} ${user.lastName}' : 'Not Logged',
               toolTip: user != null ? 'User Detail' : 'Sign-In',
+              shouldPopOnClick: shouldPopOnClick,
               onClick: (context) {
                 if (AppSecurity.instance.isLoggedIn()){
                   context.goNamed('user-detail');

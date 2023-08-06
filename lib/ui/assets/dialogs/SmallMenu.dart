@@ -40,6 +40,7 @@ class SmallMenu extends StatelessWidget {
                       children: [
                         UserInfoButton(
                           padding: EdgeInsets.symmetric(horizontal: 5),
+                          shouldPopOnClick: true,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
