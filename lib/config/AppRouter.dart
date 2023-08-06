@@ -71,7 +71,9 @@ class AppRouter {
         path: '/sign-out',
         name: 'sign-out',
         builder: (context, state) {
-          AppSecurity.instance.logout();
+          Future.delayed(Duration.zero, () {
+            AppSecurity.instance.logout();
+          });
           return const SignOut();
         },
       ),
@@ -110,5 +112,19 @@ class AppRouter {
         ],
       ),
     ],
+
+    observers: [ _RouterObserver() ],
   );
+}
+
+class _RouterObserver extends NavigatorObserver {
+
+  // Check on Pop (On going back)
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      AppRouter.instance.router.refresh();
+    });
+  }
 }
