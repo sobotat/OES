@@ -97,12 +97,31 @@ class _Courses extends StatefulWidget {
 class _CoursesState extends State<_Courses> {
 
   List<Course> courses = [];
+  Function() listenerFunction = () {};
+
+  @override
+  void initState() {
+    super.initState();
+    loadCourses();
+    listenerFunction = () {
+      loadCourses();
+    };
+    AppSecurity.instance.addListener(listenerFunction);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    AppSecurity.instance.removeListener(listenerFunction);
+  }
 
   Future<void> loadCourses() async {
     var user = AppSecurity.instance.user;
     if (user != null) {
       debugPrint('Loading Courses');
       courses = await CourseGateway.gateway.getUserCourses(user);
+
+      if (!context.mounted) return;
       setState(() {});
     }
   }
@@ -112,7 +131,6 @@ class _CoursesState extends State<_Courses> {
     return ListenableBuilder(
       listenable: AppSecurity.instance,
       builder: (context, child) {
-        loadCourses();
         return Column(
           children: [
             const _Heading(

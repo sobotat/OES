@@ -79,3 +79,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+linter:
+  rules:
+    - use_build_context_synchronously
+    - annotate_overrides
+    - always_use_package_imports
