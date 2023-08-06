@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:oes/src/RestApi/CourseGateway.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
+import 'package:oes/ui/main/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
@@ -15,12 +17,31 @@ class AppRouter {
   static final instance = AppRouter();
 
   GoRouterRedirect authCheckRedirect = (context, state) {
+    // Check if Active redirect
+    if (state.uri.toString() != state.matchedLocation) return null;
+
+    // Check user if is Init
     if(AppSecurity.instance.isInit) {
       if (!AppSecurity.instance.isLoggedIn()) {
         debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
-        return '/sign-in?path=${state.name}';
+        return '/sign-in?path=${state.uri}';
       }
+      return null;
     }
+
+    // If not Init will wait for Init
+    Future.delayed(Duration.zero, () {
+     listener() {
+       if(context.mounted){
+         if (!AppSecurity.instance.isLoggedIn()) {
+           debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
+           AppRouter.instance.router.go('/sign-in?path=${state.uri}');
+         }
+       }
+     }
+     AppSecurity.instance.addListener(listener);
+    });
+
     return null;
   };
 
@@ -63,6 +84,15 @@ class AppRouter {
         },
         routes: [
           GoRoute(
+            path: 'course/:id',
+            name: 'course',
+            redirect: authCheckRedirect,
+            builder: (context, state) {
+              int id = int.parse(state.pathParameters['id'] ?? '-1');
+              return CourseScreen(courseID: id);
+            },
+          ),
+          GoRoute(
             path: 'test',
             name: 'test',
             builder: (context, state) {
@@ -72,6 +102,7 @@ class AppRouter {
           GoRoute(
             path: 'user-detail',
             name: 'user-detail',
+            redirect: authCheckRedirect,
             builder: (context, state) {
               return const UserDetailScreen();
             },

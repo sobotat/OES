@@ -16,18 +16,19 @@ class _SignInState extends State<SignIn> {
 
   _SignInState({this.path = '/'});
 
+  Function() listenerFunction = () {};
 
   @override
   void initState() {
     super.initState();
-
-    Future.delayed(Duration.zero,() {
+    listenerFunction = () {
       AppSecurity.instance.addListener(() {
         if(AppSecurity.instance.isLoggedIn()) {
-          context.goNamed(path);
+          context.go(path);
         }
       });
-    });
+    };
+    Future.delayed(Duration.zero, listenerFunction);
   }
 
   final String path;
@@ -43,7 +44,7 @@ class _SignInState extends State<SignIn> {
     }
 
     if (!context.mounted) return;
-    context.goNamed(path);
+    context.go(path);
   }
 
   @override
@@ -51,6 +52,7 @@ class _SignInState extends State<SignIn> {
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
+    AppSecurity.instance.removeListener(listenerFunction);
   }
 
   @override
