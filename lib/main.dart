@@ -44,32 +44,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-class WebMain extends StatelessWidget {
-  const WebMain({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: AppSecurity.instance.isLoggedIn() ? Colors.greenAccent : Colors.redAccent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FilledButton(
-              onPressed: () => context.goNamed('main'),
-              child: const Text('Main Screen'),
-            ),
-            FilledButton(
-              onPressed: () {
-                AppSecurity.instance.logout();
-                context.goNamed('sign-in');
-              },
-              child: const Text('Logout'),
-            ),
-          ],
-        ),
-      )
-    );
-  }
-}
