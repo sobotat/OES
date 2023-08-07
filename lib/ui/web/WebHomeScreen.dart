@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
-import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
-import 'package:oes/ui/assets/templates/PopDialog.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -92,9 +88,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
 }
 
 class _NameBanner extends StatelessWidget {
-  const _NameBanner({
-    super.key,
-  });
+  const _NameBanner();
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +109,7 @@ class _NameBanner extends StatelessWidget {
 }
 
 class _LargeMenu extends StatelessWidget {
-  const _LargeMenu({super.key});
+  const _LargeMenu();
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +133,7 @@ class _LargeMenu extends StatelessWidget {
 }
 
 class _GoToMain extends StatelessWidget {
-  const _GoToMain({
-    super.key,
-  });
+  const _GoToMain();
 
   @override
   Widget build(BuildContext context) {

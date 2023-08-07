@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:oes/src/RestApi/CourseGateway.dart';
-import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/main/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';

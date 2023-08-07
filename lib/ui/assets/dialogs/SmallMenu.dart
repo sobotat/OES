@@ -34,7 +34,7 @@ class SmallMenu extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       color: Theme.of(context).colorScheme.secondary,
                     ),
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [

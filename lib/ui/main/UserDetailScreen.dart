@@ -40,9 +40,6 @@ class UserDetailScreen extends StatelessWidget {
       ),
       body: Builder(
         builder: (context) {
-          var width = MediaQuery.of(context).size.width;
-          var overflow = 950;
-
           return ListView(
             children: [
               Padding(
@@ -61,9 +58,7 @@ class UserDetailScreen extends StatelessWidget {
 }
 
 class _UserInfo extends StatelessWidget {
-  _UserInfo({
-    super.key,
-  });
+  _UserInfo();
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -107,7 +102,6 @@ class _UserInfo extends StatelessWidget {
 
 class _UsernameAndPasswordRow extends StatelessWidget {
   const _UsernameAndPasswordRow({
-    super.key,
     required TextEditingController usernameController,
     required TextEditingController passwordController,
   }) : _usernameController = usernameController, _passwordController = passwordController;
@@ -138,7 +132,6 @@ class _UsernameAndPasswordRow extends StatelessWidget {
 
 class _Password extends StatelessWidget {
   const _Password({
-    super.key,
     required this.passwordController,
     this.fill = false,
   });
@@ -172,7 +165,6 @@ class _Password extends StatelessWidget {
 
 class _Username extends StatelessWidget {
   const _Username({
-    super.key,
     required this.usernameController,
     this.fill = false,
   });
@@ -205,7 +197,6 @@ class _Username extends StatelessWidget {
 
 class _FirstAndLastNameRow extends StatelessWidget {
   const _FirstAndLastNameRow({
-    super.key,
     required TextEditingController firstNameController,
     required TextEditingController lastNameController,
   }) : _firstNameController = firstNameController, _lastNameController = lastNameController;
@@ -236,7 +227,6 @@ class _FirstAndLastNameRow extends StatelessWidget {
 
 class _FirstName extends StatelessWidget {
   const _FirstName({
-    super.key,
     required this.firstNameController,
     this.fill = false,
   });
@@ -269,7 +259,6 @@ class _FirstName extends StatelessWidget {
 
 class _LastName extends StatelessWidget {
   const _LastName({
-    super.key,
     required this.lastNameController,
     this.fill = false,
   });
@@ -301,9 +290,7 @@ class _LastName extends StatelessWidget {
 }
 
 class _ProfilePhoto extends StatefulWidget {
-  const _ProfilePhoto({
-    super.key,
-  });
+  const _ProfilePhoto();
 
   @override
   State<_ProfilePhoto> createState() => _ProfilePhotoState();
