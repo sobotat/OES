@@ -69,7 +69,7 @@ class AppRouter {
         path: '/sign-out',
         name: 'sign-out',
         builder: (context, state) {
-          Future.delayed(Duration.zero, () {
+          Future.delayed(const Duration(milliseconds: 100), () {
             AppSecurity.instance.logout();
           });
           return const SignOut();
