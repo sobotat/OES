@@ -1,5 +1,5 @@
-import 'package:oes/Src/Objects/User.dart';
-import 'package:oes/src/RestApi/Temp/UserGatewayTemp.dart';
+import 'package:oes/src/objects/User.dart';
+import 'package:oes/src/restApi/temp/UserGatewayTemp.dart';
 
 abstract class UserGateway {
 

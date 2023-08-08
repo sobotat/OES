@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/Objects/Course.dart';
-import 'package:oes/src/RestApi/CourseGateway.dart';
+import 'package:oes/src/objects/Course.dart';
+import 'package:oes/src/restApi/CourseGateway.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';

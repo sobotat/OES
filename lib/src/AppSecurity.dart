@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:oes/Src/Objects/User.dart';
-import 'package:oes/src/RestApi/UserGateway.dart';
+import 'package:oes/src/objects/User.dart';
+import 'package:oes/src/restApi/UserGateway.dart';
 
 class AppSecurity extends ChangeNotifier {
 

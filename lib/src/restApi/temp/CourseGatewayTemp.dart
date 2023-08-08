@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:oes/Src/Objects/User.dart';
-import 'package:oes/src/Objects/Course.dart';
-import 'package:oes/src/RestApi/CourseGateway.dart';
+import 'package:oes/src/objects/User.dart';
+import 'package:oes/src/objects/Course.dart';
+import 'package:oes/src/restApi/CourseGateway.dart';
 
 class CourseGatewayTemp implements CourseGateway {
 
