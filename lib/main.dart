@@ -6,6 +6,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/config/DarkTheme.dart';
 import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/other/NetworkChecker.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,8 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key}) {
     AppSecurity.instance.init();
+    NetworkChecker.instance.init();
+    AppRouter.instance.setNetworkListener();
   }
 
   @override
