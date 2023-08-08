@@ -35,11 +35,7 @@ class UserInfoButton extends StatelessWidget {
               toolTip: user != null ? 'User Detail' : 'Sign-In',
               shouldPopOnClick: shouldPopOnClick,
               onClick: (context) {
-                if (AppSecurity.instance.isLoggedIn()){
-                  context.goNamed('user-detail');
-                }else {
-                  context.goNamed('sign-in', queryParameters: {'path':'/'});
-                }
+                context.goNamed('user-detail');
               },
               minWidth: 200,
               maxWidth: double.infinity,
