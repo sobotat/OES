@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:oes/ui/main/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
+import 'package:oes/ui/test/TestScreen.dart';
 import 'package:oes/ui/web/WebHomeScreen.dart';
 
 import '../src/AppSecurity.dart';
@@ -57,6 +58,22 @@ class AppRouter {
         builder: (context, state) {
           return const WebHomeScreen();
         },
+        routes: [
+          GoRoute(
+            path: 'test',
+            name: 'test',
+            redirect: (context, state) {
+              if (kReleaseMode){
+                debugPrint('This is Release so redirecting to Home');
+                return '/';
+              }
+              return null;
+            },
+            builder: (context, state) {
+              return const TestScreen();
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/sign-in',
@@ -93,8 +110,8 @@ class AppRouter {
             },
           ),
           GoRoute(
-            path: 'test',
-            name: 'test',
+            path: 'mobile-web',
+            name: 'mobile-web',
             builder: (context, state) {
               return const WebHomeScreen();
             },
