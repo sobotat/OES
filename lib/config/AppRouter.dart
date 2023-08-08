@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/main/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
@@ -8,8 +9,6 @@ import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
 import 'package:oes/ui/test/TestScreen.dart';
 import 'package:oes/ui/web/WebHomeScreen.dart';
-
-import '../src/AppSecurity.dart';
 
 class AppRouter {
 

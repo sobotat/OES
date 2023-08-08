@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/PopupDialog.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({this.path = '/', super.key});
@@ -35,16 +38,65 @@ class _SignInState extends State<SignIn> {
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool signing = false;
 
   Future<void> login() async {
+    setState(() {
+      signing = true;
+    });
     bool success = await AppSecurity.instance.login(usernameController.text, passwordController.text);
     if (!success) {
       debugPrint('Invalid Username or Password');
+
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PopupDialog(
+              alignment: Alignment.center,
+              child: Material(
+                elevation: 10,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  width: 300,
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Wrong Password or Username'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Button(
+                          maxWidth: double.infinity,
+                          onClick: (context) { context.pop(); },
+                          text: 'Close',
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }
+
+      setState(() {
+        signing = false;
+      });
       return;
     }
 
-    if (!context.mounted) return;
-    context.go(path);
+    if (context.mounted) {
+      setState(() {
+        signing = false;
+      });
+      context.go(path);
+    }
   }
 
   @override
@@ -56,69 +108,194 @@ class _SignInState extends State<SignIn> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 100,
-          horizontal: 25,
-        ),
-        child: Center(
-          child: Container(
-            width: 400,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.secondary,
+  Widget build(BuildContext context) {
+    var shortest = MediaQuery.of(context).size.shortestSide;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 25,
+                horizontal: 25,
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: OrientationBuilder(
+                  builder: (context, orientation) {
+                    return Material(
+                      elevation: 5,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: EdgeInsets.all(shortest > 500 ? 50 : 25),
+                        width: orientation == Orientation.landscape ? 800 : 400,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        child: Builder(builder: (context) {
+                          // Portrait
+                          if (orientation == Orientation.portrait) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const _Heading(),
+                                _Input(
+                                  usernameController: usernameController,
+                                  passwordController: passwordController,
+                                  loginFunction: login,
+                                ),
+                                _LoginButton(
+                                  loginFunction: login,
+                                  signing: signing,
+                                ),
+                              ],
+                            );
+                          }
+                          // Landscape
+                          else {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Expanded(child: _Heading()),
+                                    Expanded(
+                                      flex: 2,
+                                      child: _Input(
+                                        usernameController: usernameController,
+                                        passwordController: passwordController,
+                                        loginFunction: login,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                _LoginButton(
+                                  loginFunction: login,
+                                  signing: signing,
+                                )
+                              ],
+                            );
+                          }
+                        }),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(30),
-                    child: Text('Sign In', style: TextStyle(fontSize: 40))
-                  ),
-                  AutofillGroup(
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: usernameController,
-                          autofillHints: const [AutofillHints.username],
-                          decoration: const InputDecoration(
-                            labelText: 'Username',
-                          ),
+            const Align(
+              alignment: Alignment.topRight,
+              child: ThemeModeButton(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                          textInputAction: TextInputAction.go,
-                          onSubmitted: (value) => login(),
-                        ),
-                        TextField(
-                          controller: passwordController,
-                          obscureText: true,
-                          autofillHints: const [AutofillHints.password],
-                          decoration: const InputDecoration(
-                            labelText: 'Password',
-                          ),
+class _LoginButton extends StatelessWidget {
+  const _LoginButton({
+    required this.loginFunction,
+    required this.signing,
+    super.key,
+  });
 
-                          textInputAction: TextInputAction.go,
-                          onSubmitted: (value) => login(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Button(
-                      text: 'Sign-In',
-                      onClick: (context) => login(),
-                    ),
-                  ),
-                ],
+  final Function() loginFunction;
+  final bool signing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 10,
+            right: 10,
+            top: 40,
+            bottom: 10,
+          ),
+          child: Button(
+            maxWidth: double.infinity,
+            text: 'Sign-In',
+            onClick: (context) => loginFunction(),
+            child: !signing ? null : SizedBox(
+              width: 25,
+              height: 25,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: Theme.of(context).extension<AppCustomColors>()!.accent,
               ),
             ),
           ),
         ),
+        const Text(
+          'Reset Password',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ],
+    );
+  }
+}
+
+class _Heading extends StatelessWidget {
+  const _Heading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+        padding: EdgeInsets.all(30),
+        child: Text('Sign In', style: TextStyle(fontSize: 40))
+    );
+  }
+}
+
+class _Input extends StatelessWidget {
+  const _Input({
+    required this.usernameController,
+    required this.passwordController,
+    required this.loginFunction,
+    super.key
+  });
+
+  final TextEditingController usernameController;
+  final TextEditingController passwordController;
+  final Function() loginFunction;
+
+  @override
+  Widget build(BuildContext context) {
+    return AutofillGroup(
+      child: Column(
+        children: [
+          TextField(
+            controller: usernameController,
+            autofillHints: const [AutofillHints.username],
+            decoration: const InputDecoration(
+              labelText: 'Username',
+            ),
+
+            textInputAction: TextInputAction.go,
+            onSubmitted: (value) => loginFunction(),
+          ),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            autofillHints: const [AutofillHints.password],
+            decoration: const InputDecoration(
+              labelText: 'Password',
+            ),
+
+            textInputAction: TextInputAction.go,
+            onSubmitted: (value) => loginFunction(),
+          ),
+        ],
       ),
-    ),
-  );
+    );
+  }
 }

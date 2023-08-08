@@ -4,7 +4,7 @@ import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
-import 'package:oes/ui/assets/templates/PopDialog.dart';
+import 'package:oes/ui/assets/templates/PopupDialog.dart';
 
 class SmallMenu extends StatelessWidget {
   const SmallMenu({super.key});

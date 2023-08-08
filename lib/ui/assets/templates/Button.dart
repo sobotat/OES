@@ -6,6 +6,7 @@ class Button extends StatelessWidget {
   const Button({
     this.icon,
     this.text = '',
+    this.child,
     this.toolTip,
     this.toolTipWaitDuration,
     this.onClick,
@@ -24,6 +25,7 @@ class Button extends StatelessWidget {
   
   final IconData? icon;
   final String text;
+  final Widget? child;
   final String? toolTip;
   final Duration? toolTipWaitDuration;
   final Function(BuildContext context)? onClick;
@@ -93,14 +95,17 @@ class Button extends StatelessWidget {
                         size: iconSize,
                       ),
                     ) : Container(),
-                    text != '' ? Text(
-                      text,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: activeTextColor,
-                        fontFamily: fontFamily,
-                      ),
-                    ) : Container(),
+                    child ?? (
+                      text != '' ?
+                      Text(
+                        text,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: activeTextColor,
+                          fontFamily: fontFamily,
+                        ),
+                      ) : Container()
+                    ),
                   ],
                 ),
               ),
