@@ -29,14 +29,16 @@ class AppRouter {
 
     // If not Init will wait for Init
     Future.delayed(Duration.zero, () {
-     listener() {
+      Function() listener = () { };
+      listener = () {
        if(context.mounted){
          if (!AppSecurity.instance.isLoggedIn()) {
-           debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
+           debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
            AppRouter.instance.router.go('/sign-in?path=${state.uri}');
+           AppSecurity.instance.removeListener(listener);
          }
        }
-     }
+     };
      AppSecurity.instance.addListener(listener);
     });
 
@@ -85,9 +87,6 @@ class AppRouter {
         path: '/sign-out',
         name: 'sign-out',
         builder: (context, state) {
-          Future.delayed(const Duration(milliseconds: 100), () {
-            AppSecurity.instance.logout();
-          });
           return const SignOut();
         },
       ),
