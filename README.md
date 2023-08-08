@@ -1,16 +1,44 @@
-# OES
+<p align="center">
+  <img src="art/icon.png" alt="SE_Trader Logo" width="150" height="150">
+</p>
 
-Online E-Learning System
+<h3 align="center">Online E-Learning System</h3>
 
-## Getting Started
+<p align="center">
+  Made for make learning more fun
+  <br>
+  <a href="https://github.com/sobotat/OES/discussions/categories/ideas">Request feature</a>  
+  ·
+  <a href="https://github.com/sobotat/OES/issues">Report bug</a>
+  ·
+  <a href="https://github.com/sobotat/OES/discussions/categories/q-a">Questions</a>
+  · 
+  <a href="https://github.com/sobotat">Author</a>
+</p>
 
-This project is a starting point for a Flutter application.
+---
+### <span style="color:#96c8ff">Info</span>
 
-A few resources to get you started if this is your first Flutter project:
+The app is designed to make learning more fun. 
+The app is made like a Bachelor's thesis.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
+### <span style="color:#96c8ff">UI</span>
+![UI](art/v0.0.1-Main-Light.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![UI](art/v0.0.1-Main-Dark.png)
+
+---
+### <span style="color:#96c8ff">How To Use</span>
+
+1. Download Docker
+2. ``` docker pull sobotat/oes-web ``` 
+3. ``` docker run -d --restart unless-stopped -p 80:80 sobotat/oes-web ```
+
+---
+### <span style="color:#96c8ff">Ideas or Bugs</span>
+
+It's like with any software. I'll be glad for any reported bugs, and I'll also be glad for ideas on how to improve the application.
+
+🛠️ You can report a bug <a href="https://github.com/sobotat/OES/issues">Here</a> <br>
+⭐ Here you can tell about your idea <a href="https://github.com/sobotat/OES/discussions/categories/ideas">Here</a>
