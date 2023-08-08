@@ -35,9 +35,9 @@ class AppRouter {
          if (!AppSecurity.instance.isLoggedIn()) {
            debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
            AppRouter.instance.router.go('/sign-in?path=${state.uri}');
-           AppSecurity.instance.removeListener(listener);
          }
        }
+       AppSecurity.instance.removeListener(listener);
      };
      AppSecurity.instance.addListener(listener);
     });
