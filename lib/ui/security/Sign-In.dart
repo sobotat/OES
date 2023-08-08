@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
@@ -49,40 +50,7 @@ class _SignInState extends State<SignIn> {
       debugPrint('Invalid Username or Password');
 
       if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return PopupDialog(
-              alignment: Alignment.center,
-              child: Material(
-                elevation: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  width: 300,
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Wrong Password or Username'),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Button(
-                          maxWidth: double.infinity,
-                          onClick: (context) { context.pop(); },
-                          text: 'Close',
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
+        _showSignFailedDialog();
       }
 
       setState(() {
@@ -97,6 +65,43 @@ class _SignInState extends State<SignIn> {
       });
       context.go(path);
     }
+  }
+
+  Future<dynamic> _showSignFailedDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return PopupDialog(
+          alignment: Alignment.center,
+          child: Material(
+            elevation: 10,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              width: 300,
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Wrong Password or Username'),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Button(
+                      maxWidth: double.infinity,
+                      onClick: (context) { context.pop(); },
+                      text: 'Close',
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -233,9 +238,15 @@ class _LoginButton extends StatelessWidget {
             ),
           ),
         ),
-        const Text(
-          'Reset Password',
-          style: TextStyle(color: Colors.grey),
+        RichText(
+          text: TextSpan(
+            text: 'Reset Password',
+            style: TextStyle(color: AppTheme.isDarkMode() ? Colors.grey : Colors.grey[800]),
+            recognizer: TapGestureRecognizer()..onTap = () {
+              debugPrint('Not Implemented');
+              //TODO: Implement
+            },
+          ),
         ),
       ],
     );
