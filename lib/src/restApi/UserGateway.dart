@@ -7,7 +7,7 @@ abstract class UserGateway {
 
   Future<User?> getUser();
 
-  Future<User?> loginWithUsernameAndPassword(String username, String password);
+  Future<User?> loginWithUsernameAndPassword(String username, String password, bool rememberMe);
 
   Future<User?> loginWithToken(String token);
 

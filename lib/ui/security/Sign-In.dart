@@ -24,13 +24,20 @@ class _SignInState extends State<SignIn> {
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool rememberMe = true;
   bool signing = false;
 
   Future<void> login() async {
     setState(() {
       signing = true;
     });
-    bool success = await AppSecurity.instance.login(usernameController.text, passwordController.text);
+
+    bool success = await AppSecurity.instance.login(
+        usernameController.text,
+        passwordController.text,
+        rememberMe: rememberMe,
+    );
+
     if (!success) {
       debugPrint('Invalid Username or Password');
 
@@ -134,11 +141,28 @@ class _SignInState extends State<SignIn> {
                                 _Input(
                                   usernameController: usernameController,
                                   passwordController: passwordController,
-                                  loginFunction: login,
+                                  loginFunction: () {
+
+                                  },
                                 ),
-                                _LoginButton(
-                                  loginFunction: login,
-                                  signing: signing,
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                      _RememberAndReset(
+                                        orientation: orientation,
+                                        value: rememberMe,
+                                        onRememberChanged: (rememberMe) {
+                                          this.rememberMe = rememberMe;
+                                        },
+                                      ),
+                                      const SizedBox(height: 5,),
+                                      _LoginButton(
+                                        loginFunction: login,
+                                        signing: signing,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             );
@@ -157,15 +181,37 @@ class _SignInState extends State<SignIn> {
                                       child: _Input(
                                         usernameController: usernameController,
                                         passwordController: passwordController,
-                                        loginFunction: login,
+                                        loginFunction: () {
+
+                                        },
                                       ),
                                     )
                                   ],
                                 ),
-                                _LoginButton(
-                                  loginFunction: login,
-                                  signing: signing,
-                                )
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                    top: 40,
+                                    bottom: 10,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _RememberAndReset(
+                                        orientation: orientation,
+                                        value: rememberMe,
+                                        onRememberChanged: (rememberMe) {
+                                          this.rememberMe = rememberMe;
+                                        },
+                                      ),
+                                      const SizedBox(height: 5,),
+                                      _LoginButton(
+                                        loginFunction: login,
+                                        signing: signing,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             );
                           }
@@ -187,7 +233,7 @@ class _SignInState extends State<SignIn> {
   }
 }
 
-class _LoginButton extends StatelessWidget {
+class _LoginButton extends StatefulWidget {
   const _LoginButton({
     required this.loginFunction,
     required this.signing,
@@ -198,38 +244,109 @@ class _LoginButton extends StatelessWidget {
   final bool signing;
 
   @override
+  State<_LoginButton> createState() => _LoginButtonState();
+}
+
+class _LoginButtonState extends State<_LoginButton> {
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 10,
-            right: 10,
-            top: 40,
-            bottom: 10,
-          ),
-          child: Button(
-            maxWidth: double.infinity,
-            text: 'Sign-In',
-            onClick: (context) => loginFunction(),
-            child: !signing ? null : SizedBox(
-              width: 25,
-              height: 25,
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-                color: Theme.of(context).extension<AppCustomColors>()!.accent,
-              ),
-            ),
-          ),
+    return Button(
+      maxWidth: double.infinity,
+      text: 'Sign-In',
+      onClick: (context) => widget.loginFunction(),
+      child: !widget.signing ? null : SizedBox(
+        width: 25,
+        height: 25,
+        child: CircularProgressIndicator(
+          strokeWidth: 3,
+          color: Theme.of(context).extension<AppCustomColors>()!.accent,
         ),
-        RichText(
-          text: TextSpan(
-            text: 'Reset Password',
-            style: TextStyle(color: AppTheme.isDarkMode() ? Colors.grey : Colors.grey[800]),
-            recognizer: TapGestureRecognizer()..onTap = () {
-              debugPrint('Not Implemented');
-              //TODO: Implement
-            },
+      ),
+    );
+  }
+}
+
+class _RememberAndReset extends StatefulWidget {
+  const _RememberAndReset({
+    required this.orientation,
+    required this.value,
+    required this.onRememberChanged,
+    super.key,
+  });
+
+  final Orientation orientation;
+  final bool value;
+  final Function(bool rememberMe) onRememberChanged;
+
+  @override
+  State<_RememberAndReset> createState() => _RememberAndResetState();
+}
+
+class _RememberAndResetState extends State<_RememberAndReset> {
+
+  bool rememberMe = false;
+  @override
+  void initState() {
+    super.initState();
+    rememberMe = widget.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.orientation == Orientation.portrait) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(child: buildRememberMe(context)),
+            const SizedBox(height: 5,),
+            Center(child: buildResetPassword(context)),
+          ],
+        ),
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          buildRememberMe(context),
+          buildResetPassword(context),
+        ],
+      );
+    }
+  }
+
+  Widget buildResetPassword(BuildContext context) {
+    return RichText(
+        text: TextSpan(
+          text: 'Reset Password',
+          style: TextStyle(color: AppTheme.isDarkMode() ? Colors.grey : Colors.grey[800]),
+          recognizer: TapGestureRecognizer()..onTap = () {
+            debugPrint('Not Implemented');
+            //TODO: Implement
+          },
+        ),
+      );
+  }
+
+  Widget buildRememberMe(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Switch(
+          value: rememberMe,
+          activeColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+          onChanged: (value) {
+            setState(() {
+              rememberMe = !rememberMe;
+              widget.onRememberChanged(rememberMe);
+            });
+          },
+        ),
+        Text('Remember Me',
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: rememberMe ? Theme.of(context).extension<AppCustomColors>()!.accent : AppTheme.isDarkMode() ? Colors.grey : Colors.grey[800]
           ),
         ),
       ],

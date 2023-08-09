@@ -14,13 +14,16 @@ class UserGatewayTemp implements UserGateway {
   }
 
   @override
-  Future<User?> loginWithUsernameAndPassword(String username, String password) async {
+  Future<User?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) async {
     await Future.delayed(const Duration(seconds: 2));
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (username.toLowerCase() == 'admin' && password.toLowerCase() == 'admin') {
       String token = '123456789';
-      prefs.setString('token', token);
+
+      if (rememberMe) {
+        prefs.setString('token', token);
+      }
 
       return User(
         id: 1,
@@ -41,8 +44,6 @@ class UserGatewayTemp implements UserGateway {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (token.toLowerCase() == '123456789') {
-      prefs.setString('token', token);
-
       return User(
           id: 1,
           firstName:'Karel',
