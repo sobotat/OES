@@ -47,5 +47,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!--TODO: Remove NSAppTransportSecurity after debug - Enables http requests-->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<!--NSAppTransportSecurity END-->
 </dict>
 </plist>

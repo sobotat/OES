@@ -36,12 +36,14 @@ dependencies:
   go_router: ^10.0.0
   google_fonts: ^5.1.0
   connectivity_plus: ^4.0.2
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  msix: ^3.16.1
 
 
 flutter:
@@ -86,3 +88,11 @@ linter:
     - use_build_context_synchronously
     - annotate_overrides
     - always_use_package_imports
+
+msix_config:
+  display_name: Online E-Learning System
+  publisher_display_name: ---
+  identity_name: com.oes.oes
+  msix_version: 1.0.0.0
+  logo_path: art\icon.png
+  capabilities: internetClient
