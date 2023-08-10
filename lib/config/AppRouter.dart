@@ -30,22 +30,6 @@ class AppRouter {
         builder: (context, state) {
           return const WebHomeScreen();
         },
-        routes: [
-          GoRoute(
-            path: 'test',
-            name: 'test',
-            redirect: (context, state) {
-              if (kReleaseMode){
-                debugPrint('This is Release so redirecting to Home');
-                return '/';
-              }
-              return null;
-            },
-            builder: (context, state) {
-              return const TestScreen();
-            },
-          ),
-        ],
       ),
       GoRoute(
         path: '/sign-in',
@@ -69,6 +53,20 @@ class AppRouter {
           return const MainScreen();
         },
         routes: [
+          GoRoute(
+            path: 'test',
+            name: 'test',
+            redirect: (context, state) {
+              if (kReleaseMode){
+                debugPrint('This is Release so redirecting to Home');
+                return '/';
+              }
+              return null;
+            },
+            builder: (context, state) {
+              return const TestScreen();
+            },
+          ),
           GoRoute(
             path: 'course/:id',
             name: 'course',
