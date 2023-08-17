@@ -1,3 +1,4 @@
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/mock/MockUserGateway.dart';
 
@@ -13,5 +14,5 @@ abstract class UserGateway {
 
   Future<void> logout();
 
-
+  Future<List<SignedDevice>> getSignedDevices();
 }
