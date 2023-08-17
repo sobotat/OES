@@ -1,8 +1,5 @@
+import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/restApi/DatabaseObject.dart';
-
-enum DevicePlatform {
-  android, ios, windows, macos, other
-}
 
 class SignedDevice extends DatabaseObject {
 
