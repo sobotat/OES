@@ -56,13 +56,13 @@ class AppRouter {
           GoRoute(
             path: 'test',
             name: 'test',
-            redirect: (context, state) {
-              if (kReleaseMode){
-                debugPrint('This is Release so redirecting to Home');
-                return '/';
-              }
-              return null;
-            },
+            // redirect: (context, state) {
+            //   if (kReleaseMode){
+            //     debugPrint('This is Release so redirecting to Home');
+            //     return '/';
+            //   }
+            //   return null;
+            // },
             builder: (context, state) {
               return const TestScreen();
             },
