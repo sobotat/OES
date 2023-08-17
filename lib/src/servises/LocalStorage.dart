@@ -27,4 +27,11 @@ class LocalStorage {
     _preferences!.setString(key, value);
   }
 
+  void remove(String key) {
+    if (_preferences == null) {
+      throw NotInitException(message: 'SharedPreferences are not Init');
+    }
+
+    _preferences!.remove(key);
+  }
 }

@@ -14,4 +14,9 @@ class SecureStorage {
     // TODO: implement set
     throw UnimplementedError();
   }
+
+  void remove(String key) {
+    // TODO: implement remove
+    throw UnimplementedError();
+  }
 }
