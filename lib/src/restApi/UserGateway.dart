@@ -1,9 +1,9 @@
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/restApi/temp/UserGatewayTemp.dart';
+import 'package:oes/src/restApi/mock/MockUserGateway.dart';
 
 abstract class UserGateway {
 
-  static UserGateway gateway = UserGatewayTemp();
+  static UserGateway gateway = MockUserGateway.instance;
 
   Future<User?> getUser();
 

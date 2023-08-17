@@ -2,7 +2,11 @@ import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserGatewayTemp implements UserGateway {
+class MockUserGateway implements UserGateway {
+
+  static final instance = MockUserGateway._();
+
+  MockUserGateway._();
 
   @override
   Future<User?> getUser() async {

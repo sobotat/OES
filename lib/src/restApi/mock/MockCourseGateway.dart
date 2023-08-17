@@ -3,11 +3,12 @@ import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 
-class CourseGatewayTemp implements CourseGateway {
+class MockCourseGateway implements CourseGateway {
 
+  static final MockCourseGateway instance = MockCourseGateway._();
   late Map<User, List<Course>> data;
 
-  CourseGatewayTemp() {
+  MockCourseGateway._() {
     data = <User, List<Course>> {};
 
     var user = User(
