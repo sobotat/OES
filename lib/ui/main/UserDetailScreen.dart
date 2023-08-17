@@ -129,34 +129,39 @@ class _Devices extends StatelessWidget {
   Widget build(BuildContext context) {
     List<SignedDevice> devices = [
       SignedDevice(
-          name: 'CZ-Windows',
-          platform: DevicePlatform.windows,
-          isWeb: false,
-          lastSignIn: DateTime.now()
+        id: 0,
+        name: 'CZ-Windows',
+        platform: DevicePlatform.windows,
+        isWeb: false,
+        lastSignIn: DateTime.now()
       ),
       SignedDevice(
-          name: 'CZ-Android',
-          platform: DevicePlatform.android,
-          isWeb: false,
-          lastSignIn: DateTime.now()
+        id: 1,
+        name: 'CZ-Android',
+        platform: DevicePlatform.android,
+        isWeb: false,
+        lastSignIn: DateTime.now()
       ),
       SignedDevice(
-          name: 'CZ-Web',
-          platform: DevicePlatform.windows,
-          isWeb: true,
-          lastSignIn: DateTime.now()
+        id: 2,
+        name: 'CZ-Web',
+        platform: DevicePlatform.windows,
+        isWeb: true,
+        lastSignIn: DateTime.now()
       ),
       SignedDevice(
-          name: 'CZ-IOS',
-          platform: DevicePlatform.ios,
-          isWeb: false,
-          lastSignIn: DateTime.now()
+        id: 3,
+        name: 'CZ-IOS',
+        platform: DevicePlatform.ios,
+        isWeb: false,
+        lastSignIn: DateTime.now()
       ),
       SignedDevice(
-          name: 'CZ-MacOS',
-          platform: DevicePlatform.macos,
-          isWeb: false,
-          lastSignIn: DateTime.now()
+        id: 4,
+        name: 'CZ-MacOS',
+        platform: DevicePlatform.macos,
+        isWeb: false,
+        lastSignIn: DateTime.now()
       )
     ];
 

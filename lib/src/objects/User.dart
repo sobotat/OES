@@ -1,19 +1,20 @@
-
 import 'package:oes/src/RestApi/DatabaseObject.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 
-class User extends ObjectDO {
+class User extends DatabaseObject {
   User({
-    required id,
+    required super.id,
     required this.firstName,
     required this.lastName,
     required this.username,
     this.token,
-  }) : super(id: id);
+  });
 
   String firstName;
   String lastName;
   String username;
   String? token;
+  List<SignedDevice>? signedDevices;
 
   @override
   bool operator ==(Object other) =>
