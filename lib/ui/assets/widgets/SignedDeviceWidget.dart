@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
-import 'package:oes/src/Objects/SignedDevice.dart';
+import 'package:oes/src/objects/DevicePlatform.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignedDeviceWidget extends StatelessWidget {
@@ -55,7 +56,9 @@ class SignedDeviceWidget extends StatelessWidget {
                 ),
               ],
             ),
-            _Actions()
+            _Actions(
+              signedDevice: signedDevice,
+            )
           ],
         ),
       ),
@@ -71,20 +74,10 @@ class _Info extends StatelessWidget {
 
   final SignedDevice signedDevice;
 
-  String getPlatform() {
-    String web = signedDevice.isWeb ? ' (Web)' : '';
-    switch(signedDevice.platform) {
-      case DevicePlatform.android:
-        return 'Android$web';
-      case DevicePlatform.ios:
-        return 'iOS$web';
-      case DevicePlatform.windows:
-        return 'Windows$web';
-      case DevicePlatform.macos:
-        return 'MacOS$web';
-      default:
-        return 'Web';
-    }
+  String getName() {
+    String platform = '${signedDevice.platform.name[0].toUpperCase()}${signedDevice.platform.name.substring(1).toLowerCase()}';
+    String web = signedDevice.isWeb ? ' ($platform)' : '';
+    return '${signedDevice.name}$web';
   }
 
   @override
@@ -94,7 +87,7 @@ class _Info extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(getPlatform(),
+        Text(getName(),
           style:Theme.of(context).textTheme.bodyMedium!.copyWith(
               fontWeight: FontWeight.bold
           ),
@@ -111,8 +104,11 @@ class _Info extends StatelessWidget {
 
 class _Actions extends StatelessWidget {
   const _Actions({
+    required this.signedDevice,
     super.key,
   });
+
+  final SignedDevice signedDevice;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +120,7 @@ class _Actions extends StatelessWidget {
         maxWidth: 75,
         maxHeight: 50,
         onClick: (context) {
-          debugPrint('You sign out of that device');
+          debugPrint('You sign out of device ${signedDevice.id}');
           //TODO: Implement sign out
         },
       ),
