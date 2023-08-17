@@ -1,5 +1,6 @@
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/servises/LocalStorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MockUserGateway implements UserGateway {
@@ -10,9 +11,7 @@ class MockUserGateway implements UserGateway {
 
   @override
   Future<User?> getUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    String token = prefs.getString('token') ?? '';
+    String token = LocalStorage.instance.get('token') ?? '';
 
     return (token != '') ? loginWithToken(token) : null;
   }
@@ -20,13 +19,13 @@ class MockUserGateway implements UserGateway {
   @override
   Future<User?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) async {
     await Future.delayed(const Duration(seconds: 2));
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    LocalStorage localStorage = LocalStorage.instance;
 
     if (username.toLowerCase() == 'admin' && password.toLowerCase() == 'admin') {
       String token = '123456789';
 
       if (rememberMe) {
-        prefs.setString('token', token);
+        localStorage.set('token', token);
       }
 
       return User(
@@ -38,14 +37,13 @@ class MockUserGateway implements UserGateway {
       );
     }
 
-    prefs.remove('token');
+    localStorage.remove('token');
     return null;
   }
 
   @override
   Future<User?> loginWithToken(String token) async {
     await Future.delayed(const Duration(seconds: 2));
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (token.toLowerCase() == '123456789') {
       return User(
@@ -57,13 +55,12 @@ class MockUserGateway implements UserGateway {
       );
     }
 
-    prefs.remove('token');
+    LocalStorage.instance.remove('token');
     return null;
   }
 
   @override
   Future<void> logout() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('token');
+    LocalStorage.instance.remove('token');
   }
 }
