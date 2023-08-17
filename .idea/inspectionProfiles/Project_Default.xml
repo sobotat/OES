@@ -28,7 +28,6 @@
           <option value="http://cxf.apache.org/schemas/" />
           <option value="http://primefaces.org/ui" />
           <option value="http://tiles.apache.org/" />
-          <option value="http://oes-api.sobotovi.net" />
         </list>
       </option>
     </inspection_tool>
