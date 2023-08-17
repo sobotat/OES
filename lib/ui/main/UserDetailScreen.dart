@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/Objects/SignedDevice.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -127,44 +127,6 @@ class _Devices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<SignedDevice> devices = [
-      SignedDevice(
-        id: 0,
-        name: 'CZ-Windows',
-        platform: DevicePlatform.windows,
-        isWeb: false,
-        lastSignIn: DateTime.now()
-      ),
-      SignedDevice(
-        id: 1,
-        name: 'CZ-Android',
-        platform: DevicePlatform.android,
-        isWeb: false,
-        lastSignIn: DateTime.now()
-      ),
-      SignedDevice(
-        id: 2,
-        name: 'CZ-Web',
-        platform: DevicePlatform.windows,
-        isWeb: true,
-        lastSignIn: DateTime.now()
-      ),
-      SignedDevice(
-        id: 3,
-        name: 'CZ-IOS',
-        platform: DevicePlatform.ios,
-        isWeb: false,
-        lastSignIn: DateTime.now()
-      ),
-      SignedDevice(
-        id: 4,
-        name: 'CZ-MacOS',
-        platform: DevicePlatform.macos,
-        isWeb: false,
-        lastSignIn: DateTime.now()
-      )
-    ];
-
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -172,16 +134,26 @@ class _Devices extends StatelessWidget {
       ),
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(5),
-      child: ListView.builder(
-        itemCount: devices.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(2),
-            child: SignedDeviceWidget(
-              signedDevice: devices[index],
-            ),
+      child: ListenableBuilder(
+        listenable: AppSecurity.instance,
+        builder: (context, widget) {
+          return FutureBuilder<List<SignedDevice>?>(
+            future: AppSecurity.instance.isLoggedIn() ? AppSecurity.instance.user!.getSignedDevices() : Future(() => []),
+            builder: (context, snapshot) {
+              return snapshot.hasData ? ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: SignedDeviceWidget(
+                      signedDevice: snapshot.data![index],
+                    ),
+                  );
+                },
+              ) : const Center(child: CircularProgressIndicator());
+            }
           );
-        },
+        }
       ),
     );
   }

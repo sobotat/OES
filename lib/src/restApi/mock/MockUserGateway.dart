@@ -1,5 +1,8 @@
+import 'package:oes/src/objects/DevicePlatform.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/servises/DeviceInfo.dart';
 import 'package:oes/src/servises/LocalStorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,7 +14,7 @@ class MockUserGateway implements UserGateway {
 
   @override
   Future<User?> getUser() async {
-    String token = LocalStorage.instance.get('token') ?? '';
+    String token = await LocalStorage.instance.get('token') ?? '';
 
     return (token != '') ? loginWithToken(token) : null;
   }
@@ -62,5 +65,41 @@ class MockUserGateway implements UserGateway {
   @override
   Future<void> logout() async {
     LocalStorage.instance.remove('token');
+  }
+
+  @override
+  Future<List<SignedDevice>> getSignedDevices() {
+    return Future.delayed(const Duration(seconds: 1), () async {
+      List<SignedDevice> out = [];
+
+      DeviceInfo deviceInfo = await DeviceInfo.getInfo();
+      out.add(SignedDevice(
+        id: 1000,
+        name: deviceInfo.name,
+        platform: deviceInfo.platform,
+        isWeb: deviceInfo.isWeb,
+        lastSignIn: DateTime.now())
+      );
+
+      List<SignedDevice> other = [
+        SignedDevice(
+            id: 3,
+            name: 'CZ-IOS',
+            platform: DevicePlatform.ios,
+            isWeb: false,
+            lastSignIn: DateTime.now()
+        ),
+        SignedDevice(
+            id: 4,
+            name: 'CZ-MacOS',
+            platform: DevicePlatform.macos,
+            isWeb: false,
+            lastSignIn: DateTime.now()
+        )
+      ];
+
+      out.addAll(other);
+      return out;
+    },);
   }
 }

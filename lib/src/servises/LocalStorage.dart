@@ -4,34 +4,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorage {
 
   static final instance = LocalStorage._();
+  LocalStorage._();
 
-  SharedPreferences? _preferences;
-
-  LocalStorage._() {
-    SharedPreferences.getInstance().then((value) => _preferences);
+  Future<String?> get(String key) async {
+    var preferences = await SharedPreferences.getInstance();
+    return preferences.getString(key);
   }
 
-  String? get(String key) {
-    if (_preferences == null) {
-      throw NotInitException(message: 'SharedPreferences are not Init');
-    }
-
-    return _preferences!.getString(key);
+  Future<void> set(String key, String value) async {
+    var preferences = await SharedPreferences.getInstance();
+    preferences.setString(key, value);
   }
 
-  void set(String key, String value) {
-    if (_preferences == null) {
-      throw NotInitException(message: 'SharedPreferences are not Init');
-    }
-
-    _preferences!.setString(key, value);
-  }
-
-  void remove(String key) {
-    if (_preferences == null) {
-      throw NotInitException(message: 'SharedPreferences are not Init');
-    }
-
-    _preferences!.remove(key);
+  Future<void> remove(String key) async {
+    var preferences = await SharedPreferences.getInstance();
+    preferences.remove(key);
   }
 }
