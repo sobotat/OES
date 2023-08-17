@@ -1,7 +1,7 @@
 
-class ObjectDO {
+class DatabaseObject {
 
-  ObjectDO({
+  DatabaseObject({
     required this.id,
   });
 

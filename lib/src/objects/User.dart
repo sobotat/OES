@@ -1,5 +1,5 @@
 
-import 'package:oes/src/RestApi/ObjectDO.dart';
+import 'package:oes/src/RestApi/DatabaseObject.dart';
 
 class User extends ObjectDO {
   User({

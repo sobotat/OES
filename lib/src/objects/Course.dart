@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oes/src/RestApi/ObjectDO.dart';
+import 'package:oes/src/RestApi/DatabaseObject.dart';
 
 class Course extends ObjectDO {
 
