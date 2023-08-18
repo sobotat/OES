@@ -15,5 +15,6 @@ class AppIcons {
   static const IconData icon_ios = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData icon_web = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData icon_windows = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData icon_android = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icon_linux = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData icon_android = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
