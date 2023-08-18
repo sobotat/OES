@@ -4,5 +4,6 @@ enum DevicePlatform {
   ios,
   windows,
   macos,
+  linux,
   other
 }

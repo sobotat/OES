@@ -31,7 +31,23 @@ class DeviceInfo {
   static Future<String> _getName() async {
     String name = 'Device';
     try{
-      name = Platform.localHostname;
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
+
+        if (androidDeviceInfo.manufacturer.toLowerCase() == 'samsung') {
+          name = '${androidDeviceInfo.manufacturer[0].toUpperCase()}${androidDeviceInfo.manufacturer.substring(1).toLowerCase()} ${androidDeviceInfo.model}';
+        }else {
+          name = androidDeviceInfo.model;
+        }
+      } else if (Platform.isIOS) {
+        name = (await DeviceInfoPlugin().iosInfo).utsname.machine;
+      } else if (Platform.isMacOS) {
+        name = (await DeviceInfoPlugin().macOsInfo).model;
+      } else if (Platform.isLinux) {
+        name = (await DeviceInfoPlugin().linuxInfo).prettyName;
+      } else {
+        name = Platform.localHostname;
+      }
     } on UnsupportedError {
       if (kIsWeb) {
         name = (await DeviceInfoPlugin().webBrowserInfo).browserName.name;
@@ -57,6 +73,8 @@ class DeviceInfo {
           return DevicePlatform.windows;
         } else if (platform.contains('mac')) {
           return DevicePlatform.macos;
+        } else if (platform.contains('linux')) {
+          return DevicePlatform.linux;
         }
       }
       return DevicePlatform.other;
@@ -70,6 +88,8 @@ class DeviceInfo {
       return DevicePlatform.windows;
     } else if (Platform.isMacOS) {
       return DevicePlatform.macos;
+    } else if (Platform.isLinux) {
+      return DevicePlatform.linux;
     }
     return DevicePlatform.other;
   }
