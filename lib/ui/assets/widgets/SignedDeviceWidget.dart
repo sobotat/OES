@@ -27,6 +27,8 @@ class SignedDeviceWidget extends StatelessWidget {
         return AppIcons.icon_windows;
       case DevicePlatform.macos:
         return AppIcons.icon_apple;
+      case DevicePlatform.linux:
+        return AppIcons.icon_linux;
       default:
         return AppIcons.icon_web;
     }
