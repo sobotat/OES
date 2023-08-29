@@ -1,8 +1,8 @@
-import 'package:oes/src/RestApi/DatabaseObject.dart';
+import 'package:oes/src/RestApi/ApiObject.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
-class User extends DatabaseObject {
+class User extends ApiObject {
   User({
     required super.id,
     required this.firstName,

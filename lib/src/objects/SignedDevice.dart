@@ -1,7 +1,7 @@
 import 'package:oes/src/objects/DevicePlatform.dart';
-import 'package:oes/src/restApi/DatabaseObject.dart';
+import 'package:oes/src/restApi/ApiObject.dart';
 
-class SignedDevice extends DatabaseObject {
+class SignedDevice extends ApiObject {
 
   SignedDevice({
     required super.id,

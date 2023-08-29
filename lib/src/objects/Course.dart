@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:oes/src/restApi/DatabaseObject.dart';
+import 'package:oes/src/restApi/ApiObject.dart';
 
-class Course extends DatabaseObject {
+class Course extends ApiObject {
 
   Course({
     required id,
