@@ -1,6 +1,4 @@
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:oes/src/restApi/api/TestApi.dart';
 import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
@@ -14,22 +12,13 @@ class TestScreen extends StatefulWidget {
 
 class _TestScreenState extends State<TestScreen> {
 
-  int? number;
-  bool loadingNumber = false;
   List<String> users = [];
   bool loadingUser = false;
 
   @override
   void initState() {
     super.initState();
-    loadNumber();
     loadUser();
-  }
-
-  Future<void> loadNumber() async {
-    setState(() { loadingNumber = true; });
-    number = await TestApi.number(Random().nextInt(100));
-    setState(() { loadingNumber = false; });
   }
 
   Future<void> loadUser() async {
@@ -56,25 +45,6 @@ class _TestScreenState extends State<TestScreen> {
       body: Center(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(10),
-                onTap: () => loadNumber(),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.teal[700],
-                  ),
-                  width: 300,
-                  height: 100,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: !loadingNumber ? Text('Number is ${number ?? 'API Failed'}') : const CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: InkWell(

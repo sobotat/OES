@@ -1,46 +1,28 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:oes/src/restApi/api/http/HttpRequest.dart';
+import 'package:oes/src/restApi/api/http/RequestResult.dart';
 
 class TestApi {
 
   static Future<List<String>> users() async {
-    Client client = Client();
-    Response response;
-    try {
-      response = await client.get(Uri.parse('http://oes-api.sobotovi.net:8001/api/Test'));
-    }
-    finally {
-      client.close();
+
+    RequestResult result = await HttpRequest.instance.get("http://oes-api.sobotovi.net:8001/api/test/get");
+
+    if (result.statusCode != 200) {
+      debugPrint('Error Code ${result.statusCode}');
+      return [];
     }
 
-    if (response.statusCode != 200) return [];
+    if (result.data is! List<dynamic>) {
+      debugPrint('Is not List of Users');
+      return [];
+    }
 
     List<String> out = [];
-
-    var decodedResponse = jsonDecode(response.body.toString()) as List;
-
-    for (Map user in decodedResponse) {
+    for (Map user in result.data ?? []) {
       out.add(user['name']);
     }
 
     return out;
   }
-
-  static Future<int?> number(int num) async {
-
-    Client client = Client();
-    Response response;
-    try {
-      response = await client.get(Uri.parse('http://oes-api.sobotovi.net:8001/WeatherForecast/thing2/$num'));
-    }
-    finally {
-      client.close();
-    }
-
-    if (response.statusCode != 200) return null;
-    return int.parse(response.body.toString());
-  }
-
 }
