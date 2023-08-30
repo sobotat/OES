@@ -47,6 +47,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       body: Container(
         alignment: Alignment.topCenter,
         child: ListView(
+          shrinkWrap: true,
           children: [
             SizedBox(
               height: 500,
