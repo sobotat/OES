@@ -6,7 +6,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/config/DarkTheme.dart';
 import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/other/NetworkChecker.dart';
+import 'package:oes/src/services/NetworkChecker.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

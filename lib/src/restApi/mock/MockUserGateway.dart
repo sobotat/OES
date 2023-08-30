@@ -2,8 +2,8 @@ import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
-import 'package:oes/src/servises/DeviceInfo.dart';
-import 'package:oes/src/servises/LocalStorage.dart';
+import 'package:oes/src/services/DeviceInfo.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MockUserGateway implements UserGateway {
