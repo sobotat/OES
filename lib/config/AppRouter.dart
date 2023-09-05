@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/ui/main/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
@@ -165,9 +166,11 @@ class AppRouter {
   };
 
   void setNetworkListener() {
-    listener() {
+    listener() async {
       var networkChecker = NetworkChecker.instance;
       if (networkChecker.isInit && !networkChecker.haveInternet) {
+        String? ignore = await LocalStorage.instance.get('ignoreNetwork');
+        if (ignore != null && ignore as bool) return;
         debugPrint('Redirecting to No Internet Page');
         router.goNamed('no-internet', queryParameters: {
           'path': _activeUri,
