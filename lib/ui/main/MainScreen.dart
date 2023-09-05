@@ -141,17 +141,15 @@ class _CoursesState extends State<_Courses> {
             _Body(
               child: Builder(
                   builder: (context) {
-                    return isInit ? SizedBox(
-                      height: (60.0 * courses.length),
-                      child: ListView.builder(
-                        itemCount: courses.length,
-                        itemBuilder: (context, index) {
-                          return _CourseItem(
-                            course: courses[index],
-                            height: 50,
-                          );
-                        },
-                      ),
+                    return isInit ? ListView.builder(
+                      itemCount: courses.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return _CourseItem(
+                          course: courses[index],
+                          height: 50,
+                        );
+                      },
                     ) :
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -189,10 +187,6 @@ class _CourseItem extends StatelessWidget {
     context.goNamed('course', pathParameters: {'id': course.id.toString()});
   }
 
-  void exit(BuildContext context) {
-    debugPrint('Exit course ${course.name}');
-  }
-
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -207,7 +201,6 @@ class _CourseItem extends StatelessWidget {
         elevation: 10,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
-          onLongPress: () => exit(context),
           onTap: () => open(context),
           borderRadius: BorderRadius.circular(10),
           child: Ink(
@@ -260,15 +253,6 @@ class _CourseItem extends StatelessWidget {
                         onClick: (context) => open(context),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Button(
-                        text: 'Exit',
-                        maxWidth: 75,
-                        backgroundColor: Colors.red,
-                        onClick: (context) => exit(context),
-                      ),
-                    )
                   ],
                 ) : Container(),
               ],
