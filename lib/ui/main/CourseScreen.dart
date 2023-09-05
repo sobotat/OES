@@ -50,8 +50,9 @@ class _CourseScreenState extends State<CourseScreen> {
       course = await CourseGateway.gateway.getCourse(widget.courseID);
       isInit = true;
 
-      if (!context.mounted) return;
-      setState(() {});
+      if (context.mounted) {
+        setState(() {});
+      }
     }
   }
 
