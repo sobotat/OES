@@ -17,7 +17,8 @@ class AppRouter {
   static final instance = AppRouter._();
   AppRouter._();
 
-  String activeUri = '/';
+  String _activeUri = '/';
+  String get activeUri => _activeUri;
 
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
@@ -126,7 +127,7 @@ class AppRouter {
     if (state.uri.toString().contains('no-internet')) return;
 
     // Save Active uri
-    activeUri = state.uri.toString();
+    _activeUri = state.uri.toString();
   }
 
   GoRouterRedirect authCheckRedirect = (context, state) {
@@ -150,7 +151,9 @@ class AppRouter {
         if(context.mounted){
           if (!AppSecurity.instance.isLoggedIn()) {
             debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
-            AppRouter.instance.router.go('/sign-in?path=${state.uri}');
+            AppRouter.instance.router.goNamed('sign-in', queryParameters: {
+              'path': state.uri,
+            });
           }
         }
         AppSecurity.instance.removeListener(listener);
@@ -166,7 +169,9 @@ class AppRouter {
       var networkChecker = NetworkChecker.instance;
       if (networkChecker.isInit && !networkChecker.haveInternet) {
         debugPrint('Redirecting to No Internet Page');
-        router.goNamed('no-internet');
+        router.goNamed('no-internet', queryParameters: {
+          'path': _activeUri,
+        });
       }
     }
     NetworkChecker.instance.addListener(listener);
