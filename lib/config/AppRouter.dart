@@ -14,7 +14,10 @@ import 'package:oes/ui/web/WebHomeScreen.dart';
 
 class AppRouter {
 
-  static final instance = AppRouter();
+  static final instance = AppRouter._();
+  AppRouter._();
+
+  String activeUri = '/';
 
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
@@ -28,6 +31,7 @@ class AppRouter {
           return null;
         },
         builder: (context, state) {
+          _setActiveUri(context, state);
           return const WebHomeScreen();
         },
       ),
@@ -35,6 +39,7 @@ class AppRouter {
         path: '/sign-in',
         name: 'sign-in',
         builder: (context, state) {
+          _setActiveUri(context, state);
           return SignIn(path: state.uri.queryParameters['path'] ?? '/');
         },
       ),
@@ -42,6 +47,7 @@ class AppRouter {
         path: '/sign-out',
         name: 'sign-out',
         builder: (context, state) {
+          _setActiveUri(context, state);
           return const SignOut();
         },
       ),
@@ -50,6 +56,7 @@ class AppRouter {
         name: 'main',
         redirect: authCheckRedirect,
         builder: (context, state) {
+          _setActiveUri(context, state);
           return const MainScreen();
         },
         routes: [
@@ -64,6 +71,7 @@ class AppRouter {
             //   return null;
             // },
             builder: (context, state) {
+              _setActiveUri(context, state);
               return const TestScreen();
             },
           ),
@@ -72,6 +80,7 @@ class AppRouter {
             name: 'course',
             redirect: authCheckRedirect,
             builder: (context, state) {
+              _setActiveUri(context, state);
               int id = int.parse(state.pathParameters['id'] ?? '-1');
               return CourseScreen(courseID: id);
             },
@@ -80,6 +89,7 @@ class AppRouter {
             path: 'mobile-web',
             name: 'mobile-web',
             builder: (context, state) {
+              _setActiveUri(context, state);
               return const WebHomeScreen();
             },
           ),
@@ -88,6 +98,7 @@ class AppRouter {
             name: 'user-detail',
             redirect: authCheckRedirect,
             builder: (context, state) {
+              _setActiveUri(context, state);
               return const UserDetailScreen();
             },
           ),
@@ -97,6 +108,7 @@ class AppRouter {
         path: '/no-internet',
         name: 'no-internet',
         builder: (context, state) {
+          _setActiveUri(context, state);
           return NoInternetScreen(path: state.uri.queryParameters['path'] ?? '/');
         },
       ),
@@ -105,9 +117,22 @@ class AppRouter {
     observers: [ _RouterObserver() ],
   );
 
+  void _setActiveUri(BuildContext context, GoRouterState state) {
+    // Check if Active uri
+    String uriNoParams = state.uri.toString().split('?')[0];
+    if (uriNoParams != state.matchedLocation) return;
+
+    // Check if is not No Internet Screen
+    if (state.uri.toString().contains('no-internet')) return;
+
+    // Save Active uri
+    activeUri = state.uri.toString();
+  }
+
   GoRouterRedirect authCheckRedirect = (context, state) {
     // Check if Active redirect
-    if (state.uri.toString() != state.matchedLocation) return null;
+    String uriNoParams = state.uri.toString().split('?')[0];
+    if (uriNoParams != state.matchedLocation) return null;
 
     // Check user if is Init
     if(AppSecurity.instance.isInit) {
