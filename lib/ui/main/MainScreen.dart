@@ -11,6 +11,7 @@ import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/IconItem.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -192,74 +193,33 @@ class _CourseItem extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
-      child: Material(
-        elevation: 10,
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          onTap: () => open(context),
-          borderRadius: BorderRadius.circular(10),
-          child: Ink(
-            height: height ?? 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.primary
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(5),
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: course.color ?? Colors.blueAccent
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        course.shortName,
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                          fontSize: 12,
-                          color: AppTheme.getActiveTheme().calculateTextColor(course.color ?? Colors.blueAccent, context)
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: SelectableText(
-                        course.name,
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                            fontSize: 16,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                width > overflow ? Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Button(
-                        text: 'Open',
-                        maxWidth: 75,
-                        onClick: (context) => open(context),
-                      ),
-                    ),
-                  ],
-                ) : Container(),
-              ],
-            ),
-          ),
+    return IconItem(
+      icon: Text(
+        course.shortName,
+        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+            fontSize: 12,
+            color: AppTheme.getActiveTheme().calculateTextColor(course.color ?? Colors.blueAccent, context)
         ),
       ),
+      body: SelectableText(
+        course.name,
+        maxLines: 1,
+        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+          fontSize: 16,
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Button(
+            text: 'Open',
+            maxWidth: 75,
+            onClick: (context) => open(context),
+          ),
+        ),
+      ],
+      color: course.color ?? Colors.blueAccent,
+      onClick: (context) => open(context),
     );
   }
 }
