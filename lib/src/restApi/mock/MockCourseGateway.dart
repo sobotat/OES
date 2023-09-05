@@ -60,9 +60,18 @@ class MockCourseGateway implements CourseGateway {
   Future<List<CourseItem>> getCourseItems(int id) {
     return Future.delayed(const Duration(seconds: 1), () {
       return [
-        Homework(id: 1),
-        Quiz(id: 2),
-        Test(id: 3),
+        Homework(
+          id: 1,
+          name: 'Write 100x Hello',
+        ),
+        Quiz(
+          id: 2,
+          name: 'Learn Cities',
+        ),
+        Test(
+          id: 3,
+          name: 'Test Cities'
+        ),
       ];
     },);
   }

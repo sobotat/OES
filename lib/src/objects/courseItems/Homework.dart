@@ -2,6 +2,9 @@
 import 'package:oes/src/objects/CourseItem.dart';
 
 class Homework extends CourseItem {
-  Homework({required super.id});
+  Homework({
+    required super.id,
+    required super.name,
+  });
 
 }
