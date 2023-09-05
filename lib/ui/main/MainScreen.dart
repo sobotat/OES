@@ -6,11 +6,13 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
+import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 
 class MainScreen extends StatelessWidget {
@@ -136,10 +138,10 @@ class _CoursesState extends State<_Courses> {
       builder: (context, child) {
         return Column(
           children: [
-            const _Heading(
+            const Heading(
               headingText: 'Courses:',
             ),
-            _Body(
+            BackgroundBody(
               child: Builder(
                   builder: (context) {
                     return isInit ? ListView.builder(
@@ -224,79 +226,3 @@ class _CourseItem extends StatelessWidget {
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({
-    this.child,
-    super.key,
-  });
-
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: width > overflow ? 50 : 5,
-      ),
-      constraints: const BoxConstraints(
-        maxHeight: 600,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(4),
-          bottom: Radius.circular(10)
-        ),
-        color: Theme.of(context).colorScheme.secondary,
-      ),
-      child: child,
-    );
-  }
-}
-
-class _Heading extends StatelessWidget {
-  const _Heading({
-    required this.headingText,
-    super.key,
-  });
-
-  final String headingText;
-
-  @override
-  Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
-    return Padding(
-      padding: EdgeInsets.only(
-        left: width > overflow ? 50 : 5,
-        right: width > overflow ? 50 : 5,
-        top: 40,
-      ),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: SelectableText(
-              headingText,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                fontSize: 25,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 2,
-            child: GradientContainer(
-              colors: [
-                Theme.of(context).extension<AppCustomColors>()!.accent,
-                Theme.of(context).colorScheme.primary,
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
