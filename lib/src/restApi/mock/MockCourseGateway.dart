@@ -34,9 +34,10 @@ class MockCourseGateway implements CourseGateway {
         Course(id: 673, name: 'Java', shortName: 'J', description: 'You will learn basic skill about java', color: Colors.green),
         Course(id: 1234, name: 'C#', shortName: 'C#', description: 'You will learn basic skill about c#. '
             '\nLong description ........................................................................................'
-            '\n..............'
+            '\n.......................................................................................'
             '\n............................................................................'
-            '\nsssssssssssssssss'),
+            '\n...............................................................'
+            '\n..................................................'),
         Course(id: 225, name: 'Math', shortName: 'M', description: '', color: Colors.blue[900]),
       ];
     });
@@ -95,7 +96,7 @@ class MockCourseGateway implements CourseGateway {
     return Future.delayed(const Duration(seconds: 1), () {
       List<int> used = [];
       List<OtherUser> out = [];
-        for(int i = 0; i < Random().nextInt(users.length); i++) {
+        for(int i = 0; i < Random().nextInt(users.length - 1) + 1; i++) {
           while(true) {
             int index = Random().nextInt(users.length);
             if(used.contains(index)) continue;

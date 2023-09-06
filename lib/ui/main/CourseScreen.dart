@@ -108,16 +108,17 @@ class _CourseScreenState extends State<CourseScreen> {
               Heading(
                 headingText: course!.name,
                 actions: width > overflow ? [
-                  const SizedBox(
+                  SizedBox(
                     height: 40,
                     child: _TeachersBuilder(
+                      course: course!,
                       axis: Axis.horizontal,
                     ),
                   )
                 ] : null,
               ),
               const SizedBox(height: 10,),
-              _Description(width: width, overflow: overflow, course: course),
+              _Description(width: width, overflow: overflow, course: course!),
               (width > overflow && course!.description != '') || width <= overflow ? Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: width > overflow ? 50 : 15,
@@ -164,15 +165,15 @@ class _CourseScreenState extends State<CourseScreen> {
 
 class _Description extends StatelessWidget {
   const _Description({
-    super.key,
+    required this.course,
     required this.width,
     required this.overflow,
-    required this.course,
+    super.key,
   });
 
+  final Course course;
   final double width;
   final int overflow;
-  final Course? course;
 
   @override
   Widget build(BuildContext context) {
@@ -194,9 +195,10 @@ class _Description extends StatelessWidget {
             course!.description,
           ) : Container(),
           course!.description != '' ? const SizedBox(height: 20,) : Container(),
-          const SizedBox(
+          SizedBox(
             height: 40,
             child: _TeachersBuilder(
+              course: course,
               axis: Axis.horizontal,
             ),
           ),
@@ -208,26 +210,31 @@ class _Description extends StatelessWidget {
 
 class _TeachersBuilder extends StatelessWidget {
   const _TeachersBuilder({
+    required this.course,
     required this.axis,
     super.key,
   });
 
+  final Course course;
   final Axis axis;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: 3,
-      scrollDirection: axis,
-      itemBuilder: (context, index) {
-        return TeacherWidget(
-            teacher: OtherUser(
-              firstName: 'Karel',
-              lastName: 'Novak',
-            )
+    return FutureBuilder(
+      future: course.teachers,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return Container();
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: snapshot.data!.length,
+          scrollDirection: axis,
+          itemBuilder: (context, index) {
+            return TeacherWidget(
+                teacher: snapshot.data![index],
+            );
+          },
         );
-      },
+      }
     );
   }
 }
