@@ -4,6 +4,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
@@ -106,7 +107,28 @@ class _CourseScreenState extends State<CourseScreen> {
             children: [
               Heading(
                 headingText: course!.name,
+                actions: width > overflow ? [
+                  const SizedBox(
+                    height: 40,
+                    child: _TeachersBuilder(
+                      axis: Axis.horizontal,
+                    ),
+                  )
+                ] : null,
               ),
+              const SizedBox(height: 10,),
+              _Description(width: width, overflow: overflow, course: course),
+              (width > overflow && course!.description != '') || width <= overflow ? Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width > overflow ? 50 : 15,
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10,),
+                    const HeadingLine(),
+                  ],
+                ),
+              ) : Container(),
               BackgroundBody(
                 child: FutureBuilder<List<CourseItem>>(
                   future: course!.items,
@@ -136,6 +158,76 @@ class _CourseScreenState extends State<CourseScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+class _Description extends StatelessWidget {
+  const _Description({
+    super.key,
+    required this.width,
+    required this.overflow,
+    required this.course,
+  });
+
+  final double width;
+  final int overflow;
+  final Course? course;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: width > overflow ? 50 : 15,
+      ),
+      child: width > overflow ? Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          child: course!.description != '' ? SelectableText(
+            course!.description,
+          ) : Container(),
+        ),
+      ) : Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          course!.description != '' ? SelectableText(
+            course!.description,
+          ) : Container(),
+          course!.description != '' ? const SizedBox(height: 20,) : Container(),
+          const SizedBox(
+            height: 40,
+            child: _TeachersBuilder(
+              axis: Axis.horizontal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TeachersBuilder extends StatelessWidget {
+  const _TeachersBuilder({
+    required this.axis,
+    super.key,
+  });
+
+  final Axis axis;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: 3,
+      scrollDirection: axis,
+      itemBuilder: (context, index) {
+        return TeacherWidget(
+            teacher: OtherUser(
+              firstName: 'Karel',
+              lastName: 'Novak',
+            )
+        );
+      },
     );
   }
 }
@@ -255,18 +347,49 @@ class _IconText extends StatelessWidget {
 class _ItemBody extends StatelessWidget {
   const _ItemBody({
     required this.bodyText,
+    this.padding = const EdgeInsets.all(0),
     super.key
   });
 
   final String bodyText;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
-    return SelectableText(
-      bodyText,
-      maxLines: 1,
-      style: Theme.of(context).textTheme.displayMedium!.copyWith(
-        fontSize: 16,
+    return Padding(
+      padding: padding,
+      child: SelectableText(
+        bodyText,
+        maxLines: 1,
+        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
+}
+
+class TeacherWidget extends StatelessWidget {
+  const TeacherWidget({
+    required this.teacher,
+    super.key
+  });
+
+  final OtherUser teacher;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: '${teacher.firstName} ${teacher.lastName}',
+      child: IconItem(
+        icon: _IconText(
+          text: (teacher.firstName[0] + teacher.lastName[0]).toUpperCase(),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+        ),
+        color: Theme.of(context).colorScheme.secondary,
+        height: 35,
+        mainSize: MainAxisSize.min,
+        padding: EdgeInsets.symmetric(horizontal: 2),
       ),
     );
   }

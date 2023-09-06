@@ -15,7 +15,7 @@ class BackgroundBody extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: width > overflow ? 50 : 5,
+        horizontal: width > overflow ? 50 : 15,
       ),
       constraints: const BoxConstraints(
         maxHeight: 600,

@@ -6,10 +6,12 @@ import 'package:oes/ui/assets/templates/Gradient.dart';
 class Heading extends StatelessWidget {
   const Heading({
     required this.headingText,
+    this.actions,
     super.key,
   });
 
   final String headingText;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -18,30 +20,48 @@ class Heading extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: width > overflow ? 50 : 5,
-        right: width > overflow ? 50 : 5,
+        left: width > overflow ? 50 : 15,
+        right: width > overflow ? 50 : 15,
         top: 40,
       ),
       child: Column(
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: SelectableText(
-              headingText,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                fontSize: 25,
+          Row(
+            children: [
+              Expanded(
+                child: SelectableText(
+                  headingText,
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontSize: 25,
+                  ),
+                ),
               ),
-            ),
+              actions != null ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: actions!,
+              ) : Container(),
+            ],
           ),
-          SizedBox(
-            height: 2,
-            child: GradientContainer(
-              colors: [
-                Theme.of(context).extension<AppCustomColors>()!.accent,
-                Theme.of(context).colorScheme.primary,
-              ],
-            ),
-          ),
+          const HeadingLine(),
+        ],
+      ),
+    );
+  }
+}
+
+class HeadingLine extends StatelessWidget {
+  const HeadingLine({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 2,
+      child: GradientContainer(
+        colors: [
+          Theme.of(context).extension<AppCustomColors>()!.accent,
+          Theme.of(context).colorScheme.primary,
         ],
       ),
     );
