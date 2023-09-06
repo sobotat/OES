@@ -14,6 +14,7 @@ class _TestScreenState extends State<TestScreen> {
 
   List<String> users = [];
   bool loadingUser = false;
+  int page = 1;
 
   @override
   void initState() {
@@ -23,7 +24,14 @@ class _TestScreenState extends State<TestScreen> {
 
   Future<void> loadUser() async {
     setState(() { loadingUser = true; });
-    users = await TestApi.users();
+    users = await TestApi.users(page, 2);
+
+    if (users.isNotEmpty) {
+      page += 1;
+    } else {
+      page = 1;
+    }
+
     setState(() { loadingUser = false; });
   }
   
