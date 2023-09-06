@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
-import 'package:oes/src/objects/User.dart';
+import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
 class AppSecurity extends ChangeNotifier {
 
   static final AppSecurity instance = AppSecurity();
 
-  User? user;
+  SignedUser? user;
   bool _isInit = false;
   bool get isInit => _isInit;
 

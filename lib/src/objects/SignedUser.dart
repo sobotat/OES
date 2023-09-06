@@ -2,8 +2,8 @@ import 'package:oes/src/RestApi/ApiObject.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
-class User extends ApiObject {
-  User({
+class SignedUser extends ApiObject {
+  SignedUser({
     required super.id,
     required this.firstName,
     required this.lastName,
@@ -23,7 +23,7 @@ class User extends ApiObject {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is User &&
+      other is SignedUser &&
           runtimeType == other.runtimeType &&
           username == other.username;
 

@@ -1,6 +1,6 @@
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
-import 'package:oes/src/objects/User.dart';
+import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/LocalStorage.dart';
@@ -13,14 +13,14 @@ class MockUserGateway implements UserGateway {
   MockUserGateway._();
 
   @override
-  Future<User?> getUser() async {
+  Future<SignedUser?> getUser() async {
     String token = await LocalStorage.instance.get('token') ?? '';
 
     return (token != '') ? loginWithToken(token) : null;
   }
 
   @override
-  Future<User?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) async {
+  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) async {
     await Future.delayed(const Duration(seconds: 2));
     LocalStorage localStorage = LocalStorage.instance;
 
@@ -31,7 +31,7 @@ class MockUserGateway implements UserGateway {
         localStorage.set('token', token);
       }
 
-      return User(
+      return SignedUser(
         id: 1,
         firstName:'Karel',
         lastName:'Novak',
@@ -45,11 +45,11 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<User?> loginWithToken(String token) async {
+  Future<SignedUser?> loginWithToken(String token) async {
     await Future.delayed(const Duration(seconds: 2));
 
     if (token.toLowerCase() == '123456789') {
-      return User(
+      return SignedUser(
           id: 1,
           firstName:'Karel',
           lastName:'Novak',
