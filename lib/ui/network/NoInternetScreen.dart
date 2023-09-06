@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
@@ -28,12 +29,18 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
     await Future.delayed(const Duration(milliseconds: 500));
     bool haveInternet = await NetworkChecker.instance.checkConnection();
 
-    if(context.mounted && haveInternet){
+    if(context.mounted && (haveInternet || AppRouter.instance.disableNetworkCheck)){
       context.go(widget.path);
     }
     setState(() {
       refreshing = false;
     });
+  }
+
+  void disableNetworkCheck() {
+    AppRouter.instance.disableNetworkCheck = true;
+    debugPrint('Network check Disabled for this session');
+    setState(() { });
   }
 
   @override
@@ -48,15 +55,21 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        'No Internet',
-                        style: TextStyle(fontSize: 40),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: GestureDetector(
+                        onDoubleTap: () => disableNetworkCheck(),
+                        child: Text(
+                          !AppRouter.instance.disableNetworkCheck ? 'No Internet' : 'Network Check Disabled',
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: !AppRouter.instance.disableNetworkCheck ? Theme.of(context).textTheme.bodyMedium!.color : Colors.red,
+                          ),
+                        ),
                       ),
                     ),
                     Button(
-                      text: 'Refresh',
+                      text: !AppRouter.instance.disableNetworkCheck ? 'Refresh' : 'Go Back',
                       maxWidth: 150,
                       onClick: (context) => refresh(context),
                       child: !refreshing ? null : SizedBox(

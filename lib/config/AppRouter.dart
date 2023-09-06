@@ -20,6 +20,7 @@ class AppRouter {
 
   String _activeUri = '/';
   String get activeUri => _activeUri;
+  bool disableNetworkCheck = false;
 
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
@@ -166,11 +167,10 @@ class AppRouter {
   };
 
   void setNetworkListener() {
-    listener() async {
+    listener() {
       var networkChecker = NetworkChecker.instance;
       if (networkChecker.isInit && !networkChecker.haveInternet) {
-        String? ignore = await LocalStorage.instance.get('ignoreNetwork');
-        if (ignore != null && ignore as bool) return;
+        if (disableNetworkCheck) return;
         debugPrint('Redirecting to No Internet Page');
         router.goNamed('no-internet', queryParameters: {
           'path': _activeUri,
