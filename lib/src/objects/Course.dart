@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/restApi/ApiObject.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 
@@ -18,10 +19,17 @@ class Course extends ApiObject {
   String description;
   Color? color;
   List<CourseItem>? _items;
+  List<OtherUser>? _teachers;
 
   Future<List<CourseItem>> get items async {
     if (_items != null) return _items!;
     _items = await CourseGateway.gateway.getCourseItems(id);
     return _items!;
+  }
+
+  Future<List<OtherUser>> get teachers async {
+    if (_teachers != null) return _teachers!;
+    _teachers = await CourseGateway.gateway.getCourseTeachers(id);
+    return _teachers!;
   }
 }

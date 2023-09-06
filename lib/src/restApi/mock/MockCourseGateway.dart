@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
@@ -77,6 +80,31 @@ class MockCourseGateway implements CourseGateway {
           name: 'Test Cities'
         ),
       ];
+    },);
+  }
+
+  @override
+  Future<List<OtherUser>> getCourseTeachers(int id) {
+    List<OtherUser> users = [
+      OtherUser(firstName: 'Karel', lastName: 'New'),
+      OtherUser(firstName: 'Mark', lastName: 'Test'),
+      OtherUser(firstName: 'Jane', lastName: 'Doe'),
+      OtherUser(firstName: 'John', lastName: 'Doe'),
+    ];
+
+    return Future.delayed(const Duration(seconds: 1), () {
+      List<int> used = [];
+      List<OtherUser> out = [];
+        for(int i = 0; i < Random().nextInt(users.length); i++) {
+          while(true) {
+            int index = Random().nextInt(users.length);
+            if(used.contains(index)) continue;
+            used.add(index);
+            out.add(users[index]);
+            break;
+          }
+        }
+      return out;
     },);
   }
 
