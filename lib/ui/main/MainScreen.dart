@@ -10,17 +10,19 @@ import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
     return Scaffold(
-      appBar: const AppAppBar(),
+      appBar: const AppAppBar(
+        actions: kIsWeb ? ([
+          _BackToWeb(),
+        ]) : [],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: ListView(
@@ -52,6 +54,50 @@ class MainScreen extends StatelessWidget {
             child: const Icon(AppIcons.icon_darkmode),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _BackToWeb extends StatelessWidget {
+  const _BackToWeb({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    if (width <= overflow) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 10,
+        ),
+        child: Button(
+          text: 'To Web',
+          onClick: (context) {
+            context.goNamed('/');
+          },
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: 50,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 10,
+        ),
+        child: Button(
+          icon: AppIcons.icon_web,
+          iconSize: 18,
+          onClick: (context) {
+            context.goNamed('/');
+          },
+        ),
       ),
     );
   }
