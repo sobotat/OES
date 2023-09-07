@@ -15,9 +15,12 @@ class SignedUser extends ApiObject {
   String lastName;
   String username;
   String? token;
+  List<SignedDevice>? _signedDevices;
 
-  Future<List<SignedDevice>> getSignedDevices() async {
-    return await UserGateway.gateway.getSignedDevices();
+  Future<List<SignedDevice>> get signedDevices async {
+    if (_signedDevices != null) return _signedDevices!;
+    _signedDevices = await UserGateway.gateway.getSignedDevices();
+    return _signedDevices!;
   }
 
   @override

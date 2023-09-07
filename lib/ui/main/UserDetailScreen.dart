@@ -116,7 +116,7 @@ class _Devices extends StatelessWidget {
         listenable: AppSecurity.instance,
         builder: (context, widget) {
           return FutureBuilder<List<SignedDevice>?>(
-            future: AppSecurity.instance.isLoggedIn() ? AppSecurity.instance.user!.getSignedDevices() : Future(() => []),
+            future: AppSecurity.instance.isLoggedIn() ? AppSecurity.instance.user!.signedDevices : Future(() => []),
             builder: (context, snapshot) {
               return snapshot.hasData ? ListView.builder(
                 itemCount: snapshot.data!.length,
