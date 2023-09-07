@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
+import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
@@ -26,23 +27,10 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
     var overflow = 950;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+      appBar: AppAppBar(
         actions: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                width >= overflow ? const _LargeMenu() : const SmallMenu(),
-              ],
-            ),
-          )
+          width > overflow ? const _GoToMain(maxWidth: 150,) : const _GoToMain(),
         ],
-        title: const _NameBanner(),
       ),
       body: Container(
         alignment: Alignment.topCenter,
@@ -134,7 +122,11 @@ class _LargeMenu extends StatelessWidget {
 }
 
 class _GoToMain extends StatelessWidget {
-  const _GoToMain();
+  const _GoToMain({
+    this.maxWidth = double.infinity,
+  });
+
+  final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +138,8 @@ class _GoToMain extends StatelessWidget {
       child: Button(
         text: 'Enter',
         backgroundColor: Theme.of(context).colorScheme.primary,
-        minWidth: 200,
-        maxWidth: double.infinity,
+        minWidth: 100,
+        maxWidth: maxWidth,
         onClick: (context) {
           context.goNamed('main');
         },
@@ -155,39 +147,3 @@ class _GoToMain extends StatelessWidget {
     );
   }
 }
-
-
-//PopupMenuButton<int>(
-//             constraints: const BoxConstraints(
-//               minWidth: 250,
-//             ),
-//             itemBuilder: (context) => [
-//               const PopupMenuItem(
-//                 enabled: false,
-//                 value: 1,
-//                 child: Row(
-//                   children: [
-//                     Expanded(
-//                         child: UserInfoButton()
-//                     ),
-//                     SignOutButton(),
-//                   ],
-//                 ),
-//               ),
-//               const PopupMenuItem(
-//                 enabled: false,
-//                 value: 1,
-//                 child: _GoToMain(),
-//               ),
-//             ],
-//             offset: const Offset(0, 100),
-//             color: Colors.grey,
-//             elevation: 2,
-//             child: SizedBox(
-//               width: 100,
-//               child: Button(
-//                 text: 'Menu',
-//                 backgroundColor: Theme.of(context).colorScheme.primary,
-//               ),
-//             ),
-//           )

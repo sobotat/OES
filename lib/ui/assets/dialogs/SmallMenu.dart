@@ -7,7 +7,12 @@ import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 
 class SmallMenu extends StatelessWidget {
-  const SmallMenu({super.key});
+  const SmallMenu({
+    this.actions = const [],
+    super.key
+  });
+
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +40,14 @@ class SmallMenu extends StatelessWidget {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                     padding: const EdgeInsets.all(10),
-                    child: const Column(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        UserInfoButton(
+                        const UserInfoButton(
                           padding: EdgeInsets.symmetric(horizontal: 5),
                           shouldPopOnClick: true,
                         ),
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -56,6 +61,11 @@ class SmallMenu extends StatelessWidget {
                             ],
                           ),
                         ),
+                        actions.isNotEmpty ? const Divider() : Container(),
+                        actions.isNotEmpty ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: actions,
+                        ) : Container(),
                       ],
                     ),
                   ),
