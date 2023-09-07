@@ -187,7 +187,7 @@ class _CourseItem extends StatelessWidget {
 
   void open(BuildContext context) {
     debugPrint('Open course ${course.name}');
-    context.goNamed('course', pathParameters: {'id': course.id.toString()});
+    context.goNamed('course', pathParameters: {'course_id': course.id.toString()});
   }
 
   @override

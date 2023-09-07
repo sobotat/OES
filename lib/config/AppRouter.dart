@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/services/LocalStorage.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
-import 'package:oes/ui/main/CourseScreen.dart';
+import 'package:oes/ui/main/course/CourseHomeworkScreen.dart';
+import 'package:oes/ui/main/course/CourseQuizScreen.dart';
+import 'package:oes/ui/main/course/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
+import 'package:oes/ui/main/course/CourseTestScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
@@ -79,14 +81,46 @@ class AppRouter {
             },
           ),
           GoRoute(
-            path: 'course/:id',
+            path: 'course/:course_id',
             name: 'course',
             redirect: authCheckRedirect,
             builder: (context, state) {
               _setActiveUri(context, state);
-              int id = int.parse(state.pathParameters['id'] ?? '-1');
+              int id = int.parse(state.pathParameters['course_id'] ?? '-1');
               return CourseScreen(courseID: id);
             },
+            routes: [
+              GoRoute(
+                path: 'course-test/:test_id',
+                name: 'course-test',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                  return CourseTestScreen(testId: id);
+                },
+              ),
+              GoRoute(
+                path: 'course-quiz/:quiz_id',
+                name: 'course-quiz',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
+                  return CourseQuizScreen(quizId: id);
+                },
+              ),
+              GoRoute(
+                path: 'course-homework/:homework_id',
+                name: 'course-homework',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int id = int.parse(state.pathParameters['homework_id'] ?? '-1');
+                  return CourseHomeworkScreen(homeworkId: id);
+                },
+              )
+            ],
           ),
           GoRoute(
             path: 'mobile-web',

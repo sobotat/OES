@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
@@ -141,11 +142,20 @@ class _CourseScreenState extends State<CourseScreen> {
                       itemBuilder: (context, index) {
                         CourseItem item = snapshot.data![index];
                         if (item is Test) {
-                          return _TestWidget(test: item);
+                          return _TestWidget(
+                            course: course!,
+                            test: item
+                          );
                         } else if (item is Homework) {
-                          return _HomeworkWidget(homework: item);
+                          return _HomeworkWidget(
+                            course: course!,
+                            homework: item
+                          );
                         } else if (item is Quiz) {
-                          return _QuizWidget(quiz: item);
+                          return _QuizWidget(
+                            course: course!,
+                            quiz: item,
+                          );
                         }
                         return Container();
                       },
@@ -262,15 +272,26 @@ class _Loading extends StatelessWidget {
 
 class _TestWidget extends StatelessWidget {
   const _TestWidget({
+    required this.course,
     required this.test,
     super.key
   });
 
+  final Course course;
   final Test test;
+
+  void openTest(BuildContext context) {
+    debugPrint('Open test ${test.name}');
+    context.goNamed('course-test', pathParameters: {
+      'course_id': course.id.toString(),
+      'test_id': test.id.toString()}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return IconItem(
+      onClick: (context) => openTest(context),
       icon: const _IconText(
           text: 'Test',
           backgroundColor: Colors.red
@@ -285,15 +306,26 @@ class _TestWidget extends StatelessWidget {
 
 class _HomeworkWidget extends StatelessWidget {
   const _HomeworkWidget({
+    required this.course,
     required this.homework,
     super.key
   });
 
+  final Course course;
   final Homework homework;
+
+  void openHomework(BuildContext context) {
+    debugPrint('Open homework ${homework.name}');
+    context.goNamed('course-homework', pathParameters: {
+      'course_id': course.id.toString(),
+      'homework_id': homework.id.toString()}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return IconItem(
+      onClick: (context) => openHomework(context),
       icon: const _IconText(
           text: 'Hw',
           backgroundColor: Colors.blueAccent
@@ -308,15 +340,26 @@ class _HomeworkWidget extends StatelessWidget {
 
 class _QuizWidget extends StatelessWidget {
   const _QuizWidget({
+    required this.course,
     required this.quiz,
     super.key
   });
 
+  final Course course;
   final Quiz quiz;
+
+  void openQuiz(BuildContext context) {
+    debugPrint('Open quiz ${quiz.name}');
+    context.goNamed('course-quiz', pathParameters: {
+      'course_id': course.id.toString(),
+      'quiz_id': quiz.id.toString()}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return IconItem(
+      onClick: (context) => openQuiz(context),
       icon: const _IconText(
         text: 'Qz',
         backgroundColor: Colors.greenAccent
