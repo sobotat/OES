@@ -109,9 +109,9 @@ class MockCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<CourseItem> getCourseItem(int courseId, int itemId) {
-    return Future(() {
-      return [
+  Future<CourseItem?> getCourseItem(int courseId, int itemId) {
+    return Future.delayed(const Duration(seconds: 1), () {
+      List<CourseItem> items = [
         Homework(
           id: 1,
           name: 'Write 100x Hello',
@@ -124,7 +124,12 @@ class MockCourseGateway implements CourseGateway {
             id: 3,
             name: 'Test Cities'
         ),
-      ][itemId];
+      ];
+
+      for (CourseItem item in items) {
+        if (item.id == itemId) return item;
+      }
+      return null;
     });
   }
 
