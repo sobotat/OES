@@ -7,10 +7,12 @@ import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 
 class AppAppBar extends StatefulWidget implements PreferredSizeWidget {
   const AppAppBar({
+    this.title,
     this.actions = const [],
     super.key
   });
 
+  final Widget? title;
   final List<Widget> actions;
 
   @override
@@ -29,6 +31,7 @@ class _AppAppBarState extends State<AppAppBar> {
 
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.secondary,
+      title: widget.title,
       actions: [
         Container(
           padding: const EdgeInsets.symmetric(
