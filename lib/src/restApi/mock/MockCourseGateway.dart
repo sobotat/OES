@@ -86,10 +86,10 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<List<OtherUser>> getCourseTeachers(int id) {
     List<OtherUser> users = [
-      OtherUser(firstName: 'Karel', lastName: 'New'),
-      OtherUser(firstName: 'Mark', lastName: 'Test'),
-      OtherUser(firstName: 'Jane', lastName: 'Doe'),
-      OtherUser(firstName: 'John', lastName: 'Doe'),
+      OtherUser(id: 1, firstName: 'Karel', lastName: 'New'),
+      OtherUser(id: 2, firstName: 'Mark', lastName: 'Test'),
+      OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      OtherUser(id: 4, firstName: 'John', lastName: 'Doe'),
     ];
 
     return Future.delayed(const Duration(seconds: 1), () {
