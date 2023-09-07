@@ -5,12 +5,8 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
-import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
+import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
-import 'package:oes/ui/assets/templates/Gradient.dart';
-import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
-import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
-import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
@@ -24,38 +20,11 @@ class MainScreen extends StatelessWidget {
     var overflow = 950;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        actions: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 0,
-            ),
-            child: width > overflow ? const Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      UserInfoButton(
-                        width: 150,
-                      ),
-                      SignOutButton(),
-                      ThemeModeButton(),
-                    ],
-                  ),
-                ),
-              ],
-            ) : const SmallMenu(),
-          ),
-        ],
-      ),
+      appBar: const AppAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: ListView(
-          children: [
+          children: const [
             _Courses(),
           ],
         ),

@@ -3,10 +3,7 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
-import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
-import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
-import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
-import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
+import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/widgets/SignedDeviceWidget.dart';
 
@@ -19,27 +16,8 @@ class UserDetailScreen extends StatelessWidget {
     var overflow = 950;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        actions: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 0,
-            ),
-            child: width > overflow ? const Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                UserInfoButton(
-                  width: 150,
-                ),
-                SignOutButton(),
-                ThemeModeButton(),
-              ],
-            ) : const SmallMenu(),
-          )
-        ],
-        title: const Text('User Detail'),
+      appBar: const AppAppBar(
+        title: Text('User Detail'),
       ),
       body: SafeArea(
         child: LayoutBuilder(

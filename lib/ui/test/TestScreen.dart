@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:oes/src/restApi/api/TestApi.dart';
-import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
+import 'package:oes/ui/assets/templates/AppAppBar.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -38,18 +38,7 @@ class _TestScreenState extends State<TestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        actions: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 0,
-            ),
-            child: const SmallMenu(),
-          )
-        ],
-      ),
+      appBar: AppAppBar(),
       body: Center(
         child: Column(
           children: [
