@@ -4,13 +4,8 @@ import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/LocalStorage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MockUserGateway implements UserGateway {
-
-  static final instance = MockUserGateway._();
-
-  MockUserGateway._();
 
   @override
   Future<SignedUser?> getUser() async {

@@ -4,7 +4,7 @@ import 'package:oes/src/restApi/mock/MockUserGateway.dart';
 
 abstract class UserGateway {
 
-  static UserGateway gateway = MockUserGateway.instance;
+  static UserGateway gateway = MockUserGateway();
 
   Future<SignedUser?> getUser();
 

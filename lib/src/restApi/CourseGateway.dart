@@ -7,7 +7,7 @@ import 'package:oes/src/restApi/mock/MockCourseGateway.dart';
 
 abstract class CourseGateway {
 
-  static CourseGateway gateway = MockCourseGateway.instance;
+  static CourseGateway gateway = MockCourseGateway();
 
   Future<List<Course>> getUserCourses(SignedUser user);
 

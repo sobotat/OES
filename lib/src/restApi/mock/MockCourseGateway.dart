@@ -13,10 +13,9 @@ import 'package:oes/src/restApi/CourseGateway.dart';
 
 class MockCourseGateway implements CourseGateway {
 
-  static final MockCourseGateway instance = MockCourseGateway._();
   late Map<SignedUser, List<Course>> data;
 
-  MockCourseGateway._() {
+  MockCourseGateway() {
     data = <SignedUser, List<Course>> {};
 
     var user = SignedUser(

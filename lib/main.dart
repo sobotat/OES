@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:oes/config/AppApi.dart';
 import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/config/DarkTheme.dart';
@@ -8,7 +9,7 @@ import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   LicenseRegistry.addLicense(() async* {
@@ -18,6 +19,7 @@ void main() {
     yield LicenseEntryWithLineBreaks(['google_fonts'], licenseFlowCircular);
   });
 
+  await AppApi.instance.init();
   runApp(MyApp());
 }
 
