@@ -96,8 +96,12 @@ class AppRouter {
                 redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                   int id = int.parse(state.pathParameters['test_id'] ?? '-1');
-                  return CourseTestScreen(testId: id);
+                  return CourseTestScreen(
+                    courseId: courseId,
+                    testId: id
+                  );
                 },
               ),
               GoRoute(
@@ -106,8 +110,12 @@ class AppRouter {
                 redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                   int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
-                  return CourseQuizScreen(quizId: id);
+                  return CourseQuizScreen(
+                    courseId: courseId,
+                    quizId: id
+                  );
                 },
               ),
               GoRoute(
@@ -116,8 +124,12 @@ class AppRouter {
                 redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                   int id = int.parse(state.pathParameters['homework_id'] ?? '-1');
-                  return CourseHomeworkScreen(homeworkId: id);
+                  return CourseHomeworkScreen(
+                    courseId: courseId,
+                    homeworkId: id
+                  );
                 },
               )
             ],

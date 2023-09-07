@@ -17,6 +17,7 @@ import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
+import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({
@@ -135,7 +136,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 child: FutureBuilder<List<CourseItem>>(
                   future: course!.items,
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const _Loading();
+                    if (!snapshot.hasData) return const WidgetLoading();
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: snapshot.data!.length,
@@ -165,7 +166,7 @@ class _CourseScreenState extends State<CourseScreen> {
               )
             ],
           ) : const Center(
-            child: _Loading(),
+            child: WidgetLoading(),
           );
         },
       ),
@@ -245,27 +246,6 @@ class _TeachersBuilder extends StatelessWidget {
           },
         );
       }
-    );
-  }
-}
-
-class _Loading extends StatelessWidget {
-  const _Loading({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(25),
-          child: CircularProgressIndicator(
-            color: Theme.of(context).extension<AppCustomColors>()!.accent,
-          ),
-        ),
-      ],
     );
   }
 }
