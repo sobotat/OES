@@ -108,4 +108,24 @@ class MockCourseGateway implements CourseGateway {
     },);
   }
 
+  @override
+  Future<CourseItem> getCourseItem(int courseId, int itemId) {
+    return Future(() {
+      return [
+        Homework(
+          id: 1,
+          name: 'Write 100x Hello',
+        ),
+        Quiz(
+          id: 2,
+          name: 'Learn Cities',
+        ),
+        Test(
+            id: 3,
+            name: 'Test Cities'
+        ),
+      ][itemId];
+    });
+  }
+
 }
