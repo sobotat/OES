@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';

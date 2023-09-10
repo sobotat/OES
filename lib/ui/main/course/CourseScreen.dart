@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';

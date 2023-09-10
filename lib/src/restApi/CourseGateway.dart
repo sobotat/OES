@@ -1,5 +1,5 @@
 
-import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/Course.dart';

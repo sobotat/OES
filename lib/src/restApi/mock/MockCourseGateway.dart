@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/Course.dart';
@@ -14,6 +14,35 @@ import 'package:oes/src/restApi/CourseGateway.dart';
 class MockCourseGateway implements CourseGateway {
 
   late Map<SignedUser, List<Course>> data;
+  List<CourseItem> items = [
+    Homework(
+      id: 1,
+      name: 'Write 100x Hello',
+      created: DateTime(2022, 12, 1, 15, 35),
+      createdBy: OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      end: DateTime(2023, 12, 31, 23, 59),
+      scheduled: DateTime(2023, 1, 1, 0, 0),
+    ),
+    Quiz(
+      id: 2,
+      name: 'Learn Cities',
+      created: DateTime(2022, 12, 1, 15, 35),
+      createdBy: OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      end: DateTime(2023, 12, 31, 23, 59),
+      scheduled: DateTime(2023, 1, 1, 0, 0),
+      duration: 162000,
+    ),
+    Test(
+      id: 3,
+      name: 'Test Cities',
+      created: DateTime(2022, 12, 1, 15, 35),
+      createdBy: OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      end: DateTime(2023, 12, 31, 23, 59),
+      scheduled: DateTime(2023, 1, 1, 0, 0),
+      duration: 162000,
+      password: '1234',
+    ),
+  ];
 
   MockCourseGateway() {
     data = <SignedUser, List<Course>> {};
@@ -66,20 +95,7 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<List<CourseItem>> getCourseItems(int id) {
     return Future.delayed(const Duration(seconds: 1), () {
-      return [
-        Homework(
-          id: 1,
-          name: 'Write 100x Hello',
-        ),
-        Quiz(
-          id: 2,
-          name: 'Learn Cities',
-        ),
-        Test(
-          id: 3,
-          name: 'Test Cities'
-        ),
-      ];
+      return items;
     },);
   }
 
@@ -111,21 +127,6 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<CourseItem?> getCourseItem(int courseId, int itemId) {
     return Future.delayed(const Duration(seconds: 1), () {
-      List<CourseItem> items = [
-        Homework(
-          id: 1,
-          name: 'Write 100x Hello',
-        ),
-        Quiz(
-          id: 2,
-          name: 'Learn Cities',
-        ),
-        Test(
-            id: 3,
-            name: 'Test Cities'
-        ),
-      ];
-
       for (CourseItem item in items) {
         if (item.id == itemId) return item;
       }

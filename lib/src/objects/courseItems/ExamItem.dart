@@ -1,17 +1,18 @@
 
-import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/courseItems/ScheduledItem.dart';
 
-class Homework extends ScheduledItem {
+abstract class ExamItem extends ScheduledItem {
 
-  Homework({
+  ExamItem({
     required super.id,
     required super.name,
     required super.created,
     required super.createdBy,
     required super.scheduled,
     required super.end,
+    required this.duration,
   });
 
-  //File? file;
+  int duration;
+  //List<QuestionItem> questions;
 }

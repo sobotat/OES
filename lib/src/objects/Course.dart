@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oes/src/objects/CourseItem.dart';
+import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/OtherUser.dart';
 import 'package:oes/src/restApi/ApiObject.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
