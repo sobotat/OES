@@ -137,7 +137,13 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<List<UserQuiz>> getUserQuizzes(int courseId) {
     return Future(() => [
-
+      UserQuiz(
+        id: 1,
+        name: 'Some User Created Quiz',
+        created: DateTime(2022, 12, 1, 15, 35),
+        createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+        questions: []
+      ),
     ]);
   }
 
