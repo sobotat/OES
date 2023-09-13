@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class PopupDialog extends Dialog {
   const PopupDialog({
+    this.alignment = Alignment.center,
     required this.child,
-    required this.alignment,
     super.key
   });
 
