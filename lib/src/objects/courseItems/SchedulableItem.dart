@@ -1,9 +1,9 @@
 
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 
-abstract class ScheduledItem extends CourseItem {
+abstract class SchedulableItem extends CourseItem {
 
-  ScheduledItem({
+  SchedulableItem({
     required super.id,
     required super.name,
     required super.created,

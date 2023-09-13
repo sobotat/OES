@@ -1,7 +1,7 @@
 
-import 'package:oes/src/objects/courseItems/ScheduledItem.dart';
+import 'package:oes/src/objects/courseItems/SchedulableItem.dart';
 
-abstract class ExamItem extends ScheduledItem {
+abstract class ExamItem extends SchedulableItem {
 
   ExamItem({
     required super.id,
