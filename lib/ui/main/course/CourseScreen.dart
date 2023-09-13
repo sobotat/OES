@@ -20,6 +20,7 @@ import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
+import 'dart:io' show Platform;
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({
@@ -395,6 +396,16 @@ class _TestDialogState extends State<_TestDialog> {
                           enteredWrongPassword = false;
                           goodPassword = checkPassword();
                         });
+                      },
+                      onSubmitted: (value) {
+                        if (Platform.isAndroid || Platform.isIOS) return;
+                        if (startTest(context)) {
+                          context.pop();
+                        }else {
+                          setState(() {
+                            enteredWrongPassword = true;
+                          });
+                        }
                       },
                     ),
                   ),
