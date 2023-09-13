@@ -15,13 +15,13 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    user = await UserGateway.gateway.getUser();
+    user = await UserGateway.instance.getUser();
     _isInit = true;
     notifyListeners();
   }
 
   Future<bool> login(String username, String password, {bool? rememberMe}) async {
-    user = await UserGateway.gateway.loginWithUsernameAndPassword(username, password, rememberMe ?? true);
+    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true);
     notifyListeners();
     return user == null ? false : true;
   }
@@ -31,7 +31,7 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    await UserGateway.gateway.logout();
+    await UserGateway.instance.logout();
     user = null;
     notifyListeners();
   }

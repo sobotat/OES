@@ -32,7 +32,7 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      homework = await CourseGateway.gateway.getCourseItem(widget.courseId, widget.homeworkId) as Homework;
+      homework = await CourseGateway.instance.getCourseItem(widget.courseId, widget.homeworkId) as Homework;
       setState(() { });
     },);
   }
@@ -48,7 +48,7 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
         listenable: AppSecurity.instance,
         builder: (context, child) {
           return FutureBuilder(
-            future: CourseGateway.gateway.getCourseItem(widget.courseId, widget.homeworkId),
+            future: CourseGateway.instance.getCourseItem(widget.courseId, widget.homeworkId),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Center(child: WidgetLoading());
               homework = snapshot.data as Homework;

@@ -23,13 +23,13 @@ class Course extends ApiObject {
 
   Future<List<CourseItem>> get items async {
     if (_items != null) return _items!;
-    _items = await CourseGateway.gateway.getCourseItems(id);
+    _items = await CourseGateway.instance.getCourseItems(id);
     return _items!;
   }
 
   Future<List<OtherUser>> get teachers async {
     if (_teachers != null) return _teachers!;
-    _teachers = await CourseGateway.gateway.getCourseTeachers(id);
+    _teachers = await CourseGateway.instance.getCourseTeachers(id);
     return _teachers!;
   }
 }

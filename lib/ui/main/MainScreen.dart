@@ -138,7 +138,7 @@ class _CoursesState extends State<_Courses> {
     var user = AppSecurity.instance.user;
     if (user != null) {
       debugPrint('Loading Courses');
-      courses = await CourseGateway.gateway.getUserCourses(user);
+      courses = await CourseGateway.instance.getUserCourses(user);
       isInit = true;
 
       if (!context.mounted) return;

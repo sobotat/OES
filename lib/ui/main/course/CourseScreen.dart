@@ -57,7 +57,7 @@ class _CourseScreenState extends State<CourseScreen> {
     var user = AppSecurity.instance.user;
     if (user != null) {
       debugPrint('Loading Course');
-      course = await CourseGateway.gateway.getCourse(widget.courseID);
+      course = await CourseGateway.instance.getCourse(widget.courseID);
       isInit = true;
 
       if (context.mounted) {

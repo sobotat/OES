@@ -19,7 +19,7 @@ class SignedUser extends ApiObject {
 
   Future<List<SignedDevice>> get signedDevices async {
     if (_signedDevices != null) return _signedDevices!;
-    _signedDevices = await UserGateway.gateway.getSignedDevices();
+    _signedDevices = await UserGateway.instance.getSignedDevices();
     return _signedDevices!;
   }
 
