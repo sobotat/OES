@@ -1,14 +1,16 @@
 
 import 'package:oes/src/RestApi/ApiObject.dart';
 
-class OtherUser extends ApiObject {
+class User extends ApiObject {
 
-  OtherUser({
+  User({
     required super.id,
     required this.firstName,
     required this.lastName,
+    required this.username
   });
 
   String firstName;
   String lastName;
+  String username;
 }

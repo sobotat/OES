@@ -1,5 +1,5 @@
 
-import 'package:oes/src/objects/OtherUser.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/ApiObject.dart';
 
 abstract class CourseItem extends ApiObject {
@@ -13,5 +13,5 @@ abstract class CourseItem extends ApiObject {
 
   String name;
   DateTime created;
-  OtherUser createdBy;
+  User createdBy;
 }

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
-import 'package:oes/src/objects/OtherUser.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
@@ -19,7 +19,7 @@ class MockCourseGateway implements CourseGateway {
       id: 1,
       name: 'Write 100x Hello',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
     ),
@@ -27,7 +27,7 @@ class MockCourseGateway implements CourseGateway {
       id: 2,
       name: 'Learn Cities',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
@@ -36,7 +36,7 @@ class MockCourseGateway implements CourseGateway {
       id: 3,
       name: 'Test Cities',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
+      createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
@@ -100,17 +100,16 @@ class MockCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<List<OtherUser>> getCourseTeachers(int id) {
-    List<OtherUser> users = [
-      OtherUser(id: 1, firstName: 'Karel', lastName: 'New'),
-      OtherUser(id: 2, firstName: 'Mark', lastName: 'Test'),
-      OtherUser(id: 3, firstName: 'Jane', lastName: 'Doe'),
-      OtherUser(id: 4, firstName: 'John', lastName: 'Doe'),
+  Future<List<User>> getCourseTeachers(int id) {
+    List<User> users = [
+      User(id: 1, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
+      User(id: 2, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
+      User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
     ];
 
     return Future.delayed(const Duration(seconds: 1), () {
       List<int> used = [];
-      List<OtherUser> out = [];
+      List<User> out = [];
         for(int i = 0; i < Random().nextInt(users.length - 1) + 1; i++) {
           while(true) {
             int index = Random().nextInt(users.length);
@@ -122,6 +121,13 @@ class MockCourseGateway implements CourseGateway {
         }
       return out;
     },);
+  }
+
+  @override
+  Future<List<Quiz>> getUserQuizzes(int courseId) {
+    return Future(() => [
+
+    ]);
   }
 
   @override

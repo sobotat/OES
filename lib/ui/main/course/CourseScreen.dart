@@ -5,7 +5,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
-import 'package:oes/src/objects/OtherUser.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
@@ -405,7 +405,7 @@ class TeacherWidget extends StatelessWidget {
     super.key
   });
 
-  final OtherUser teacher;
+  final User teacher;
 
   @override
   Widget build(BuildContext context) {
