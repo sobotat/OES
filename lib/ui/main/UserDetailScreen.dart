@@ -5,6 +5,7 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/widgets/SignedDeviceWidget.dart';
 
 class UserDetailScreen extends StatelessWidget {
@@ -302,9 +303,14 @@ class _ProfilePhotoState extends State<_ProfilePhoto> {
 
             showDialog<String>(
                 context: context,
-                builder: (BuildContext context) => Dialog(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
+                builder: (BuildContext context) => PopupDialog(
+                  alignment: Alignment.center,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    padding: EdgeInsets.all(10),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
