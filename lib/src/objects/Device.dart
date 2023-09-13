@@ -1,9 +1,9 @@
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/restApi/ApiObject.dart';
 
-class SignedDevice extends ApiObject {
+class Device extends ApiObject {
 
-  SignedDevice({
+  Device({
     required super.id,
     required this.name,
     required this.platform,

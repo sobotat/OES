@@ -1,5 +1,5 @@
 import 'package:oes/src/objects/DevicePlatform.dart';
-import 'package:oes/src/objects/SignedDevice.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
@@ -63,12 +63,12 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<List<SignedDevice>> getSignedDevices() {
+  Future<List<Device>> getSignedDevices() {
     return Future.delayed(const Duration(seconds: 1), () async {
-      List<SignedDevice> out = [];
+      List<Device> out = [];
 
       DeviceInfo deviceInfo = await DeviceInfo.getInfo();
-      out.add(SignedDevice(
+      out.add(Device(
         id: 1000,
         name: deviceInfo.name,
         platform: deviceInfo.platform,
@@ -76,15 +76,15 @@ class MockUserGateway implements UserGateway {
         lastSignIn: DateTime.now())
       );
 
-      List<SignedDevice> other = [
-        SignedDevice(
+      List<Device> other = [
+        Device(
             id: 3,
             name: 'CZ-IOS',
             platform: DevicePlatform.ios,
             isWeb: false,
             lastSignIn: DateTime.now()
         ),
-        SignedDevice(
+        Device(
             id: 4,
             name: 'CZ-MacOS',
             platform: DevicePlatform.macos,

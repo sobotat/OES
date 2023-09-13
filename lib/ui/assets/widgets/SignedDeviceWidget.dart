@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
-import 'package:oes/src/objects/SignedDevice.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignedDeviceWidget extends StatelessWidget {
@@ -11,7 +11,7 @@ class SignedDeviceWidget extends StatelessWidget {
     super.key
   });
 
-  final SignedDevice signedDevice;
+  final Device signedDevice;
 
   IconData getIcon() {
     if(signedDevice.isWeb) {
@@ -74,7 +74,7 @@ class _Info extends StatelessWidget {
     super.key,
   });
 
-  final SignedDevice signedDevice;
+  final Device signedDevice;
 
   String getName() {
     String platform = '${signedDevice.platform.name[0].toUpperCase()}${signedDevice.platform.name.substring(1).toLowerCase()}';
@@ -110,7 +110,7 @@ class _Actions extends StatelessWidget {
     super.key,
   });
 
-  final SignedDevice signedDevice;
+  final Device signedDevice;
 
   @override
   Widget build(BuildContext context) {

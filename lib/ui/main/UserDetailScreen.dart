@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/SignedDevice.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -116,7 +116,7 @@ class _Devices extends StatelessWidget {
       child: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, widget) {
-          return FutureBuilder<List<SignedDevice>?>(
+          return FutureBuilder<List<Device>?>(
             future: AppSecurity.instance.isLoggedIn() ? AppSecurity.instance.user!.signedDevices : Future(() => []),
             builder: (context, snapshot) {
               return snapshot.hasData ? ListView.builder(

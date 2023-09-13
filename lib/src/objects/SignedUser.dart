@@ -1,5 +1,5 @@
 import 'package:oes/src/RestApi/ApiObject.dart';
-import 'package:oes/src/objects/SignedDevice.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
@@ -13,9 +13,9 @@ class SignedUser extends User {
   });
 
   String? token;
-  List<SignedDevice>? _signedDevices;
+  List<Device>? _signedDevices;
 
-  Future<List<SignedDevice>> get signedDevices async {
+  Future<List<Device>> get signedDevices async {
     if (_signedDevices != null) return _signedDevices!;
     _signedDevices = await UserGateway.instance.getSignedDevices();
     return _signedDevices!;
