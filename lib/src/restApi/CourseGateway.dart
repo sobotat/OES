@@ -3,7 +3,7 @@ import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/courseItems/Quiz.dart';
+import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/mock/MockCourseGateway.dart';
 
 abstract class CourseGateway {
@@ -16,7 +16,7 @@ abstract class CourseGateway {
 
   Future<List<CourseItem>> getCourseItems(int id);
   Future<List<User>> getCourseTeachers(int id);
-  Future<List<Quiz>> getUserQuizzes(int courseId);
+  Future<List<UserQuiz>> getUserQuizzes(int courseId);
 
   Future<CourseItem?> getCourseItem(int courseId, int itemId);
 }
