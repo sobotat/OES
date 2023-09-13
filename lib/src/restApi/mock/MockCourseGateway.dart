@@ -42,6 +42,16 @@ class MockCourseGateway implements CourseGateway {
       duration: 162000,
       password: '1234',
     ),
+    Test(
+      id: 4,
+      name: 'Free Points',
+      created: DateTime(2022, 12, 1, 15, 35),
+      createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      end: DateTime(2023, 12, 31, 23, 59),
+      scheduled: DateTime(2023, 1, 1, 0, 0),
+      duration: 162000,
+      password: '',
+    ),
   ];
 
   MockCourseGateway() {

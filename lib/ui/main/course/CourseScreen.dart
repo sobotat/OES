@@ -15,8 +15,10 @@ import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
+import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseScreen extends StatefulWidget {
@@ -250,7 +252,7 @@ class _TeachersBuilder extends StatelessWidget {
   }
 }
 
-class _TestWidget extends StatelessWidget {
+class _TestWidget extends StatefulWidget {
   const _TestWidget({
     required this.course,
     required this.test,
@@ -260,29 +262,162 @@ class _TestWidget extends StatelessWidget {
   final Course course;
   final Test test;
 
-  void openTest(BuildContext context) {
-    debugPrint('Open test ${test.name}');
-    context.goNamed('course-test', pathParameters: {
-      'course_id': course.id.toString(),
-      'test_id': test.id.toString()}
+  @override
+  State<_TestWidget> createState() => _TestWidgetState();
+}
+
+class _TestWidgetState extends State<_TestWidget> {
+
+  Future<void> openPasswordDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) => PopupDialog(
+        alignment: Alignment.center,
+        child: _TestDialog(
+          course: widget.course,
+          test: widget.test,
+        )
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return IconItem(
-      onClick: (context) => openTest(context),
+      onClick: (context) => openPasswordDialog(context),
       icon: const _IconText(
           text: 'Test',
           backgroundColor: Colors.red
       ),
       body: _ItemBody(
-        bodyText: test.name,
+        bodyText: widget.test.name,
       ),
       color: Colors.red,
     );
   }
 }
+
+class _TestDialog extends StatefulWidget {
+  const _TestDialog({
+    required this.course,
+    required this.test
+  });
+
+  final Course course;
+  final Test test;
+
+  @override
+  State<_TestDialog> createState() => _TestDialogState();
+}
+
+class _TestDialogState extends State<_TestDialog> {
+
+  TextEditingController passwordController = TextEditingController();
+  bool enteredWrongPassword = false;
+  bool goodPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        goodPassword = checkPassword();
+      });
+    });
+  }
+
+  bool checkPassword() {
+    if (widget.test.password == '') return true;
+    if (passwordController.text != widget.test.password) {
+      return false;
+    }
+    return true;
+  }
+
+  bool startTest(BuildContext context) {
+    if (!checkPassword()) {
+      debugPrint('Wrong Password to Test');
+      return false;
+    }
+
+    debugPrint('Open test ${widget.test.name}');
+    if (context.mounted) {
+      context.goNamed('course-test', pathParameters: {
+        'course_id': widget.course.id.toString(),
+        'test_id': widget.test.id.toString()}
+      );
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: BorderRadius.circular(10),
+      elevation: 10,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 25,
+              ),
+              child: Text(widget.test.password != '' ? 'Enter Password' : 'Start Test', style: TextStyle(fontSize: 40)),
+            ),
+            widget.test.password != '' ? SizedBox(
+              width: 500,
+              child: TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                ),
+                textInputAction: TextInputAction.go,
+                onChanged: (value) {
+                  setState(() {
+                    enteredWrongPassword = false;
+                    goodPassword = checkPassword();
+                  });
+                },
+              ),
+            ) : Container(width: 0,),
+            const SizedBox(height: 15,),
+            Button(
+              text: 'Start Test',
+              onClick: (context) {
+                if (startTest(context)) {
+                  context.pop();
+                }else {
+                  setState(() {
+                    enteredWrongPassword = true;
+                  });
+                }
+              },
+              maxWidth: 500,
+              backgroundColor: goodPassword ? Colors.green : enteredWrongPassword ? Colors.red : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+}
+
 
 class _HomeworkWidget extends StatelessWidget {
   const _HomeworkWidget({
