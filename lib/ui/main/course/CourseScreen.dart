@@ -315,6 +315,7 @@ class _TestDialogState extends State<_TestDialog> {
   TextEditingController passwordController = TextEditingController();
   bool enteredWrongPassword = false;
   bool goodPassword = false;
+  bool hiddenPassword= true;
 
   @override
   void initState() {
@@ -376,18 +377,40 @@ class _TestDialogState extends State<_TestDialog> {
             ),
             widget.test.password != '' ? SizedBox(
               width: 500,
-              child: TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                ),
-                textInputAction: TextInputAction.go,
-                onChanged: (value) {
-                  setState(() {
-                    enteredWrongPassword = false;
-                    goodPassword = checkPassword();
-                  });
-                },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 450,
+                    child: TextField(
+                      controller: passwordController,
+                      obscureText: hiddenPassword,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                      ),
+                      textInputAction: TextInputAction.go,
+                      onChanged: (value) {
+                        setState(() {
+                          enteredWrongPassword = false;
+                          goodPassword = checkPassword();
+                        });
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Button(
+                      icon: hiddenPassword ? Icons.add_box_outlined : Icons.add_box,
+                      maxWidth: 40,
+                      onClick: (context) {
+                        setState(() {
+                          hiddenPassword = !hiddenPassword;
+                        });
+                      },
+                    ),
+                  )
+                ],
               ),
             ) : Container(width: 0,),
             const SizedBox(height: 15,),
