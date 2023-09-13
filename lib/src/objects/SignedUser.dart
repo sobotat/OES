@@ -1,19 +1,17 @@
 import 'package:oes/src/RestApi/ApiObject.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
-class SignedUser extends ApiObject {
+class SignedUser extends User {
   SignedUser({
     required super.id,
-    required this.firstName,
-    required this.lastName,
-    required this.username,
+    required super.firstName,
+    required super.lastName,
+    required super.username,
     this.token,
   });
 
-  String firstName;
-  String lastName;
-  String username;
   String? token;
   List<SignedDevice>? _signedDevices;
 
