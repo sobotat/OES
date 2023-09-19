@@ -11,6 +11,6 @@ class AppApi {
   String apiServerUrl = 'http://oes-api.sobotovi.net:8001';
 
   Future<void> init() async {
-    useMuckApi = (await LocalStorage.instance.get('useMuck') ?? 'false') as bool;
+    useMuckApi = bool.parse(await LocalStorage.instance.get('useMuck') ?? 'false');
   }
 }
