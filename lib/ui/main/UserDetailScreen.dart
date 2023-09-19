@@ -53,43 +53,50 @@ class UserDetailScreen extends StatelessWidget {
                 );
               }
               else {
-                return Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.all(10),
-                          child: _UserInfo(),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Column(
+                return ListView(
+                  children: [
+                    SizedBox(
+                      height: 650,
+                      child: Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).colorScheme.secondary,
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ),
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.all(10),
+                                child: _UserInfo(),
                               ),
-                              margin: EdgeInsets.all(10),
-                              alignment: Alignment.center,
-                              child: _ProfilePhoto(),
                             ),
-                            const Expanded(
-                              child: _Devices(),
-                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Theme.of(context).colorScheme.secondary,
+                                    ),
+                                    margin: EdgeInsets.all(10),
+                                    alignment: Alignment.center,
+                                    child: _ProfilePhoto(),
+                                  ),
+                                  const Expanded(
+                                    child: _Devices(),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 );
               }
             }
