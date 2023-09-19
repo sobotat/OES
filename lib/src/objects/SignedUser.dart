@@ -1,4 +1,3 @@
-import 'package:oes/src/objects/ApiObject.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
