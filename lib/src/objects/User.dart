@@ -1,5 +1,5 @@
 
-import 'package:oes/src/RestApi/ApiObject.dart';
+import 'package:oes/src/objects/ApiObject.dart';
 
 class User extends ApiObject {
 
@@ -13,4 +13,15 @@ class User extends ApiObject {
   String firstName;
   String lastName;
   String username;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is User &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => super.hashCode ^ id.hashCode;
 }

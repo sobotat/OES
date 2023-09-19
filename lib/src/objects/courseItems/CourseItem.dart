@@ -1,6 +1,6 @@
 
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/restApi/ApiObject.dart';
+import 'package:oes/src/objects/ApiObject.dart';
 
 abstract class CourseItem extends ApiObject {
 

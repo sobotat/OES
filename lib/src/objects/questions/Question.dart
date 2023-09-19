@@ -1,5 +1,5 @@
 
-import 'package:oes/src/RestApi/ApiObject.dart';
+import 'package:oes/src/objects/ApiObject.dart';
 
 abstract class Question extends ApiObject {
 

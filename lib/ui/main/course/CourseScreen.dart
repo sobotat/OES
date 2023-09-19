@@ -356,6 +356,9 @@ class _TestDialogState extends State<_TestDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 500;
+
     return Material(
       borderRadius: BorderRadius.circular(10),
       elevation: 10,
@@ -374,43 +377,47 @@ class _TestDialogState extends State<_TestDialog> {
                 horizontal: 10,
                 vertical: 25,
               ),
-              child: Text(widget.test.password != '' ? 'Enter Password' : 'Start Test', style: TextStyle(fontSize: 40)),
+              child: Text(widget.test.password != '' ? 'Enter Password' : 'Start Test',
+                  style: TextStyle(fontSize: 40), textAlign: TextAlign.center),
             ),
             widget.test.password != '' ? SizedBox(
-              width: 500,
+              width: width > overflow ? 500 : null,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: width > overflow ? MainAxisSize.min : MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 450,
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: hiddenPassword,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                      ),
-                      textInputAction: TextInputAction.go,
-                      onChanged: (value) {
-                        setState(() {
-                          enteredWrongPassword = false;
-                          goodPassword = checkPassword();
-                        });
-                      },
-                      onSubmitted: (value) {
-                        if (Platform.isAndroid || Platform.isIOS) return;
-                        if (startTest(context)) {
-                          context.pop();
-                        }else {
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: SizedBox(
+                      width: width > overflow ? 450 : null,
+                      child: TextField(
+                        controller: passwordController,
+                        obscureText: hiddenPassword,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                        ),
+                        textInputAction: TextInputAction.go,
+                        onChanged: (value) {
                           setState(() {
-                            enteredWrongPassword = true;
+                            enteredWrongPassword = false;
+                            goodPassword = checkPassword();
                           });
-                        }
-                      },
+                        },
+                        onSubmitted: (value) {
+                          if (Platform.isAndroid || Platform.isIOS) return;
+                          if (startTest(context)) {
+                            context.pop();
+                          }else {
+                            setState(() {
+                              enteredWrongPassword = true;
+                            });
+                          }
+                        },
+                      ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.only(top: 10, left: 5),
                     child: Button(
                       icon: hiddenPassword ? Icons.add_box_outlined : Icons.add_box,
                       maxWidth: 40,

@@ -1,5 +1,5 @@
 import 'package:oes/src/objects/DevicePlatform.dart';
-import 'package:oes/src/restApi/ApiObject.dart';
+import 'package:oes/src/objects/ApiObject.dart';
 
 class Device extends ApiObject {
 
