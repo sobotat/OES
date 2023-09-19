@@ -34,18 +34,6 @@ class MainScreen extends StatelessWidget {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 10,
-            ),
-            child: FloatingActionButton(
-              heroTag: '2',
-              onPressed: () {
-                context.goNamed('user-detail');
-              },
-              child: const Icon(AppIcons.icon_profile),
-            ),
-          ),
           FloatingActionButton(
             heroTag: '3',
             onPressed: () {
