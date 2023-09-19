@@ -9,6 +9,7 @@ import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
@@ -103,75 +104,102 @@ class _CourseScreenState extends State<CourseScreen> {
           ),
         ],
       ),
-      body: ListenableBuilder(
-        listenable: AppSecurity.instance,
-        builder: (context, child) {
-          return course != null ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Heading(
-                headingText: course!.name,
-                actions: width > overflow ? [
-                  SizedBox(
-                    height: 40,
-                    child: _TeachersBuilder(
-                      course: course!,
-                      axis: Axis.horizontal,
+      body: ListView(
+        children: [
+          ListenableBuilder(
+            listenable: AppSecurity.instance,
+            builder: (context, child) {
+              if (course != null) {
+                return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Heading(
+                    headingText: course!.name,
+                    actions: width > overflow ? [
+                      SizedBox(
+                        height: 40,
+                        child: _TeachersBuilder(
+                          course: course!,
+                          axis: Axis.horizontal,
+                        ),
+                      )
+                    ] : null,
+                  ),
+                  const SizedBox(height: 10,),
+                  _Description(width: width, overflow: overflow, course: course!),
+                  (width > overflow && course!.description != '') || width <= overflow ? Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width > overflow ? 50 : 15,
                     ),
-                  )
-                ] : null,
-              ),
-              const SizedBox(height: 10,),
-              _Description(width: width, overflow: overflow, course: course!),
-              (width > overflow && course!.description != '') || width <= overflow ? Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: width > overflow ? 50 : 15,
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10,),
-                    const HeadingLine(),
-                  ],
-                ),
-              ) : Container(),
-              BackgroundBody(
-                child: FutureBuilder<List<CourseItem>>(
-                  future: course!.items,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const WidgetLoading();
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        CourseItem item = snapshot.data![index];
-                        if (item is Test) {
-                          return _TestWidget(
-                            course: course!,
-                            test: item
-                          );
-                        } else if (item is Homework) {
-                          return _HomeworkWidget(
-                            course: course!,
-                            homework: item
-                          );
-                        } else if (item is Quiz) {
-                          return _QuizWidget(
-                            course: course!,
-                            quiz: item,
-                          );
-                        }
-                        return Container();
+                    child: const Column(
+                      children: [
+                        SizedBox(height: 10,),
+                        HeadingLine(),
+                      ],
+                    ),
+                  ) : Container(),
+                  BackgroundBody(
+                    child: FutureBuilder<List<CourseItem>>(
+                      future: course!.items,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const WidgetLoading();
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            CourseItem item = snapshot.data![index];
+                            if (item is Test) {
+                              return _TestWidget(
+                                course: course!,
+                                test: item
+                              );
+                            } else if (item is Homework) {
+                              return _HomeworkWidget(
+                                course: course!,
+                                homework: item
+                              );
+                            } else if (item is Quiz) {
+                              return _QuizWidget(
+                                course: course!,
+                                quiz: item,
+                              );
+                            }
+                            return Container();
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
-              )
-            ],
-          ) : const Center(
-            child: WidgetLoading(),
-          );
-        },
+                    ),
+                  ),
+                  const Heading(headingText: 'My Quizzes'),
+                  BackgroundBody(
+                    child: FutureBuilder(
+                      future: course!.userQuizzes,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const WidgetLoading();
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return _UserQuizWidget(
+                              course: course!,
+                              quiz: snapshot.data![index],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+              } else {
+                return const Center(
+                child: WidgetLoading(),
+              );
+              }
+            },
+          ),
+        ],
       ),
     );
   }
@@ -378,7 +406,7 @@ class _TestDialogState extends State<_TestDialog> {
                 vertical: 25,
               ),
               child: Text(widget.test.password != '' ? 'Enter Password' : 'Start Test',
-                  style: TextStyle(fontSize: 40), textAlign: TextAlign.center),
+                  style: const TextStyle(fontSize: 40), textAlign: TextAlign.center),
             ),
             widget.test.password != '' ? SizedBox(
               width: width > overflow ? 500 : null,
@@ -528,6 +556,41 @@ class _QuizWidget extends StatelessWidget {
   }
 }
 
+class _UserQuizWidget extends StatelessWidget {
+  const _UserQuizWidget({
+    required this.course,
+    required this.quiz,
+    super.key
+  });
+
+  final Course course;
+  final UserQuiz quiz;
+
+  void openQuiz(BuildContext context) {
+    debugPrint('Open user quiz ${quiz.name}');
+    context.goNamed('course-user-quiz', pathParameters: {
+      'course_id': course.id.toString(),
+      'quiz_id': quiz.id.toString()
+    },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconItem(
+      onClick: (context) => openQuiz(context),
+      icon: const _IconText(
+          text: 'Qz',
+          backgroundColor: Colors.greenAccent
+      ),
+      body: _ItemBody(
+        bodyText: quiz.name,
+      ),
+      color: Colors.greenAccent,
+    );
+  }
+}
+
 class _IconText extends StatelessWidget {
   const _IconText({
     required this.text,
@@ -595,7 +658,7 @@ class TeacherWidget extends StatelessWidget {
         color: Theme.of(context).colorScheme.secondary,
         height: 35,
         mainSize: MainAxisSize.min,
-        padding: EdgeInsets.symmetric(horizontal: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 2),
       ),
     );
   }

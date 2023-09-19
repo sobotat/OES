@@ -16,7 +16,8 @@ abstract class CourseGateway {
 
   Future<List<CourseItem>> getCourseItems(int id);
   Future<List<User>> getCourseTeachers(int id);
-  Future<List<UserQuiz>> getUserQuizzes(int courseId);
+  Future<List<UserQuiz>> getUserQuizzes(SignedUser user);
+  Future<UserQuiz> getUserQuiz(SignedUser user, int courseId, int itemId);
 
   Future<CourseItem?> getCourseItem(int courseId, int itemId);
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
@@ -37,7 +39,9 @@ class Course extends ApiObject {
 
   Future<List<UserQuiz>> get userQuizzes async {
     if (_userQuizzes != null) return _userQuizzes!;
-    _userQuizzes = await CourseGateway.instance.getUserQuizzes(id);
-    return Future(() => []);
+    SignedUser? user = AppSecurity.instance.user;
+    if (user == null) return [];
+    _userQuizzes = await CourseGateway.instance.getUserQuizzes(user);
+    return _userQuizzes!;
   }
 }

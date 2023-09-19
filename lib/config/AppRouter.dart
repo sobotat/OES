@@ -9,6 +9,7 @@ import 'package:oes/ui/main/course/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/main/course/CourseTestScreen.dart';
+import 'package:oes/ui/main/course/CourseUserQuizScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
@@ -114,7 +115,21 @@ class AppRouter {
                   int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
                   return CourseQuizScreen(
                     courseId: courseId,
-                    quizId: id
+                    quizId: id,
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'course-user-quiz/:quiz_id',
+                name: 'course-user-quiz',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
+                  return CourseUserQuizScreen(
+                    courseId: courseId,
+                    quizId: id,
                   );
                 },
               ),
@@ -128,7 +143,7 @@ class AppRouter {
                   int id = int.parse(state.pathParameters['homework_id'] ?? '-1');
                   return CourseHomeworkScreen(
                     courseId: courseId,
-                    homeworkId: id
+                    homeworkId: id,
                   );
                 },
               )

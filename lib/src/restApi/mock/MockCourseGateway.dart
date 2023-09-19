@@ -84,7 +84,7 @@ class MockCourseGateway implements CourseGateway {
 
   @override
   Future<List<Course>> getUserCourses(SignedUser user) {
-    return Future.delayed(const Duration(seconds: 1), () {
+    return Future.delayed(const Duration(seconds: 2), () {
       return data[user] ?? [];
     });
   }
@@ -135,8 +135,8 @@ class MockCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<List<UserQuiz>> getUserQuizzes(int courseId) {
-    return Future(() => [
+  Future<List<UserQuiz>> getUserQuizzes(SignedUser user) {
+    return Future.delayed(const Duration(seconds: 1), () => [
       UserQuiz(
         id: 1,
         name: 'Some User Created Quiz',
@@ -145,6 +145,19 @@ class MockCourseGateway implements CourseGateway {
         questions: []
       ),
     ]);
+  }
+
+  @override
+  Future<UserQuiz> getUserQuiz(SignedUser user, int courseId, int itemId) {
+    return Future.delayed(const Duration(seconds: 1), () =>
+      UserQuiz(
+          id: 1,
+          name: 'Some User Created Quiz',
+          created: DateTime(2022, 12, 1, 15, 35),
+          createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+          questions: []
+      ),
+    );
   }
 
   @override
