@@ -67,6 +67,7 @@ class MockUserGateway implements UserGateway {
       List<Device> out = [];
 
       Device device = await DeviceInfo.getDevice();
+      device.lastSignIn = DateTime.now();
       out.add(device);
 
       List<Device> other = [
