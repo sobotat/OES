@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:oes/src/services/LocalStorage.dart';
 
 class AppApi {
@@ -11,6 +12,15 @@ class AppApi {
   String apiServerUrl = 'http://oes-api.sobotovi.net:8001';
 
   Future<void> init() async {
-    useMuckApi = bool.parse(await LocalStorage.instance.get('useMuck') ?? 'false');
+    String? setting = await LocalStorage.instance.get('useMuck');
+    if (setting == null) return;
+
+    try {
+      useMuckApi = bool.parse(setting);
+      debugPrint("Setting loaded [useMuck = $useMuckApi]");
+    } on FormatException {
+      debugPrint("Invalid Value on useMuck");
+      LocalStorage.instance.remove('useMuck');
+    }
   }
 }
