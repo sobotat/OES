@@ -13,14 +13,14 @@ class MockUserGateway implements UserGateway {
         name: 'CZ-IOS',
         platform: DevicePlatform.ios,
         isWeb: false,
-        lastSignIn: DateTime.now()
+        lastSignIn: DateTime(2022, 6, 1, 12, 30)
     ),
     Device(
         id: 4,
         name: 'CZ-MacOS',
         platform: DevicePlatform.macos,
         isWeb: false,
-        lastSignIn: DateTime.now()
+        lastSignIn: DateTime(2023, 2, 1, 16, 35)
     )
   ];
 
@@ -89,7 +89,12 @@ class MockUserGateway implements UserGateway {
   @override
   Future<List<Device>> getDevices() {
     return Future.delayed(const Duration(seconds: 1), () async {
-      return devices;
+      List<Device> sorted = devices.toList();
+      sorted.sort((a, b) {
+        if(a.lastSignIn == null || b.lastSignIn == null) return 0;
+        return a.lastSignIn!.compareTo(b.lastSignIn!) * -1;
+      },);
+      return sorted;
     },);
   }
 
