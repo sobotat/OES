@@ -3,7 +3,8 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/Device.dart';
-import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/objects/SignedUser.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignedDeviceWidget extends StatelessWidget {
@@ -123,9 +124,16 @@ class _Actions extends StatelessWidget {
         text: 'Sign-Out',
         maxWidth: 75,
         maxHeight: 50,
-        onClick: (context) {
-          debugPrint('You sign out of device ${device.id}');
-          UserGateway.instance.logoutFromDevice(device.id);
+        onClick: (context) async {
+          await AppSecurity.instance.logoutFromDevice(device.id);
+          if (context.mounted) {
+            Toast.makeToast(
+                context: context,
+                text: 'You have been signed out of device',
+                duration: ToastDuration.large,
+                icon: Icons.add_moderator
+            );
+          }
         },
       ),
     );

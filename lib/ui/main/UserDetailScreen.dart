@@ -6,6 +6,7 @@ import 'package:oes/src/objects/Device.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 import 'package:oes/ui/assets/widgets/SignedDeviceWidget.dart';
 
 class UserDetailScreen extends StatelessWidget {
@@ -123,21 +124,31 @@ class _Devices extends StatelessWidget {
       child: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, widget) {
-          return FutureBuilder<List<Device>?>(
-            future: AppSecurity.instance.isLoggedIn() ? AppSecurity.instance.user!.signedDevices : Future(() => []),
-            builder: (context, snapshot) {
-              return snapshot.hasData ? ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: SignedDeviceWidget(
-                      device: snapshot.data![index],
-                    ),
-                  );
-                },
-              ) : const Center(child: CircularProgressIndicator());
-            }
+          if (!AppSecurity.instance.isLoggedIn()) return const Center(child: WidgetLoading(),);
+          return ListenableBuilder(
+            listenable: AppSecurity.instance,
+            builder: (context, child) {
+              return FutureBuilder<List<Device>?>(
+                  future: AppSecurity.instance.user!.signedDevices,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: SignedDeviceWidget(
+                            device: snapshot.data![index],
+                          ),
+                        );
+                      },
+                    );
+                    } else {
+                      return const Center(child: WidgetLoading());
+                    }
+                  }
+              );
+            },
           );
         }
       ),
@@ -161,7 +172,7 @@ class _UserInfo extends StatelessWidget {
         _firstNameController.text = AppSecurity.instance.user?.firstName ?? '';
         _lastNameController.text = AppSecurity.instance.user?.lastName ?? '';
         _usernameController.text = AppSecurity.instance.user?.username ?? '';
-        _passwordController.text = AppSecurity.instance.user == null ? '' : '*****.****.****';
+        _passwordController.text = AppSecurity.instance.user == null ? '' : '****.****.****';
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,

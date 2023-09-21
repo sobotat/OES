@@ -51,6 +51,19 @@ class AppSecurity extends ChangeNotifier {
       await UserGateway.instance.logout();
     }
     user = null;
+    device = null;
+    notifyListeners();
+  }
+
+  Future<void> logoutFromDevice(int deviceId) async {
+    await UserGateway.instance.logoutFromDevice(deviceId);
+    if(user != null) {
+      user!.clearCache();
+      if (device != null && device!.id == deviceId) {
+        user = null;
+        device = null;
+      }
+    }
     notifyListeners();
   }
 
