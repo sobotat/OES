@@ -8,11 +8,11 @@ class Device extends ApiObject {
     required this.name,
     required this.platform,
     required this.isWeb,
-    required this.lastSignIn,
+    this.lastSignIn,
   });
 
   String name;
   DevicePlatform platform;
   bool isWeb;
-  DateTime lastSignIn;
+  DateTime? lastSignIn;
 }

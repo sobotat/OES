@@ -8,7 +8,7 @@ import 'package:oes/src/services/LocalStorage.dart';
 class MockUserGateway implements UserGateway {
 
   @override
-  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) async {
+  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
     await Future.delayed(const Duration(seconds: 2));
     LocalStorage localStorage = LocalStorage.instance;
 
@@ -51,8 +51,14 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout(String token) async {
     LocalStorage.instance.remove('token');
+  }
+
+  @override
+  Future<void> logoutFromDevice(String token, int deviceId) {
+    // TODO: implement logoutFromDevice
+    throw UnimplementedError();
   }
 
   @override
@@ -60,14 +66,8 @@ class MockUserGateway implements UserGateway {
     return Future.delayed(const Duration(seconds: 1), () async {
       List<Device> out = [];
 
-      DeviceInfo deviceInfo = await DeviceInfo.getInfo();
-      out.add(Device(
-        id: 1000,
-        name: deviceInfo.name,
-        platform: deviceInfo.platform,
-        isWeb: deviceInfo.isWeb,
-        lastSignIn: DateTime.now())
-      );
+      Device device = await DeviceInfo.getDevice();
+      out.add(device);
 
       List<Device> other = [
         Device(

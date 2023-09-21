@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/LocalStorage.dart';
 
 class AppSecurity extends ChangeNotifier {
@@ -25,17 +27,17 @@ class AppSecurity extends ChangeNotifier {
   }
 
   Future<bool> login(String username, String password, {bool? rememberMe}) async {
-    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true);
+    Device device = await DeviceInfo.getDevice();
+    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true, device);
     notifyListeners();
     return user == null ? false : true;
   }
 
   Future<void> logout() async {
-    if (user == null) {
-      return;
+    if (user == null) return;
+    if (user!.token != null) {
+      await UserGateway.instance.logout(user!.token!);
     }
-
-    await UserGateway.instance.logout();
     user = null;
     notifyListeners();
   }

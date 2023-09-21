@@ -8,11 +8,11 @@ abstract class UserGateway {
 
   static final UserGateway instance = AppApi.instance.useMuckApi ? MockUserGateway() : ApiUserGateway();
 
-  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe);
-
+  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device);
   Future<SignedUser?> loginWithToken(String token);
 
-  Future<void> logout();
+  Future<void> logout(String token);
+  Future<void> logoutFromDevice(String token, int deviceId);
 
   Future<List<Device>> getSignedDevices();
 }

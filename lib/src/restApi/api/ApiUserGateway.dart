@@ -24,14 +24,20 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) {
+  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) {
     // TODO: implement loginWithUsernameAndPassword
     throw UnimplementedError();
   }
 
   @override
-  Future<void> logout() {
+  Future<void> logout(String token) {
     // TODO: implement logout
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> logoutFromDevice(String token, int deviceId) {
+    // TODO: implement logoutFromDevice
     throw UnimplementedError();
   }
 

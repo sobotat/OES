@@ -1,27 +1,16 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'dart:io' show Platform;
 
 class DeviceInfo {
 
-  DeviceInfo({
-    required this.name,
-    required this.platform,
-    required this.isWeb,
-  });
+  DeviceInfo._();
 
-  String name;
-  DevicePlatform platform;
-  bool isWeb;
-
-  @override
-  String toString() {
-    return 'DeviceInfo{name: $name, platform: $platform, isWeb: $isWeb}';
-  }
-
-  static Future<DeviceInfo> getInfo() async {
-    return DeviceInfo(
+  static Future<Device> getDevice() async {
+    return Device(
+      id: -1,
       name:  await _getName(),
       platform: await _getPlatform(),
       isWeb: kIsWeb,
