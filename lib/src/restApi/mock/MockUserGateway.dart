@@ -8,13 +8,6 @@ import 'package:oes/src/services/LocalStorage.dart';
 class MockUserGateway implements UserGateway {
 
   @override
-  Future<SignedUser?> getUser() async {
-    String token = await LocalStorage.instance.get('token') ?? '';
-
-    return (token != '') ? loginWithToken(token) : null;
-  }
-
-  @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe) async {
     await Future.delayed(const Duration(seconds: 2));
     LocalStorage localStorage = LocalStorage.instance;

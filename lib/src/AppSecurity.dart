@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 
 class AppSecurity extends ChangeNotifier {
 
@@ -15,7 +16,10 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    user = await UserGateway.instance.getUser();
+    String? token = await LocalStorage.instance.get('token');
+    if (token != null) {
+      user = await UserGateway.instance.loginWithToken(token);
+    }
     _isInit = true;
     notifyListeners();
   }
