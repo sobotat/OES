@@ -42,31 +42,34 @@ class Toast {
               left: 20,
               right: 20,
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade800,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  icon != null ? Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: Icon(icon,
-                      size: 20,
-                      color: iconColor,
+            child: Material(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icon != null ? Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Icon(icon,
+                        size: 20,
+                        color: iconColor,
+                      ),
+                    ) : Container(height: 0,),
+                    Text(text,
+                      softWrap: true,
+                      style: TextStyle(color: textColor),
+                      textAlign: TextAlign.center,
                     ),
-                  ) : Container(height: 0,),
-                  Text(text,
-                    softWrap: true,
-                    style: TextStyle(color: textColor),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           )
