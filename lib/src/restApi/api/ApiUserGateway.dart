@@ -6,18 +6,6 @@ import 'package:oes/src/restApi/UserGateway.dart';
 class ApiUserGateway implements UserGateway {
 
   @override
-  Future<List<Device>> getSignedDevices() {
-    // TODO: implement getSignedDevices
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<SignedUser?> getUser() {
-    // TODO: implement getUser
-    throw UnimplementedError();
-  }
-
-  @override
   Future<SignedUser?> loginWithToken(String token) {
     // TODO: implement loginWithToken
     throw UnimplementedError();
@@ -30,14 +18,26 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logout(String token) {
+  Future<void> logout() {
     // TODO: implement logout
     throw UnimplementedError();
   }
 
   @override
-  Future<void> logoutFromDevice(String token, int deviceId) {
+  Future<void> logoutFromDevice(int deviceId) {
     // TODO: implement logoutFromDevice
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Device>> getDevices() {
+    // TODO: implement getSignedDevices
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Device> getCurrentDevice() {
+    // TODO: implement getCurrentDevice
     throw UnimplementedError();
   }
 

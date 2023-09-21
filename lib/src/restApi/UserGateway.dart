@@ -11,8 +11,9 @@ abstract class UserGateway {
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device);
   Future<SignedUser?> loginWithToken(String token);
 
-  Future<void> logout(String token);
-  Future<void> logoutFromDevice(String token, int deviceId);
+  Future<void> logout();
+  Future<void> logoutFromDevice(int deviceId);
 
-  Future<List<Device>> getSignedDevices();
+  Future<List<Device>> getDevices();
+  Future<Device> getCurrentDevice();
 }

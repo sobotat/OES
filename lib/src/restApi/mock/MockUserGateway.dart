@@ -7,6 +7,23 @@ import 'package:oes/src/services/LocalStorage.dart';
 
 class MockUserGateway implements UserGateway {
 
+  List<Device> devices = [
+    Device(
+        id: 3,
+        name: 'CZ-IOS',
+        platform: DevicePlatform.ios,
+        isWeb: false,
+        lastSignIn: DateTime.now()
+    ),
+    Device(
+        id: 4,
+        name: 'CZ-MacOS',
+        platform: DevicePlatform.macos,
+        isWeb: false,
+        lastSignIn: DateTime.now()
+    )
+  ];
+
   @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
     await Future.delayed(const Duration(seconds: 2));
@@ -18,6 +35,9 @@ class MockUserGateway implements UserGateway {
       if (rememberMe) {
         localStorage.set('token', token);
       }
+
+      device.lastSignIn = DateTime.now();
+      devices.add(device);
 
       return SignedUser(
         id: 1,
@@ -51,44 +71,30 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logout(String token) async {
+  Future<void> logout() async {
     LocalStorage.instance.remove('token');
   }
 
   @override
-  Future<void> logoutFromDevice(String token, int deviceId) {
-    // TODO: implement logoutFromDevice
-    throw UnimplementedError();
+  Future<void> logoutFromDevice(int deviceId) {
+    for(Device device in devices) {
+      if (device.id == deviceId) {
+        devices.remove(device);
+        break;
+      }
+    }
+    return Future.delayed(const Duration(seconds: 1), () => {});
   }
 
   @override
-  Future<List<Device>> getSignedDevices() {
+  Future<List<Device>> getDevices() {
     return Future.delayed(const Duration(seconds: 1), () async {
-      List<Device> out = [];
-
-      Device device = await DeviceInfo.getDevice();
-      device.lastSignIn = DateTime.now();
-      out.add(device);
-
-      List<Device> other = [
-        Device(
-            id: 3,
-            name: 'CZ-IOS',
-            platform: DevicePlatform.ios,
-            isWeb: false,
-            lastSignIn: DateTime.now()
-        ),
-        Device(
-            id: 4,
-            name: 'CZ-MacOS',
-            platform: DevicePlatform.macos,
-            isWeb: false,
-            lastSignIn: DateTime.now()
-        )
-      ];
-
-      out.addAll(other);
-      return out;
+      return devices;
     },);
+  }
+
+  @override
+  Future<Device> getCurrentDevice() {
+    return Future.delayed(const Duration(seconds: 1), () => devices.last,);
   }
 }
