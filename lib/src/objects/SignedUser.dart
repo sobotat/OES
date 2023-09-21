@@ -8,15 +8,15 @@ class SignedUser extends User {
     required super.firstName,
     required super.lastName,
     required super.username,
-    this.token,
+    required this.token,
   });
 
-  String? token;
+  String token;
   List<Device>? _signedDevices;
 
   Future<List<Device>> get signedDevices async {
     if (_signedDevices != null) return _signedDevices!;
-    _signedDevices = await UserGateway.instance.getSignedDevices();
+    _signedDevices = await UserGateway.instance.getDevices();
     return _signedDevices!;
   }
 
