@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
+import 'package:oes/src/interfaces/ClearCache.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
-class SignedUser extends User {
+class SignedUser extends User implements ClearCache {
   SignedUser({
     required super.id,
     required super.firstName,
@@ -29,4 +31,9 @@ class SignedUser extends User {
 
   @override
   int get hashCode => username.hashCode;
+
+  @override
+  void clearCache() {
+    _signedDevices = null;
+  }
 }
