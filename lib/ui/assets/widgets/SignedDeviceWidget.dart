@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class SignedDeviceWidget extends StatelessWidget {
 
   const SignedDeviceWidget({
-    required this.signedDevice,
+    required this.device,
     super.key
   });
 
-  final Device signedDevice;
+  final Device device;
 
   IconData getIcon() {
-    if(signedDevice.isWeb) {
+    if(device.isWeb) {
       return AppIcons.icon_web;
     }
 
-    switch (signedDevice.platform) {
+    switch (device.platform) {
       case DevicePlatform.android:
         return AppIcons.icon_android;
       case DevicePlatform.ios:
@@ -54,12 +56,12 @@ class SignedDeviceWidget extends StatelessWidget {
                 _Icon(icon: getIcon(),),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: _Info(signedDevice: signedDevice),
+                  child: _Info(signedDevice: device),
                 ),
               ],
             ),
             _Actions(
-              signedDevice: signedDevice,
+              device: device,
             )
           ],
         ),
@@ -106,11 +108,11 @@ class _Info extends StatelessWidget {
 
 class _Actions extends StatelessWidget {
   const _Actions({
-    required this.signedDevice,
+    required this.device,
     super.key,
   });
 
-  final Device signedDevice;
+  final Device device;
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +124,8 @@ class _Actions extends StatelessWidget {
         maxWidth: 75,
         maxHeight: 50,
         onClick: (context) {
-          debugPrint('You sign out of device ${signedDevice.id}');
-          //TODO: Implement sign out
+          debugPrint('You sign out of device ${device.id}');
+          UserGateway.instance.logoutFromDevice(device.id);
         },
       ),
     );

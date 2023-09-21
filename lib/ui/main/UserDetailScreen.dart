@@ -132,7 +132,7 @@ class _Devices extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(2),
                     child: SignedDeviceWidget(
-                      signedDevice: snapshot.data![index],
+                      device: snapshot.data![index],
                     ),
                   );
                 },
