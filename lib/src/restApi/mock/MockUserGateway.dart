@@ -57,6 +57,10 @@ class MockUserGateway implements UserGateway {
     await Future.delayed(const Duration(seconds: 2));
 
     if (token.toLowerCase() == '123456789') {
+      devices.add(await DeviceInfo.getDevice()
+        ..lastSignIn = DateTime.now()
+      );
+
       return SignedUser(
           id: 1,
           firstName:'Karel',
@@ -83,7 +87,7 @@ class MockUserGateway implements UserGateway {
         break;
       }
     }
-    return Future.delayed(const Duration(seconds: 1), () => {});
+    return Future.delayed(const Duration(milliseconds: 100), () => {});
   }
 
   @override
