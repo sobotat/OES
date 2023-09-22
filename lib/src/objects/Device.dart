@@ -23,7 +23,7 @@ class Device extends ApiObject {
         'name': name,
         'platform': platform.name,
         'isWeb': isWeb,
-        'lastSignIn': lastSignIn
+        'lastSignIn': lastSignIn != null ? lastSignIn!.millisecondsSinceEpoch : null
       });
   }
 
@@ -33,7 +33,7 @@ class Device extends ApiObject {
       name: json['name'],
       platform: DevicePlatform.values.firstWhere((e) => e.toString() == 'DevicePlatform.${json['platform']}'),
       isWeb: json['isWeb'],
-      lastSignIn: json['lastSignIn']
+      lastSignIn: json['lastSignIn'] != null ? DateTime.fromMillisecondsSinceEpoch(json['lastSignIn']) : null
     );
   }
 }
