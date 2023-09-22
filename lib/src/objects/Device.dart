@@ -15,4 +15,25 @@ class Device extends ApiObject {
   DevicePlatform platform;
   bool isWeb;
   DateTime? lastSignIn;
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()
+      ..addAll({
+        'name': name,
+        'platform': platform.name,
+        'isWeb': isWeb,
+        'lastSignIn': lastSignIn
+      });
+  }
+
+  factory Device.fromJson(Map<String, dynamic> json) {
+    return Device(
+      id: json['id'],
+      name: json['name'],
+      platform: DevicePlatform.values.firstWhere((e) => e.toString() == 'DevicePlatform.${json['platform']}'),
+      isWeb: json['isWeb'],
+      lastSignIn: json['lastSignIn']
+    );
+  }
 }

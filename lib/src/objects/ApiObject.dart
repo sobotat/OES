@@ -14,4 +14,10 @@ abstract class ApiObject {
 
   @override
   int get hashCode => id.hashCode;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+    };
+  }
 }

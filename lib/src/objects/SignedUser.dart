@@ -36,4 +36,22 @@ class SignedUser extends User implements ClearCache {
   void clearCache() {
     _signedDevices = null;
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()
+    ..addAll({
+      'token': token,
+    });
+  }
+
+  factory SignedUser.fromJson(Map<String, dynamic> json) {
+    return SignedUser(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      username: json['username'],
+      token: json['token'],
+    );
+  }
 }

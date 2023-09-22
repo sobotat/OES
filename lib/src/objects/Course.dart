@@ -44,4 +44,25 @@ class Course extends ApiObject {
     _userQuizzes = await CourseGateway.instance.getUserQuizzes(user);
     return _userQuizzes!;
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()
+      ..addAll({
+        'name': name,
+        'shortName': shortName,
+        'description': description,
+        'color': color != null ? color!.toString().split('(')[1].split(')')[0] : null
+      });
+  }
+
+  factory Course.fromJson(Map<String, dynamic> json) {
+    return Course(
+      id: json['id'],
+      name: json['name'],
+      shortName: json['shortName'],
+      description: json['description'],
+      color: json['color'] != null ? Color(int.parse(json['color'])) : null,
+    );
+  }
 }

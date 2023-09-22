@@ -24,4 +24,23 @@ class User extends ApiObject {
 
   @override
   int get hashCode => super.hashCode ^ id.hashCode;
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()
+      ..addAll({
+        'firstName': firstName,
+        'lastName': lastName,
+        'username': username,
+      });
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      username: json['username']
+    );
+  }
 }
