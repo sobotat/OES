@@ -52,7 +52,7 @@ class Course extends ApiObject {
         'name': name,
         'shortName': shortName,
         'description': description,
-        'color': color != null ? color!.toString().split('(')[1].split(')')[0] : null
+        'color': color != null ? '0x${color!.toString().split('0x')[1].split(')')[0]}' : null
       });
   }
 
