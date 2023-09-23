@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -224,7 +225,13 @@ class _SignInState extends State<SignIn> {
             ),
             const Align(
               alignment: Alignment.topRight,
-              child: ThemeModeButton(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ThemeModeButton(),
+                  SettingButton()
+                ],
+              ),
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -53,6 +54,7 @@ class _AppAppBarState extends State<AppAppBar> {
                     const UserInfoButton(width: 150),
                     const SignOutButton(),
                     const ThemeModeButton(),
+                    const SettingButton(),
                   ],
                 ),
               ),

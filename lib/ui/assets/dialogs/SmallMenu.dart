@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -52,12 +53,9 @@ class SmallMenu extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ThemeModeButton(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                              ),
-                              SignOutButton(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                              ),
+                              ThemeModeButton(),
+                              SignOutButton(),
+                              SettingButton(),
                             ],
                           ),
                         ),

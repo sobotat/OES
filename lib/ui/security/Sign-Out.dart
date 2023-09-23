@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -46,7 +47,13 @@ class _SignOutState extends State<SignOut> {
             ),
             const Align(
               alignment: Alignment.topRight,
-              child: ThemeModeButton(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ThemeModeButton(),
+                  SettingButton()
+                ],
+              ),
             )
           ],
         ),
