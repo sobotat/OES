@@ -21,7 +21,7 @@ class Device extends ApiObject {
     return super.toMap()
       ..addAll({
         'name': name,
-        'platform': platform.name,
+        'platform': platform.index,
         'isWeb': isWeb,
         'lastSignIn': lastSignIn != null ? lastSignIn!.millisecondsSinceEpoch : null
       });
@@ -31,7 +31,7 @@ class Device extends ApiObject {
     return Device(
       id: json['id'],
       name: json['name'],
-      platform: DevicePlatform.values.firstWhere((e) => e.toString() == 'DevicePlatform.${json['platform']}'),
+      platform: DevicePlatform.values.firstWhere((e) => e.index == json['platform']),
       isWeb: json['isWeb'],
       lastSignIn: json['lastSignIn'] != null ? DateTime.fromMillisecondsSinceEpoch(json['lastSignIn']) : null
     );
