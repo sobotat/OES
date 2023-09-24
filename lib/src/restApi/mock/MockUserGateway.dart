@@ -10,18 +10,20 @@ class MockUserGateway implements UserGateway {
 
   List<SignedDevice> devices = [
     SignedDevice(
-        id: 3,
-        name: 'CZ-IOS',
-        platform: DevicePlatform.ios,
-        isWeb: false,
-        lastSignIn: DateTime(2022, 6, 1, 12, 30)
+      id: 3,
+      name: 'CZ-IOS',
+      platform: DevicePlatform.ios,
+      isWeb: false,
+      lastSignIn: DateTime(2022, 6, 1, 12, 30),
+      isCurrent: false,
     ),
     SignedDevice(
-        id: 4,
-        name: 'CZ-MacOS',
-        platform: DevicePlatform.macos,
-        isWeb: false,
-        lastSignIn: DateTime(2023, 2, 1, 16, 35)
+      id: 4,
+      name: 'CZ-MacOS',
+      platform: DevicePlatform.macos,
+      isWeb: false,
+      lastSignIn: DateTime(2023, 2, 1, 16, 35),
+      isCurrent: false,
     )
   ];
 
@@ -42,7 +44,8 @@ class MockUserGateway implements UserGateway {
         name: device.name,
         platform: device.platform,
         isWeb: device.isWeb,
-        lastSignIn: DateTime.now()
+        lastSignIn: DateTime.now(),
+        isCurrent: true,
       ));
 
       return SignedUser(
@@ -70,7 +73,8 @@ class MockUserGateway implements UserGateway {
           name: device.name,
           platform: device.platform,
           isWeb: device.isWeb,
-          lastSignIn: DateTime.now()
+          lastSignIn: DateTime.now(),
+          isCurrent: true,
         )
       );
 
@@ -112,10 +116,5 @@ class MockUserGateway implements UserGateway {
       },);
       return sorted;
     },);
-  }
-
-  @override
-  Future<Device> getCurrentDevice() {
-    return Future.delayed(const Duration(seconds: 1), () => devices.last,);
   }
 }
