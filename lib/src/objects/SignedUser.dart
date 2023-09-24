@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:oes/src/interfaces/ClearCache.dart';
-import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 
@@ -14,9 +13,9 @@ class SignedUser extends User implements ClearCache {
   });
 
   String token;
-  List<Device>? _signedDevices;
+  List<SignedDevice>? _signedDevices;
 
-  Future<List<Device>> get signedDevices async {
+  Future<List<SignedDevice>> get signedDevices async {
     if (_signedDevices != null) return _signedDevices!;
     _signedDevices = await UserGateway.instance.getDevices();
     return _signedDevices!;

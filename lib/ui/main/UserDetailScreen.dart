@@ -3,6 +3,7 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -128,7 +129,7 @@ class _Devices extends StatelessWidget {
           return ListenableBuilder(
             listenable: AppSecurity.instance,
             builder: (context, child) {
-              return FutureBuilder<List<Device>?>(
+              return FutureBuilder<List<SignedDevice>?>(
                   future: AppSecurity.instance.user!.signedDevices,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {

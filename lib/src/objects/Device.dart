@@ -8,13 +8,11 @@ class Device extends ApiObject {
     required this.name,
     required this.platform,
     required this.isWeb,
-    this.lastSignIn,
   });
 
   String name;
   DevicePlatform platform;
   bool isWeb;
-  DateTime? lastSignIn;
 
   @override
   Map<String, dynamic> toMap() {
@@ -23,7 +21,6 @@ class Device extends ApiObject {
         'name': name,
         'platform': platform.index,
         'isWeb': isWeb,
-        'lastSignIn': lastSignIn != null ? lastSignIn!.millisecondsSinceEpoch : null
       });
   }
 
@@ -33,7 +30,6 @@ class Device extends ApiObject {
       name: json['name'],
       platform: DevicePlatform.values.firstWhere((e) => e.index == json['platform']),
       isWeb: json['isWeb'],
-      lastSignIn: json['lastSignIn'] != null ? DateTime.fromMillisecondsSinceEpoch(json['lastSignIn']) : null
     );
   }
 }

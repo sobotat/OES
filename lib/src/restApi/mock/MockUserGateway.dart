@@ -1,5 +1,6 @@
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
@@ -7,15 +8,15 @@ import 'package:oes/src/services/LocalStorage.dart';
 
 class MockUserGateway implements UserGateway {
 
-  List<Device> devices = [
-    Device(
+  List<SignedDevice> devices = [
+    SignedDevice(
         id: 3,
         name: 'CZ-IOS',
         platform: DevicePlatform.ios,
         isWeb: false,
         lastSignIn: DateTime(2022, 6, 1, 12, 30)
     ),
-    Device(
+    SignedDevice(
         id: 4,
         name: 'CZ-MacOS',
         platform: DevicePlatform.macos,
@@ -36,8 +37,13 @@ class MockUserGateway implements UserGateway {
         localStorage.set('token', token);
       }
 
-      device.lastSignIn = DateTime.now();
-      devices.add(device);
+      devices.add(SignedDevice(
+        id: device.id,
+        name: device.name,
+        platform: device.platform,
+        isWeb: device.isWeb,
+        lastSignIn: DateTime.now()
+      ));
 
       return SignedUser(
         id: 1,
@@ -57,8 +63,15 @@ class MockUserGateway implements UserGateway {
     await Future.delayed(const Duration(seconds: 2));
 
     if (token.toLowerCase() == '123456789') {
-      devices.add(await DeviceInfo.getDevice()
-        ..lastSignIn = DateTime.now()
+      Device device = await DeviceInfo.getDevice();
+      devices.add(
+        SignedDevice(
+          id: device.id,
+          name: device.name,
+          platform: device.platform,
+          isWeb: device.isWeb,
+          lastSignIn: DateTime.now()
+        )
       );
 
       return SignedUser(
@@ -91,12 +104,11 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<List<Device>> getDevices() {
+  Future<List<SignedDevice>> getDevices() {
     return Future.delayed(const Duration(seconds: 1), () async {
-      List<Device> sorted = devices.toList();
+      List<SignedDevice> sorted = devices.toList();
       sorted.sort((a, b) {
-        if(a.lastSignIn == null || b.lastSignIn == null) return 0;
-        return a.lastSignIn!.compareTo(b.lastSignIn!) * -1;
+        return a.lastSignIn.compareTo(b.lastSignIn) * -1;
       },);
       return sorted;
     },);

@@ -3,6 +3,7 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -14,7 +15,7 @@ class SignedDeviceWidget extends StatelessWidget {
     super.key
   });
 
-  final Device device;
+  final SignedDevice device;
 
   IconData getIcon() {
     if(device.isWeb) {
@@ -77,7 +78,7 @@ class _Info extends StatelessWidget {
     super.key,
   });
 
-  final Device signedDevice;
+  final SignedDevice signedDevice;
 
   String getName() {
     String platform = '${signedDevice.platform.name[0].toUpperCase()}${signedDevice.platform.name.substring(1).toLowerCase()}';

@@ -10,7 +10,6 @@ class AppSecurity extends ChangeNotifier {
   static final AppSecurity instance = AppSecurity();
 
   SignedUser? user;
-  Device? device;
 
   bool _isInit = false;
   bool get isInit => _isInit;
@@ -23,9 +22,6 @@ class AppSecurity extends ChangeNotifier {
     String? token = await LocalStorage.instance.get('token');
     if (token != null) {
       user = await UserGateway.instance.loginWithToken(token);
-      if (user != null) {
-        device = await UserGateway.instance.getCurrentDevice();
-      }
     }
     _isInit = true;
     notifyListeners();
@@ -36,7 +32,6 @@ class AppSecurity extends ChangeNotifier {
     user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true, device);
 
     if(user != null) {
-      this.device = await UserGateway.instance.getCurrentDevice();
       notifyListeners();
       return true;
     }
@@ -47,11 +42,8 @@ class AppSecurity extends ChangeNotifier {
 
   Future<void> logout() async {
     if (user == null) return;
-    if (user!.token != null) {
-      await UserGateway.instance.logout();
-    }
+    await UserGateway.instance.logout();
     user = null;
-    device = null;
     notifyListeners();
   }
 
@@ -59,10 +51,6 @@ class AppSecurity extends ChangeNotifier {
     await UserGateway.instance.logoutFromDevice(deviceId);
     if(user != null) {
       user!.clearCache();
-      if (device != null && device!.id == deviceId) {
-        user = null;
-        device = null;
-      }
     }
     notifyListeners();
   }
