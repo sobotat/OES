@@ -68,6 +68,7 @@ class _SignInState extends State<SignIn> {
           alignment: Alignment.center,
           child: Material(
             elevation: 10,
+            borderRadius: BorderRadius.circular(10),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -182,9 +183,7 @@ class _SignInState extends State<SignIn> {
                                       child: _Input(
                                         usernameController: usernameController,
                                         passwordController: passwordController,
-                                        loginFunction: () {
-
-                                        },
+                                        loginFunction: login,
                                       ),
                                     )
                                   ],
