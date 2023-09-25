@@ -3,7 +3,7 @@ import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
-import 'package:oes/src/services/LocalStorage.dart';
+import 'package:oes/src/services/SecureStorage.dart';
 
 class AppSecurity extends ChangeNotifier {
 
@@ -19,7 +19,7 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    String? token = await LocalStorage.instance.get('token');
+    String? token = await SecureStorage.instance.get('token');
     if (token != null) {
       user = await UserGateway.instance.loginWithToken(token);
     }

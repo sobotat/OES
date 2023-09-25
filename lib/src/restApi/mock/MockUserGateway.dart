@@ -4,7 +4,7 @@ import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
-import 'package:oes/src/services/LocalStorage.dart';
+import 'package:oes/src/services/SecureStorage.dart';
 
 class MockUserGateway implements UserGateway {
 
@@ -30,13 +30,13 @@ class MockUserGateway implements UserGateway {
   @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
     await Future.delayed(const Duration(seconds: 2));
-    LocalStorage localStorage = LocalStorage.instance;
+    SecureStorage secureStorage = SecureStorage.instance;
 
     if (username.toLowerCase() == 'admin' && password.toLowerCase() == 'admin') {
       String token = '123456789';
 
       if (rememberMe) {
-        localStorage.set('token', token);
+        secureStorage.set('token', token);
       }
 
       devices.add(SignedDevice(
@@ -57,7 +57,7 @@ class MockUserGateway implements UserGateway {
       );
     }
 
-    localStorage.remove('token');
+    secureStorage.remove('token');
     return null;
   }
 
@@ -87,13 +87,13 @@ class MockUserGateway implements UserGateway {
       );
     }
 
-    LocalStorage.instance.remove('token');
+    SecureStorage.instance.remove('token');
     return null;
   }
 
   @override
   Future<void> logout() async {
-    LocalStorage.instance.remove('token');
+    SecureStorage.instance.remove('token');
   }
 
   @override
