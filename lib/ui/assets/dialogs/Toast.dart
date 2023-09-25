@@ -43,7 +43,7 @@ class Toast {
               right: 20,
             ),
             child: Material(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(20),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey.shade800,
