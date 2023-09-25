@@ -40,7 +40,10 @@ class DioRequest extends HttpRequest {
   }
 
   Options? _getOptionsFromHttpRequestOptions(HttpRequestOptions? options) {
-    return options == null ? null : Options(
+    return options == null ? Options(
+      receiveDataWhenStatusError: true,
+      validateStatus: (status) => true,
+    ) : Options(
       contentType: options.contentType,
       extra: options.extra,
       followRedirects: options.followRedirects,
@@ -51,7 +54,7 @@ class DioRequest extends HttpRequest {
       sendTimeout: options.sendTimeout,
       receiveTimeout: options.receiveTimeout,
       receiveDataWhenStatusError: true,
-      validateStatus: options.validateStatus,
+      validateStatus: (status) => true,
     );
   }
 
