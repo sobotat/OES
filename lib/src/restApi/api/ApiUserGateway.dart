@@ -9,27 +9,30 @@ import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
 import 'package:oes/src/restApi/api/http/RequestResult.dart';
 import 'package:oes/src/services/LocalStorage.dart';
+import 'package:oes/src/services/SecureStorage.dart';
 
 class ApiUserGateway implements UserGateway {
 
   String basePath = '${AppApi.instance.apiServerUrl}/api/user';
 
   @override
-  Future<SignedUser?> loginWithToken(String token) async {
-    RequestResult result = await HttpRequest.instance.get(basePath,
+  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
+    RequestResult result = await HttpRequest.instance.post('$basePath/login',
       queryParameters: {
-        'token': token,
-      }
+        'username': username,
+        'password': password,
+      },
     );
 
     if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
       debugPrint('Api Error: [User-loginWithToken] ${result.statusCode} -> ${result.message}');
+      await SecureStorage.instance.remove('token');
       return null;
     }
 
     try {
       SignedUser user = SignedUser.fromJson(result.data);
-      await LocalStorage.instance.set('token', user.token);
+      await SecureStorage.instance.set('token', user.token);
 
       return user;
     } on Exception {
@@ -38,24 +41,20 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
-    RequestResult result = await HttpRequest.instance.get(basePath,
-      queryParameters: {
-        'username': username,
-        'password': password,
-        'rememberMe': rememberMe,
-        'device': device.toMap()
-      },
+  Future<SignedUser?> loginWithToken(String token) async {
+    RequestResult result = await HttpRequest.instance.post('$basePath/TokenLogin',
+      options: AuthHttpRequestOptions(token: token)
     );
 
     if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
       debugPrint('Api Error: [User-loginWithToken] ${result.statusCode} -> ${result.message}');
+      await SecureStorage.instance.remove('token');
       return null;
     }
 
     try {
       SignedUser user = SignedUser.fromJson(result.data);
-      await LocalStorage.instance.set('token', user.token);
+      await SecureStorage.instance.set('token', user.token);
 
       return user;
     } on Exception {
@@ -65,7 +64,7 @@ class ApiUserGateway implements UserGateway {
 
   @override
   Future<void> logout() async {
-    LocalStorage.instance.remove('token');
+    SecureStorage.instance.remove('token');
   }
 
   @override
