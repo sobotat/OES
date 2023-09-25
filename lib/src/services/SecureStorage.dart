@@ -1,5 +1,6 @@
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 
 class SecureStorage {
 
@@ -10,14 +11,29 @@ class SecureStorage {
   SecureStorage._();
 
   Future<String?> get(String key) async {
-    return await storage.read(key: key);
+    try {
+      return storage.read(key: key);
+    } on Exception {
+      print('Warning -> Using LocalStorage instance of SecureStorage');
+      return LocalStorage.instance.get(key);
+    }
   }
 
   Future<void> set(String key, String value) async {
-    await storage.write(key: key, value: value);
+    try {
+      await storage.write(key: key, value: value);
+    } on Exception {
+      print('Warning -> Using LocalStorage instance of SecureStorage');
+      return LocalStorage.instance.set(key, value);
+    }
   }
 
   Future<void> remove(String key) async {
-    await storage.delete(key: key);
+    try {
+      await storage.delete(key: key);
+    } on Exception {
+      print('Warning -> Using LocalStorage instance of SecureStorage');
+      return LocalStorage.instance.remove(key);
+    }
   }
 }
