@@ -6,31 +6,45 @@ class SecureStorage {
 
   static final instance = SecureStorage._();
 
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
+  bool isSupported = true;
+
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   SecureStorage._();
 
-  Future<String?> get(String key) async {
-    return storage.read(key: key)
+  Future<void> init() async {
+    await _storage.write(key: 'test-flutter_secure_storage', value: 'true')
+      .then((value) {
+        isSupported = true;
+        _storage.delete(key: 'test-flutter_secure_storage');
+      })
       .onError((error, stackTrace) {
-        print('Warning -> Using LocalStorage instance of SecureStorage');
-        return LocalStorage.instance.get(key);
-    });
+        isSupported = false;
+        print('Warning -> SecureStorage is not Supported');
+      });
+  }
+
+  Future<String?> get(String key) async {
+    if (!isSupported) {
+      print('Warning -> Using LocalStorage instance of SecureStorage');
+      return await LocalStorage.instance.get(key);
+    }
+    return await _storage.read(key: key);
   }
 
   Future<void> set(String key, String value) async {
-    await storage.write(key: key, value: value)
-      .onError((error, stackTrace) {
-        print('Warning -> Using LocalStorage instance of SecureStorage');
-        return LocalStorage.instance.set(key, value);
-    });
+    if (!isSupported) {
+      print('Warning -> Using LocalStorage instance of SecureStorage');
+      return await LocalStorage.instance.set(key, value);
+    }
+    await _storage.write(key: key, value: value);
   }
 
   Future<void> remove(String key) async {
-    await storage.delete(key: key)
-      .onError((error, stackTrace) {
-        print('Warning -> Using LocalStorage instance of SecureStorage');
-        return LocalStorage.instance.remove(key);
-    });
+    if (!isSupported) {
+      print('Warning -> Using LocalStorage instance of SecureStorage');
+      return await LocalStorage.instance.remove(key);
+    }
+    await _storage.delete(key: key);
   }
 }

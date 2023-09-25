@@ -8,6 +8,7 @@ import 'package:oes/config/DarkTheme.dart';
 import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
+import 'package:oes/src/services/SecureStorage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ Future<void> main() async {
     yield LicenseEntryWithLineBreaks(['google_fonts'], licenseFlowCircular);
   });
 
+  await SecureStorage.instance.init();
   await AppApi.instance.init();
   runApp(MyApp());
 }
