@@ -11,29 +11,26 @@ class SecureStorage {
   SecureStorage._();
 
   Future<String?> get(String key) async {
-    try {
-      return storage.read(key: key);
-    } on Exception {
-      print('Warning -> Using LocalStorage instance of SecureStorage');
-      return LocalStorage.instance.get(key);
-    }
+    return storage.read(key: key)
+      .onError((error, stackTrace) {
+        print('Warning -> Using LocalStorage instance of SecureStorage');
+        return LocalStorage.instance.get(key);
+    });
   }
 
   Future<void> set(String key, String value) async {
-    try {
-      await storage.write(key: key, value: value);
-    } on Exception {
-      print('Warning -> Using LocalStorage instance of SecureStorage');
-      return LocalStorage.instance.set(key, value);
-    }
+    await storage.write(key: key, value: value)
+      .onError((error, stackTrace) {
+        print('Warning -> Using LocalStorage instance of SecureStorage');
+        return LocalStorage.instance.set(key, value);
+    });
   }
 
   Future<void> remove(String key) async {
-    try {
-      await storage.delete(key: key);
-    } on Exception {
-      print('Warning -> Using LocalStorage instance of SecureStorage');
-      return LocalStorage.instance.remove(key);
-    }
+    await storage.delete(key: key)
+      .onError((error, stackTrace) {
+        print('Warning -> Using LocalStorage instance of SecureStorage');
+        return LocalStorage.instance.remove(key);
+    });
   }
 }
