@@ -92,7 +92,7 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout(String token) async {
     SecureStorage.instance.remove('token');
   }
 

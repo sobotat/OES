@@ -12,7 +12,7 @@ abstract class UserGateway {
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device);
   Future<SignedUser?> loginWithToken(String token);
 
-  Future<void> logout();
+  Future<void> logout(String token);
   Future<void> logoutFromDevice(int deviceId);
 
   Future<List<SignedDevice>> getDevices();

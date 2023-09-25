@@ -42,7 +42,7 @@ class AppSecurity extends ChangeNotifier {
 
   Future<void> logout() async {
     if (user == null) return;
-    await UserGateway.instance.logout();
+    await UserGateway.instance.logout(user!.token);
     user = null;
     notifyListeners();
   }

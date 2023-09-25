@@ -17,15 +17,17 @@ class ApiUserGateway implements UserGateway {
 
   @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
+
     RequestResult result = await HttpRequest.instance.post('$basePath/login',
-      queryParameters: {
+      data: {
         'username': username,
         'password': password,
+        'deviceRequest': device.toMap()..remove('id')
       },
     );
 
     if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
-      debugPrint('Api Error: [User-loginWithToken] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [User-loginWithPassword] ${result.statusCode} -> ${result.message}');
       await SecureStorage.instance.remove('token');
       return null;
     }
@@ -63,8 +65,12 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout(String token) async {
     SecureStorage.instance.remove('token');
+
+    await HttpRequest.instance.post('$basePath/TokenLogout',
+        options: AuthHttpRequestOptions(token: token)
+    );
   }
 
   @override
@@ -74,9 +80,8 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<List<SignedDevice>> getDevices() {
-    // TODO: implement getSignedDevices
-    throw UnimplementedError();
+  Future<List<SignedDevice>> getDevices() async {
+    return [];
   }
 
 }
