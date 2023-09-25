@@ -214,9 +214,13 @@ class AppRouter {
         if(context.mounted){
           if (!AppSecurity.instance.isLoggedIn()) {
             debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
-            AppRouter.instance.router.goNamed('sign-in', queryParameters: {
-              'path': state.uri,
-            });
+            try {
+              AppRouter.instance.router.goNamed('sign-in', queryParameters: {
+                'path': state.uri,
+              });
+            } on Exception {
+              AppRouter.instance.router.goNamed('sign-in');
+            }
           }
         }
         AppSecurity.instance.removeListener(listener);
