@@ -19,7 +19,7 @@ class Device extends ApiObject {
     return super.toMap()
       ..addAll({
         'name': name,
-        'platform': platform.index,
+        'platformId': platform.index,
         'isWeb': isWeb,
       });
   }
@@ -28,7 +28,7 @@ class Device extends ApiObject {
     return Device(
       id: json['id'],
       name: json['name'],
-      platform: DevicePlatform.values.firstWhere((e) => e.index == json['platform']),
+      platform: DevicePlatform.values.firstWhere((e) => e.index == json['platformId']),
       isWeb: json['isWeb'],
     );
   }
