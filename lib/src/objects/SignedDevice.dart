@@ -5,7 +5,6 @@ import 'package:oes/src/objects/DevicePlatform.dart';
 class SignedDevice extends Device {
 
   SignedDevice({
-    required super.id,
     required super.name,
     required super.platform,
     required super.isWeb,
@@ -18,22 +17,21 @@ class SignedDevice extends Device {
 
   @override
   Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = super.toMap();
     return super.toMap()
       ..addAll({
         'deviceToken': deviceToken,
-        'lastSignIn': lastSignIn.millisecondsSinceEpoch,
+        'lastSignIn': lastSignIn.toUtc().toString(),
     });
   }
 
   factory SignedDevice.fromJson(Map<String, dynamic> json) {
     return SignedDevice(
-      id: json['id'],
       name: json['name'],
-      platform: DevicePlatform.values.firstWhere((e) => e.index == json['platform']),
+      platform: DevicePlatform.values.firstWhere((e) => e.index == json['platformId']),
       isWeb: json['isWeb'],
       deviceToken: json['deviceToken'],
-      lastSignIn: DateTime.fromMillisecondsSinceEpoch(json['lastSignIn']),
+      lastSignIn: DateTime.tryParse(json['lastSignIn'])!,
     );
   }
-
 }

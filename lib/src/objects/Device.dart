@@ -4,7 +4,6 @@ import 'package:oes/src/objects/ApiObject.dart';
 class Device extends ApiObject {
 
   Device({
-    required super.id,
     required this.name,
     required this.platform,
     required this.isWeb,
@@ -26,7 +25,6 @@ class Device extends ApiObject {
 
   factory Device.fromJson(Map<String, dynamic> json) {
     return Device(
-      id: json['id'],
       name: json['name'],
       platform: DevicePlatform.values.firstWhere((e) => e.index == json['platformId']),
       isWeb: json['isWeb'],

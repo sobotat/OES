@@ -15,5 +15,5 @@ abstract class UserGateway {
   Future<void> logout(String token);
   Future<void> logoutFromDevice(String deviceToken);
 
-  Future<List<SignedDevice>> getDevices();
+  Future<List<SignedDevice>> getDevices(String token);
 }

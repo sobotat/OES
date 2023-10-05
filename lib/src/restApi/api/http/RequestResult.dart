@@ -16,4 +16,7 @@ class RequestResult {
   dynamic data;
   bool isRedirect;
 
+  bool checkUnauthorized() {
+    return statusCode == 401;
+  }
 }

@@ -10,7 +10,6 @@ class MockUserGateway implements UserGateway {
 
   List<SignedDevice> devices = [
     SignedDevice(
-      id: 3,
       name: 'CZ-IOS',
       platform: DevicePlatform.ios,
       isWeb: false,
@@ -18,7 +17,6 @@ class MockUserGateway implements UserGateway {
       lastSignIn: DateTime(2022, 6, 1, 12, 30),
     ),
     SignedDevice(
-      id: 4,
       name: 'CZ-MacOS',
       platform: DevicePlatform.macos,
       isWeb: false,
@@ -40,7 +38,6 @@ class MockUserGateway implements UserGateway {
       }
 
       devices.add(SignedDevice(
-        id: device.id,
         name: device.name,
         platform: device.platform,
         isWeb: device.isWeb,
@@ -49,7 +46,6 @@ class MockUserGateway implements UserGateway {
       ));
 
       return SignedUser(
-        id: 1,
         firstName:'Karel',
         lastName:'Novak',
         username:username,
@@ -69,7 +65,6 @@ class MockUserGateway implements UserGateway {
       Device device = await DeviceInfo.getDevice();
       devices.add(
         SignedDevice(
-          id: device.id,
           name: device.name,
           platform: device.platform,
           isWeb: device.isWeb,
@@ -79,7 +74,6 @@ class MockUserGateway implements UserGateway {
       );
 
       return SignedUser(
-          id: 1,
           firstName:'Karel',
           lastName:'Novak',
           username: 'admin',
@@ -108,7 +102,7 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<List<SignedDevice>> getDevices() {
+  Future<List<SignedDevice>> getDevices(String token) {
     return Future.delayed(const Duration(seconds: 1), () async {
       List<SignedDevice> sorted = devices.toList();
       sorted.sort((a, b) {

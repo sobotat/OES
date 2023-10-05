@@ -10,13 +10,14 @@ import 'package:oes/src/restApi/CourseGateway.dart';
 class Course extends ApiObject {
 
   Course({
-    required id,
+    required this.id,
     required this.name,
     required this.shortName,
     required this.description,
     this.color,
-  }) : super(id: id);
+  });
 
+  int id;
   String name;
   String shortName;
   String description;
@@ -49,6 +50,7 @@ class Course extends ApiObject {
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
+        'id': id,
         'name': name,
         'shortName': shortName,
         'description': description,

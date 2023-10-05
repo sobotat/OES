@@ -19,7 +19,9 @@ import 'package:oes/ui/web/WebHomeScreen.dart';
 class AppRouter {
 
   static final instance = AppRouter._();
-  AppRouter._();
+  AppRouter._() {
+    _setAuthListener();
+  }
 
   String _activeUri = '/';
   String get activeUri => _activeUri;
@@ -198,34 +200,24 @@ class AppRouter {
     String uriNoParams = state.uri.toString().split('?')[0];
     if (uriNoParams != state.matchedLocation) return null;
 
-    // Check user if is Init
-    if(AppSecurity.instance.isInit) {
-      if (!AppSecurity.instance.isLoggedIn()) {
-        debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
-        return '/sign-in?path=${state.uri}';
-      }
-      return null;
-    }
+    if (!AppSecurity.instance.isInit) return null;
+    if (AppSecurity.instance.isLoggedIn()) return null;
 
-    // If not Init will wait for Init
-    Future.delayed(Duration.zero, () {
-      Function() listener = () { };
-      listener = () {
-        if(context.mounted){
-          if (!AppSecurity.instance.isLoggedIn()) {
-            debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
-            AppRouter.instance.router.goNamed('sign-in', queryParameters: {
-              'path': AppRouter.instance.activeUri,
-            });
-          }
-        }
-        AppSecurity.instance.removeListener(listener);
-      };
-      AppSecurity.instance.addListener(listener);
-    });
-
-    return null;
+    debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
+    return '/sign-in?path=${state.uri}';
   };
+
+  void _setAuthListener() {
+    listener() {
+      if (!AppSecurity.instance.isLoggedIn()) {
+        debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
+        AppRouter.instance.router.goNamed('sign-in', queryParameters: {
+          'path': AppRouter.instance.activeUri,
+        });
+      }
+    }
+    AppSecurity.instance.addListener(listener);
+  }
 
   void setNetworkListener() {
     listener() {

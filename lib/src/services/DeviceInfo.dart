@@ -10,7 +10,6 @@ class DeviceInfo {
 
   static Future<Device> getDevice() async {
     return Device(
-      id: -1,
       name:  await _getName(),
       platform: await _getPlatform(),
       isWeb: kIsWeb,

@@ -5,12 +5,13 @@ import 'package:oes/src/objects/ApiObject.dart';
 abstract class CourseItem extends ApiObject {
 
   CourseItem({
-    required super.id,
+    required this.id,
     required this.name,
     required this.created,
     required this.createdBy,
   });
 
+  int id;
   String name;
   DateTime created;
   User createdBy;
