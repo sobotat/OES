@@ -20,7 +20,7 @@ class MockCourseGateway implements CourseGateway {
       id: 1,
       name: 'Write 100x Hello',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
     ),
@@ -28,7 +28,7 @@ class MockCourseGateway implements CourseGateway {
       id: 2,
       name: 'Learn Cities',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdBy: User(id: 2, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
@@ -37,7 +37,7 @@ class MockCourseGateway implements CourseGateway {
       id: 3,
       name: 'Test Cities',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
@@ -47,7 +47,7 @@ class MockCourseGateway implements CourseGateway {
       id: 4,
       name: 'Free Points',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
@@ -59,6 +59,7 @@ class MockCourseGateway implements CourseGateway {
     data = <SignedUser, List<Course>> {};
 
     var user = SignedUser(
+        id: 100,
         firstName:'Karel',
         lastName:'Novak',
         username:'admin',
@@ -112,9 +113,9 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<List<User>> getCourseTeachers(int id) {
     List<User> users = [
-      User(firstName: 'Karel', lastName: 'New', username: 'karel.new'),
-      User(firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
-      User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
+      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
+      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
     ];
 
     return Future.delayed(const Duration(seconds: 1), () {
@@ -140,7 +141,7 @@ class MockCourseGateway implements CourseGateway {
         id: 1,
         name: 'Some User Created Quiz',
         created: DateTime(2022, 12, 1, 15, 35),
-        createdBy: User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+        createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
         questions: []
       ),
     ]);
@@ -153,7 +154,7 @@ class MockCourseGateway implements CourseGateway {
           id: 1,
           name: 'Some User Created Quiz',
           created: DateTime(2022, 12, 1, 15, 35),
-          createdBy: User(firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+          createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
           questions: []
       ),
     );

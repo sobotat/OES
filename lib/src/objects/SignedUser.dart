@@ -5,6 +5,7 @@ import 'package:oes/src/restApi/UserGateway.dart';
 
 class SignedUser extends User implements ClearCache {
   SignedUser({
+    required super.id,
     required super.firstName,
     required super.lastName,
     required super.username,
@@ -45,6 +46,7 @@ class SignedUser extends User implements ClearCache {
 
   factory SignedUser.fromJson(Map<String, dynamic> json) {
     return SignedUser(
+      id: json['id'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       username: json['username'],

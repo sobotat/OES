@@ -46,6 +46,7 @@ class MockUserGateway implements UserGateway {
       ));
 
       return SignedUser(
+        id: 100,
         firstName:'Karel',
         lastName:'Novak',
         username:username,
@@ -74,10 +75,11 @@ class MockUserGateway implements UserGateway {
       );
 
       return SignedUser(
-          firstName:'Karel',
-          lastName:'Novak',
-          username: 'admin',
-          token: token,
+        id: 100,
+        firstName:'Karel',
+        lastName:'Novak',
+        username: 'admin',
+        token: token,
       );
     }
 

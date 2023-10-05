@@ -4,11 +4,13 @@ import 'package:oes/src/objects/ApiObject.dart';
 class User extends ApiObject {
 
   User({
+    required this.id,
     required this.firstName,
     required this.lastName,
     required this.username
   });
 
+  int id;
   String firstName;
   String lastName;
   String username;
@@ -17,6 +19,7 @@ class User extends ApiObject {
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
+        'id': id,
         'firstName': firstName,
         'lastName': lastName,
         'username': username,
@@ -25,6 +28,7 @@ class User extends ApiObject {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+      id: json['id'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       username: json['username']
