@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
-import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
-import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
@@ -57,7 +55,7 @@ class SignedDeviceWidget extends StatelessWidget {
               children: [
                 _Icon(icon: getIcon(),),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: _Info(signedDevice: device),
                 ),
               ],
@@ -75,7 +73,6 @@ class SignedDeviceWidget extends StatelessWidget {
 class _Info extends StatelessWidget {
   const _Info({
     required this.signedDevice,
-    super.key,
   });
 
   final SignedDevice signedDevice;
@@ -111,10 +108,9 @@ class _Info extends StatelessWidget {
 class _Actions extends StatelessWidget {
   const _Actions({
     required this.device,
-    super.key,
   });
 
-  final Device device;
+  final SignedDevice device;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +122,7 @@ class _Actions extends StatelessWidget {
         maxWidth: 75,
         maxHeight: 50,
         onClick: (context) async {
-          await AppSecurity.instance.logoutFromDevice(device.id);
+          await AppSecurity.instance.logoutFromDevice(device.deviceToken);
           if (context.mounted) {
             Toast.makeToast(
                 context: context,
@@ -144,7 +140,6 @@ class _Actions extends StatelessWidget {
 class _Icon extends StatelessWidget {
   const _Icon({
     required this.icon,
-    super.key,
   });
 
   final IconData icon;

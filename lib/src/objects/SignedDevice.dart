@@ -9,19 +9,19 @@ class SignedDevice extends Device {
     required super.name,
     required super.platform,
     required super.isWeb,
-    required this.lastSignIn,
-    required this.isCurrent,
+    required this.deviceToken,
+    required this.lastSignIn
   });
 
+  String deviceToken;
   DateTime lastSignIn;
-  bool isCurrent;
 
   @override
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
+        'deviceToken': deviceToken,
         'lastSignIn': lastSignIn.millisecondsSinceEpoch,
-        'isCurrent': isCurrent,
     });
   }
 
@@ -31,8 +31,8 @@ class SignedDevice extends Device {
       name: json['name'],
       platform: DevicePlatform.values.firstWhere((e) => e.index == json['platform']),
       isWeb: json['isWeb'],
+      deviceToken: json['deviceToken'],
       lastSignIn: DateTime.fromMillisecondsSinceEpoch(json['lastSignIn']),
-      isCurrent: json['isCurrent']
     );
   }
 

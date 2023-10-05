@@ -14,16 +14,16 @@ class MockUserGateway implements UserGateway {
       name: 'CZ-IOS',
       platform: DevicePlatform.ios,
       isWeb: false,
+      deviceToken: '1234${0}',
       lastSignIn: DateTime(2022, 6, 1, 12, 30),
-      isCurrent: false,
     ),
     SignedDevice(
       id: 4,
       name: 'CZ-MacOS',
       platform: DevicePlatform.macos,
       isWeb: false,
+      deviceToken: '1234${1}',
       lastSignIn: DateTime(2023, 2, 1, 16, 35),
-      isCurrent: false,
     )
   ];
 
@@ -44,8 +44,8 @@ class MockUserGateway implements UserGateway {
         name: device.name,
         platform: device.platform,
         isWeb: device.isWeb,
+        deviceToken: '1234${devices.length}',
         lastSignIn: DateTime.now(),
-        isCurrent: true,
       ));
 
       return SignedUser(
@@ -73,8 +73,8 @@ class MockUserGateway implements UserGateway {
           name: device.name,
           platform: device.platform,
           isWeb: device.isWeb,
+          deviceToken: '1234${devices.length}',
           lastSignIn: DateTime.now(),
-          isCurrent: true,
         )
       );
 
@@ -97,9 +97,9 @@ class MockUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logoutFromDevice(int deviceId) {
-    for(Device device in devices) {
-      if (device.id == deviceId) {
+  Future<void> logoutFromDevice(String deviceToken) {
+    for(SignedDevice device in devices) {
+      if (device.deviceToken == deviceToken) {
         devices.remove(device);
         break;
       }

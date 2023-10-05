@@ -74,9 +74,10 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<void> logoutFromDevice(int deviceId) {
-    // TODO: implement logoutFromDevice
-    throw UnimplementedError();
+  Future<void> logoutFromDevice(String deviceToken) async {
+    await HttpRequest.instance.post('$basePath/TokenLogout',
+        options: AuthHttpRequestOptions(token: deviceToken)
+    );
   }
 
   @override
