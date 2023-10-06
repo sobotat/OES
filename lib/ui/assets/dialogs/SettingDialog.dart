@@ -20,7 +20,7 @@ class SettingDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _Title(),
-              _UseMuck()
+              _UseMock()
             ],
           ),
         ),
@@ -29,16 +29,16 @@ class SettingDialog extends StatelessWidget {
   }
 }
 
-class _UseMuck extends StatefulWidget {
-  const _UseMuck({
+class _UseMock extends StatefulWidget {
+  const _UseMock({
     super.key,
   });
 
   @override
-  State<_UseMuck> createState() => _UseMuckState();
+  State<_UseMock> createState() => _UseMockState();
 }
 
-class _UseMuckState extends State<_UseMuck> {
+class _UseMockState extends State<_UseMock> {
 
   String value = 'default';
   String loadedValue = 'default';
@@ -47,12 +47,12 @@ class _UseMuckState extends State<_UseMuck> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      String? useMuck = await LocalStorage.instance.get('useMuck');
-      if (useMuck == null) {
+      String? useMock = await LocalStorage.instance.get('useMock');
+      if (useMock == null) {
         value = 'default';
-      } else if (useMuck == 'true') {
+      } else if (useMock == 'true') {
         value = 'yes';
-      } else if (useMuck == 'false') {
+      } else if (useMock == 'false') {
         value = 'no';
       }
       loadedValue = value;
@@ -66,13 +66,13 @@ class _UseMuckState extends State<_UseMuck> {
 
     switch(value) {
       case 'default':
-        LocalStorage.instance.remove('useMuck');
+        LocalStorage.instance.remove('useMock');
         break;
       case 'yes':
-        LocalStorage.instance.set('useMuck', 'true');
+        LocalStorage.instance.set('useMock', 'true');
         break;
       case 'no':
-        LocalStorage.instance.set('useMuck', 'false');
+        LocalStorage.instance.set('useMock', 'false');
         break;
     }
 
@@ -87,7 +87,7 @@ class _UseMuckState extends State<_UseMuck> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Use Muck Api'),
+            const Text('Use Mock Api'),
             DropdownButton(
               items: const [
                 DropdownMenuItem(value: 'default',child: Text('Default'),),

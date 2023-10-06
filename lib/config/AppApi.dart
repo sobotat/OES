@@ -6,7 +6,7 @@ class AppApi {
   static final AppApi instance = AppApi._();
   AppApi._();
 
-  bool useMuckApi = false;
+  bool useMockApi = false;
 
   String mainServerUrl = 'http://oes-main.sobotovi.net:8002';
   String apiServerUrl = 'http://oes-api.sobotovi.net:8001';
@@ -16,11 +16,11 @@ class AppApi {
     if (setting == null) return;
 
     try {
-      useMuckApi = bool.parse(setting);
-      debugPrint("Setting loaded [useMuck = $useMuckApi]");
+      useMockApi = bool.parse(setting);
+      debugPrint("Setting loaded [useMock = $useMockApi]");
     } on FormatException {
-      debugPrint("Invalid Value on useMuck");
-      LocalStorage.instance.remove('useMuck');
+      debugPrint("Invalid Value on useMock");
+      LocalStorage.instance.remove('useMock');
     }
   }
 }
