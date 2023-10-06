@@ -12,12 +12,10 @@ class Test extends ExamItem {
     required super.end,
     required super.duration,
     required super.isVisible,
-    required this.password,
     required this.maxAttempts,
   }) : super(type: 'test');
 
   int maxAttempts;
-  String password;
 
   @override
   Map<String, dynamic> toMap() {
@@ -31,7 +29,6 @@ class Test extends ExamItem {
         'scheduled': scheduled.toUtc().toString(),
         'end': end.toUtc().toString(),
         'duration': duration,
-        'password': password,
         'maxAttempts': maxAttempts,
       });
   }
@@ -46,7 +43,6 @@ class Test extends ExamItem {
       scheduled: DateTime.tryParse(json['scheduled'])!,
       end: DateTime.tryParse(json['end'])!,
       duration: json['duration'],
-      password: json['password'],
       maxAttempts: json['maxAttempts'],
     );
   }

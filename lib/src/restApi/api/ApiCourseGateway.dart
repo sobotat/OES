@@ -20,7 +20,30 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<Course?> getCourse(int id) async {
-    return map[id];
+
+    // Identity Map
+    Course? course = map[id];
+    if (course != null) return course;
+
+    RequestResult result = await HttpRequest.instance.get('$basePath/course/$id',
+        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    course = Course.fromJson(result.data);
+    map[id] = course;
+
+    return course;
   }
 
   @override
@@ -154,6 +177,31 @@ class ApiCourseGateway implements CourseGateway {
   Future<List<UserQuiz>> getUserQuizzes(SignedUser user) {
     // TODO: implement getUserQuizzes
     throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> checkTestPassword(int courseId, int itemId, String password) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/test/checkPassword',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'id': itemId,
+        'password': password,
+        'courseId': courseId,
+      }
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (result.statusCode != 200) {
+      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
   }
 
 }

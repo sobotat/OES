@@ -94,16 +94,18 @@ class AppRouter {
             },
             routes: [
               GoRoute(
-                path: 'course-test/:test_id',
+                path: 'course-test/:test_id/:password',
                 name: 'course-test',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
                   int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                   int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                  String password = state.pathParameters['password'] ?? '';
                   return CourseTestScreen(
                     courseId: courseId,
-                    testId: id
+                    testId: id,
+                    password: password,
                   );
                 },
               ),

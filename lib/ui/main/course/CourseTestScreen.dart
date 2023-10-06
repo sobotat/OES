@@ -13,11 +13,13 @@ class CourseTestScreen extends StatefulWidget {
   const CourseTestScreen({
     required this.courseId,
     required this.testId,
+    required this.password,
     super.key
   });
 
   final int courseId;
   final int testId;
+  final String password;
 
   @override
   State<CourseTestScreen> createState() => _CourseTestScreenState();
@@ -28,6 +30,11 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
   Test? test;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppAppBar(),
@@ -36,6 +43,15 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
         child: ListenableBuilder(
           listenable: AppSecurity.instance,
           builder: (context, child) {
+            if (AppSecurity.instance.isLoggedIn()) {
+              Future.delayed(Duration.zero, () async {
+                bool okPassword = await CourseGateway.instance.checkTestPassword(widget.courseId, widget.testId, widget.password);
+                print(okPassword);
+                if (!okPassword && mounted) {
+                  context.goNamed('/');
+                }
+              },);
+            }
             return FutureBuilder(
               future: CourseGateway.instance.getCourseItem(widget.courseId, widget.testId, 'test'),
               builder: (context, snapshot) {

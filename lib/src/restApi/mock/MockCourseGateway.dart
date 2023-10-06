@@ -44,7 +44,6 @@ class MockCourseGateway implements CourseGateway {
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
-      password: '1234',
       maxAttempts: 1,
     ),
     Test(
@@ -56,7 +55,6 @@ class MockCourseGateway implements CourseGateway {
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
-      password: '',
       maxAttempts: 3,
     ),
   ];
@@ -176,6 +174,11 @@ class MockCourseGateway implements CourseGateway {
       }
       return null;
     });
+  }
+
+  @override
+  Future<bool> checkTestPassword(int courseId, int itemId, String password) async {
+    return '1234' == password;
   }
 
 }

@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
@@ -292,7 +294,7 @@ class _TestWidgetState extends State<_TestWidget> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () async {
+    Future(() async {
       test = await CourseGateway.instance.getCourseItem(widget.course.id, widget.item.id, 'test') as Test;
       if (mounted) {
         setState(() {});
@@ -350,26 +352,14 @@ class _TestDialogState extends State<_TestDialog> {
   bool goodPassword = false;
   bool hiddenPassword= true;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
-      setState(() {
-        goodPassword = checkPassword();
-      });
-    });
+  Timer? timer;
+
+  Future<bool> checkPassword() async {
+    return await CourseGateway.instance.checkTestPassword(widget.course.id, widget.test.id, passwordController.text);
   }
 
-  bool checkPassword() {
-    if (widget.test.password == '') return true;
-    if (passwordController.text != widget.test.password) {
-      return false;
-    }
-    return true;
-  }
-
-  bool startTest(BuildContext context) {
-    if (!checkPassword()) {
+  Future<bool> startTest(BuildContext context) async {
+    if (!await checkPassword()) {
       debugPrint('Wrong Password to Test');
       return false;
     }
@@ -378,7 +368,9 @@ class _TestDialogState extends State<_TestDialog> {
     if (context.mounted) {
       context.goNamed('course-test', pathParameters: {
         'course_id': widget.course.id.toString(),
-        'test_id': widget.test.id.toString()}
+        'test_id': widget.test.id.toString(),
+        'password': passwordController.text,
+      }
       );
     } else {
       return false;
@@ -404,15 +396,14 @@ class _TestDialogState extends State<_TestDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
+            const Padding(
+              padding: EdgeInsets.symmetric(
                 horizontal: 10,
                 vertical: 25,
               ),
-              child: Text(widget.test.password != '' ? 'Enter Password' : 'Start Test',
-                  style: const TextStyle(fontSize: 40), textAlign: TextAlign.center),
-            ),
-            widget.test.password != '' ? SizedBox(
+              child: Text('Enter Password',
+                  style: TextStyle(fontSize: 40), textAlign: TextAlign.center),
+            ),SizedBox(
               width: width > overflow ? 500 : null,
               child: Row(
                 mainAxisSize: width > overflow ? MainAxisSize.min : MainAxisSize.max,
@@ -430,14 +421,22 @@ class _TestDialogState extends State<_TestDialog> {
                         ),
                         textInputAction: TextInputAction.go,
                         onChanged: (value) {
-                          setState(() {
+                          if (timer != null) {
+                            timer!.cancel();
+                          }
+
+                          timer = Timer(const Duration(seconds: 1), () async {
+                            goodPassword = await checkPassword();
                             enteredWrongPassword = false;
-                            goodPassword = checkPassword();
+                            if (mounted) {
+                              setState(() {});
+                            }
+                            timer = null;
                           });
                         },
-                        onSubmitted: (value) {
+                        onSubmitted: (value) async {
                           if (Platform.isAndroid || Platform.isIOS) return;
-                          if (startTest(context)) {
+                          if (await startTest(context)) {
                             context.pop();
                           }else {
                             setState(() {
@@ -462,22 +461,7 @@ class _TestDialogState extends State<_TestDialog> {
                   )
                 ],
               ),
-            ) : Container(width: 0,),
-            const SizedBox(height: 15,),
-            Button(
-              text: 'Start Test',
-              onClick: (context) {
-                if (startTest(context)) {
-                  context.pop();
-                }else {
-                  setState(() {
-                    enteredWrongPassword = true;
-                  });
-                }
-              },
-              maxWidth: 500,
-              backgroundColor: goodPassword ? Colors.green : enteredWrongPassword ? Colors.red : null,
-            ),
+            )
           ],
         ),
       ),
