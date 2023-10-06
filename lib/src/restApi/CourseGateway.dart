@@ -10,7 +10,7 @@ import 'package:oes/src/restApi/mock/MockCourseGateway.dart';
 
 abstract class CourseGateway {
 
-  static final CourseGateway instance = AppApi.instance.useMuckApi ? MockCourseGateway() : ApiCourseGateway();
+  static final CourseGateway instance = AppApi.instance.useMockApi ? MockCourseGateway() : ApiCourseGateway();
 
   Future<List<Course>> getUserCourses(SignedUser user);
 
