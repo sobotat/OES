@@ -421,13 +421,16 @@ class _TestDialogState extends State<_TestDialog> {
                         ),
                         textInputAction: TextInputAction.go,
                         onChanged: (value) {
+                          setState(() {
+                            enteredWrongPassword = false;
+                          });
                           if (timer != null) {
                             timer!.cancel();
                           }
 
                           timer = Timer(const Duration(seconds: 1), () async {
                             goodPassword = await checkPassword();
-                            enteredWrongPassword = false;
+                            enteredWrongPassword = !goodPassword;
                             if (mounted) {
                               setState(() {});
                             }
@@ -437,11 +440,14 @@ class _TestDialogState extends State<_TestDialog> {
                         onSubmitted: (value) async {
                           if (Platform.isAndroid || Platform.isIOS) return;
                           if (await startTest(context)) {
-                            context.pop();
+                            if (mounted) {
+                              context.pop();
+                            }
                           }else {
-                            setState(() {
-                              enteredWrongPassword = true;
-                            });
+                            enteredWrongPassword = true;
+                            if (mounted) {
+                              setState(() {});
+                            }
                           }
                         },
                       ),
@@ -458,10 +464,33 @@ class _TestDialogState extends State<_TestDialog> {
                         });
                       },
                     ),
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Button(
+              text: 'Start Test',
+              onClick: (context) {
+                Future(() async {
+                  if (await startTest(context)) {
+                    if (mounted) {
+                      context.pop();
+                    }
+                  } else {
+                    enteredWrongPassword = true;
+                    if (mounted) {
+                      setState(() {});
+                    }
+                  }
+                },
+                );
+              },
+              maxWidth: 500,
+              backgroundColor: goodPassword ? Colors.green : enteredWrongPassword ? Colors.red : null,
+            ),
           ],
         ),
       ),
