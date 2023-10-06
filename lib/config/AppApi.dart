@@ -6,7 +6,7 @@ class AppApi {
   static final AppApi instance = AppApi._();
   AppApi._();
 
-  bool useMuckApi = true;
+  bool useMuckApi = false;
 
   String mainServerUrl = 'http://oes-main.sobotovi.net:8002';
   String apiServerUrl = 'http://oes-api.sobotovi.net:8001';
