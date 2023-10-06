@@ -5,18 +5,18 @@ import 'package:oes/src/objects/questions/Question.dart';
 abstract class ExamItem extends SchedulableItem {
 
   ExamItem({
+    required super.type,
     required super.id,
     required super.name,
     required super.created,
-    required super.createdBy,
+    required super.createdById,
     required super.scheduled,
     required super.end,
+    required super.isVisible,
     required this.duration,
-    this.maxTryCount = -1,
   });
 
   int duration;
-  int maxTryCount;
   List<Question>? _questions;
 
   Future<List<Question>> get questions async {

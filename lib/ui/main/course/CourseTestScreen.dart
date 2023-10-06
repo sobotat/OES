@@ -37,7 +37,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
           listenable: AppSecurity.instance,
           builder: (context, child) {
             return FutureBuilder(
-              future: CourseGateway.instance.getCourseItem(widget.courseId, widget.testId),
+              future: CourseGateway.instance.getCourseItem(widget.courseId, widget.testId, 'test'),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
                 test = snapshot.data as Test;

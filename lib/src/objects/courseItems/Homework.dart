@@ -1,5 +1,4 @@
 
-import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/courseItems/SchedulableItem.dart';
 
 class Homework extends SchedulableItem {
@@ -8,10 +7,11 @@ class Homework extends SchedulableItem {
     required super.id,
     required super.name,
     required super.created,
-    required super.createdBy,
+    required super.createdById,
+    required super.isVisible,
     required super.scheduled,
     required super.end,
-  });
+  }) : super(type: 'homework');
 
   //File? file;
 }

@@ -45,7 +45,7 @@ class AuthHttpRequestOptions extends HttpRequestOptions {
     };
 
     if (headers != null) {
-      super.headers!.addAll(headers!);
+      super.headers!.addAll(headers);
     }
   }
 

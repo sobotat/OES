@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -15,9 +14,6 @@ class UserDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
     return Scaffold(
       appBar: const AppAppBar(
         title: Text('User Detail'),

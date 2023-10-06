@@ -7,10 +7,11 @@ class Quiz extends ExamItem {
     required super.id,
     required super.name,
     required super.created,
-    required super.createdBy,
+    required super.createdById,
+    required super.isVisible,
     required super.scheduled,
     required super.end,
     required super.duration,
-  });
+  }) : super(type: 'quiz');
 
 }

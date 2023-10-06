@@ -32,7 +32,7 @@ class _CourseQuizScreenState extends State<CourseQuizScreen> {
         listenable: AppSecurity.instance,
         builder: (context, child) {
           return FutureBuilder(
-            future: CourseGateway.instance.getCourseItem(widget.courseId, widget.quizId),
+            future: CourseGateway.instance.getCourseItem(widget.courseId, widget.quizId, 'quiz'),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Center(child: WidgetLoading());
               quiz = snapshot.data as Quiz;

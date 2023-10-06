@@ -1,41 +1,147 @@
 
+import 'package:flutter/material.dart';
+import 'package:oes/config/AppApi.dart';
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
+import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
+import 'package:oes/src/restApi/api/http/HttpRequest.dart';
+import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
+import 'package:oes/src/restApi/api/http/RequestResult.dart';
 
 class ApiCourseGateway implements CourseGateway {
 
+  String basePath = '${AppApi.instance.apiServerUrl}/api';
+  Map<int, Course> map = {};
+
   @override
-  Future<Course?> getCourse(int id) {
-    // TODO: implement getCourse
-    throw UnimplementedError();
+  Future<Course?> getCourse(int id) async {
+    return map[id];
   }
 
   @override
-  Future<CourseItem?> getCourseItem(int courseId, int itemId) {
-    // TODO: implement getCourseItem
-    throw UnimplementedError();
+  Future<CourseItem?> getCourseItem(int courseId, int itemId, String type) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$type/$itemId',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId': courseId,
+      }
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    switch(type) {
+      case 'test' : return Test.fromJson(result.data);
+      default: return null;
+    }
   }
 
   @override
-  Future<List<CourseItem>> getCourseItems(int id) {
-    // TODO: implement getCourseItems
-    throw UnimplementedError();
+  Future<List<CourseItem>> getCourseItems(int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/course/items/$id',
+        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (result.statusCode != 200 || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<CourseItem> items = [];
+    for (Map<String, dynamic> json in result.data) {
+      try {
+        items.add(CourseItem.fromJson(json));
+      } on Exception catch (e) {
+        debugPrint('Api Error: [Course-getCourseItems] $e');
+      }
+    }
+
+    return items;
   }
 
   @override
-  Future<List<User>> getCourseTeachers(int id) {
-    // TODO: implement getCourseTeachers
-    throw UnimplementedError();
+  Future<List<User>> getCourseTeachers(int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseTeachers',
+        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        queryParameters: {
+          'courseId': id,
+        }
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (result.statusCode != 200 || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<User> users = [];
+    for (Map<String, dynamic> json in result.data) {
+      try {
+        users.add(User.fromJson(json));
+      } on Exception catch (e) {
+        debugPrint('Api Error: [Course-getUserCourses] $e');
+      }
+    }
+
+    return users;
   }
 
   @override
-  Future<List<Course>> getUserCourses(SignedUser user) {
-    // TODO: implement getUserCourses
-    throw UnimplementedError();
+  Future<List<Course>> getUserCourses(SignedUser user) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/course',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'userId': user.id,
+      }
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<Course> courses = [];
+    for (Map<String, dynamic> json in result.data['items']) {
+      try {
+        Course course = Course.fromJson(json);
+        courses.add(course);
+        map[course.id] = course;
+      } on Exception catch (e) {
+        debugPrint('Api Error: [Course-getUserCourses] $e');
+      }
+    }
+
+    return courses;
   }
 
   @override

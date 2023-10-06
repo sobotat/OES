@@ -5,6 +5,7 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
@@ -18,7 +19,7 @@ class ApiUserGateway implements UserGateway {
   @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
 
-    RequestResult result = await HttpRequest.instance.post('$basePath/user/login',
+    RequestResult result = await HttpRequest.instance.post('$basePath/auth/login',
       data: {
         'username': username,
         'password': password,
@@ -44,7 +45,7 @@ class ApiUserGateway implements UserGateway {
 
   @override
   Future<SignedUser?> loginWithToken(String token) async {
-    RequestResult result = await HttpRequest.instance.post('$basePath/user/TokenLogin',
+    RequestResult result = await HttpRequest.instance.post('$basePath/auth/tokenLogin',
       options: AuthHttpRequestOptions(token: token)
     );
 
@@ -68,21 +69,21 @@ class ApiUserGateway implements UserGateway {
   Future<void> logout(String token) async {
     SecureStorage.instance.remove('token');
 
-    await HttpRequest.instance.post('$basePath/user/TokenLogout',
+    await HttpRequest.instance.post('$basePath/auth/tokenLogout',
         options: AuthHttpRequestOptions(token: token)
     );
   }
 
   @override
   Future<void> logoutFromDevice(String deviceToken) async {
-    await HttpRequest.instance.post('$basePath/user/TokenLogout',
+    await HttpRequest.instance.post('$basePath/auth/tokenLogout',
         options: AuthHttpRequestOptions(token: deviceToken)
     );
   }
 
   @override
   Future<List<SignedDevice>> getDevices(String token) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/Session/GetUserSessions',
+    RequestResult result = await HttpRequest.instance.get('$basePath/session/getUserSessions',
         options: AuthHttpRequestOptions(token: token)
     );
 
@@ -103,6 +104,12 @@ class ApiUserGateway implements UserGateway {
     }
 
     return devices;
+  }
+
+  @override
+  Future<User?> getUser(int userId) {
+    // TODO: implement getUser
+    throw UnimplementedError();
   }
 
 }

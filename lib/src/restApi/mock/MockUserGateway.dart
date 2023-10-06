@@ -2,6 +2,7 @@ import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/SecureStorage.dart';
@@ -112,5 +113,17 @@ class MockUserGateway implements UserGateway {
       },);
       return sorted;
     },);
+  }
+
+  @override
+  Future<User?> getUser(int userId) async {
+
+    List<User> users = [
+      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
+      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
+      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+    ];
+
+    return users.where((element) => element.id == userId).single;
   }
 }

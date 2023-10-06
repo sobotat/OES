@@ -19,9 +19,13 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
 
-  _SignInState({this.path = '/'});
+  _SignInState({this.path = '/'}) {
+    if (path.contains('sign-out')) {
+      path = '/';
+    }
+  }
 
-  final String path;
+  String path;
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();

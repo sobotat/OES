@@ -7,7 +7,8 @@ class Document extends CourseItem {
     required super.id,
     required super.name,
     required super.created,
-    required super.createdBy
-  });
+    required super.createdById,
+    required super.isVisible
+  }) : super(type: 'document');
 
 }

@@ -17,7 +17,6 @@ class SignedDevice extends Device {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = super.toMap();
     return super.toMap()
       ..addAll({
         'deviceToken': deviceToken,

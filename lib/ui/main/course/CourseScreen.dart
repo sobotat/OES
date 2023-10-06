@@ -6,10 +6,7 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/objects/courseItems/Homework.dart';
-import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
-import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
@@ -149,23 +146,16 @@ class _CourseScreenState extends State<CourseScreen> {
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             CourseItem item = snapshot.data![index];
-                            if (item is Test) {
+                            if (item.type == 'test') {
                               return _TestWidget(
                                 course: course!,
-                                test: item
-                              );
-                            } else if (item is Homework) {
-                              return _HomeworkWidget(
-                                course: course!,
-                                homework: item
-                              );
-                            } else if (item is Quiz) {
-                              return _QuizWidget(
-                                course: course!,
-                                quiz: item,
+                                item: item,
                               );
                             }
-                            return Container();
+                            return _CourseItemWidget(
+                              course: course!,
+                              item: item
+                            );
                           },
                         );
                       },
@@ -181,10 +171,11 @@ class _CourseScreenState extends State<CourseScreen> {
                           shrinkWrap: true,
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
-                            return _UserQuizWidget(
-                              course: course!,
-                              quiz: snapshot.data![index],
-                            );
+                            // return _UserQuizWidget(
+                            //   course: course!,
+                            //   quiz: snapshot.data![index],
+                            // );
+                            return Container();
                           },
                         );
                       },
@@ -226,17 +217,17 @@ class _Description extends StatelessWidget {
       child: width > overflow ? Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          child: course!.description != '' ? SelectableText(
-            course!.description,
+          child: course.description != '' ? SelectableText(
+            course.description,
           ) : Container(),
         ),
       ) : Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          course!.description != '' ? SelectableText(
-            course!.description,
+          course.description != '' ? SelectableText(
+            course.description,
           ) : Container(),
-          course!.description != '' ? const SizedBox(height: 20,) : Container(),
+          course.description != '' ? const SizedBox(height: 20,) : Container(),
           SizedBox(
             height: 40,
             child: _TeachersBuilder(
@@ -284,12 +275,11 @@ class _TeachersBuilder extends StatelessWidget {
 class _TestWidget extends StatefulWidget {
   const _TestWidget({
     required this.course,
-    required this.test,
-    super.key
+    required this.item,
   });
 
   final Course course;
-  final Test test;
+  final CourseItem item;
 
   @override
   State<_TestWidget> createState() => _TestWidgetState();
@@ -297,14 +287,28 @@ class _TestWidget extends StatefulWidget {
 
 class _TestWidgetState extends State<_TestWidget> {
 
+  Test? test;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      test = await CourseGateway.instance.getCourseItem(widget.course.id, widget.item.id, 'test') as Test;
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
   Future<void> openPasswordDialog(BuildContext context) async {
+    if (test == null) return;
     await showDialog(
       context: context,
       builder: (context) => PopupDialog(
         alignment: Alignment.center,
         child: _TestDialog(
           course: widget.course,
-          test: widget.test,
+          test: test!,
         )
       ),
     );
@@ -319,7 +323,7 @@ class _TestWidgetState extends State<_TestWidget> {
           backgroundColor: Colors.red
       ),
       body: _ItemBody(
-        bodyText: widget.test.name,
+        bodyText: widget.item.name,
       ),
       color: Colors.red,
     );
@@ -488,105 +492,56 @@ class _TestDialogState extends State<_TestDialog> {
 }
 
 
-class _HomeworkWidget extends StatelessWidget {
-  const _HomeworkWidget({
+class _CourseItemWidget extends StatelessWidget {
+  const _CourseItemWidget({
     required this.course,
-    required this.homework,
+    required this.item,
     super.key
   });
 
   final Course course;
-  final Homework homework;
+  final CourseItem item;
 
   void openHomework(BuildContext context) {
-    debugPrint('Open homework ${homework.name}');
-    context.goNamed('course-homework', pathParameters: {
+    debugPrint('Open ${item.type} ${item.name}');
+    context.goNamed('course-${item.type}', pathParameters: {
       'course_id': course.id.toString(),
-      'homework_id': homework.id.toString()}
+      '${item.type}_id': item.id.toString()}
     );
+  }
+
+  String getIconText() {
+    switch(item.type.toLowerCase()) {
+      case 'document': return 'F';
+      case 'homework': return 'Hw';
+      case 'quiz': return 'Qz';
+      case 'user-quiz': return 'U-Qz';
+    }
+    return item.type;
+  }
+
+  Color getColor() {
+    switch(item.type.toLowerCase()) {
+      case 'document': return Colors.lightBlueAccent;
+      case 'homework': return Colors.teal;
+      case 'quiz': return Colors.greenAccent;
+      case 'user-quiz': return Colors.lightGreen;
+    }
+    return Colors.blueAccent;
   }
 
   @override
   Widget build(BuildContext context) {
     return IconItem(
       onClick: (context) => openHomework(context),
-      icon: const _IconText(
-          text: 'Hw',
-          backgroundColor: Colors.blueAccent
+      icon: _IconText(
+          text: getIconText(),
+          backgroundColor: getColor()
       ),
       body: _ItemBody(
-        bodyText: homework.name,
+        bodyText: item.name,
       ),
-      color: Colors.blueAccent,
-    );
-  }
-}
-
-class _QuizWidget extends StatelessWidget {
-  const _QuizWidget({
-    required this.course,
-    required this.quiz,
-    super.key
-  });
-
-  final Course course;
-  final Quiz quiz;
-
-  void openQuiz(BuildContext context) {
-    debugPrint('Open quiz ${quiz.name}');
-    context.goNamed('course-quiz', pathParameters: {
-      'course_id': course.id.toString(),
-      'quiz_id': quiz.id.toString()}
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconItem(
-      onClick: (context) => openQuiz(context),
-      icon: const _IconText(
-        text: 'Qz',
-        backgroundColor: Colors.greenAccent
-      ),
-      body: _ItemBody(
-        bodyText: quiz.name,
-      ),
-      color: Colors.greenAccent,
-    );
-  }
-}
-
-class _UserQuizWidget extends StatelessWidget {
-  const _UserQuizWidget({
-    required this.course,
-    required this.quiz,
-    super.key
-  });
-
-  final Course course;
-  final UserQuiz quiz;
-
-  void openQuiz(BuildContext context) {
-    debugPrint('Open user quiz ${quiz.name}');
-    context.goNamed('course-user-quiz', pathParameters: {
-      'course_id': course.id.toString(),
-      'quiz_id': quiz.id.toString()
-    },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconItem(
-      onClick: (context) => openQuiz(context),
-      icon: const _IconText(
-          text: 'Qz',
-          backgroundColor: Colors.greenAccent
-      ),
-      body: _ItemBody(
-        bodyText: quiz.name,
-      ),
-      color: Colors.greenAccent,
+      color: getColor(),
     );
   }
 }

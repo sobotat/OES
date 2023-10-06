@@ -195,9 +195,6 @@ class _CourseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
     return IconItem(
       icon: Text(
         course.shortName,

@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/CourseGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';

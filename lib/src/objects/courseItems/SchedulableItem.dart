@@ -4,10 +4,12 @@ import 'package:oes/src/objects/courseItems/CourseItem.dart';
 abstract class SchedulableItem extends CourseItem {
 
   SchedulableItem({
+    required super.type,
     required super.id,
     required super.name,
     required super.created,
-    required super.createdBy,
+    required super.createdById,
+    required super.isVisible,
     required this.scheduled,
     required this.end,
   });

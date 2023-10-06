@@ -20,7 +20,8 @@ class MockCourseGateway implements CourseGateway {
       id: 1,
       name: 'Write 100x Hello',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdById: 1,
+      isVisible: true,
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
     ),
@@ -28,7 +29,8 @@ class MockCourseGateway implements CourseGateway {
       id: 2,
       name: 'Learn Cities',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(id: 2, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdById: 2,
+      isVisible: true,
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
@@ -37,21 +39,25 @@ class MockCourseGateway implements CourseGateway {
       id: 3,
       name: 'Test Cities',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(id: 3, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdById: 2,
+      isVisible: true,
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
       password: '1234',
+      maxAttempts: 1,
     ),
     Test(
       id: 4,
       name: 'Free Points',
       created: DateTime(2022, 12, 1, 15, 35),
-      createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      createdById: 3,
+      isVisible: true,
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
       password: '',
+      maxAttempts: 3,
     ),
   ];
 
@@ -141,7 +147,8 @@ class MockCourseGateway implements CourseGateway {
         id: 1,
         name: 'Some User Created Quiz',
         created: DateTime(2022, 12, 1, 15, 35),
-        createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+        createdById: 1,
+        isVisible: true,
         questions: []
       ),
     ]);
@@ -154,14 +161,15 @@ class MockCourseGateway implements CourseGateway {
           id: 1,
           name: 'Some User Created Quiz',
           created: DateTime(2022, 12, 1, 15, 35),
-          createdBy: User(id: 1, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+          createdById: 1,
+          isVisible: true,
           questions: []
       ),
     );
   }
 
   @override
-  Future<CourseItem?> getCourseItem(int courseId, int itemId) {
+  Future<CourseItem?> getCourseItem(int courseId, int itemId, String type) {
     return Future.delayed(const Duration(seconds: 1), () {
       for (CourseItem item in items) {
         if (item.id == itemId) return item;

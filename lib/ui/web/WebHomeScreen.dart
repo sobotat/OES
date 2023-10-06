@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
-import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
-import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
-import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
-import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class WebHomeScreen extends StatefulWidget {
@@ -71,51 +67,6 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _NameBanner extends StatelessWidget {
-  const _NameBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(10),
-              child: Icon(Icons.add_chart),
-            ),
-            Text(MediaQuery.of(context).size.width >= 950 ? 'Online E-Learning System' : 'OES', style: const TextStyle(fontSize: 22),),
-          ],
-        );
-      }
-    );
-  }
-}
-
-class _LargeMenu extends StatelessWidget {
-  const _LargeMenu();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 150,
-            child: _GoToMain(),
-          ),
-          UserInfoButton(
-            width: 150,
-          ),
-          SignOutButton(),
-          ThemeModeButton(),
-        ],
       ),
     );
   }
