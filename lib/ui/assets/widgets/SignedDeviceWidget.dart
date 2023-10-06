@@ -95,7 +95,7 @@ class _Info extends StatelessWidget {
               fontWeight: FontWeight.bold
           ),
         ),
-        Text('Last Signed: \n${signedDevice.lastSignIn.toString()}',
+        Text('Last Signed: \n${signedDevice.lastSignIn.toLocal().toString()}',
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
             fontWeight: FontWeight.w300,
           ),

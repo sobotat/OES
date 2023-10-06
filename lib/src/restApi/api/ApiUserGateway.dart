@@ -103,7 +103,11 @@ class ApiUserGateway implements UserGateway {
         devices.add(SignedDevice.fromJson(json));
     }
 
-    return devices;
+    List<SignedDevice> sorted = devices.toList();
+    sorted.sort((a, b) {
+      return a.lastSignIn.compareTo(b.lastSignIn) * -1;
+    },);
+    return sorted;
   }
 
   @override
