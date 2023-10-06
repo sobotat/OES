@@ -15,6 +15,10 @@ class SignedDeviceWidget extends StatelessWidget {
 
   final SignedDevice device;
 
+  bool isCurrent() {
+    return device.deviceToken == AppSecurity.instance.user!.token;
+  }
+
   IconData getIcon() {
     if(device.isWeb) {
       return AppIcons.icon_web;
@@ -53,7 +57,10 @@ class SignedDeviceWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                _Icon(icon: getIcon(),),
+                _Icon(
+                  icon: getIcon(),
+                  isCurrent: isCurrent(),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: _Info(signedDevice: device),
@@ -140,9 +147,11 @@ class _Actions extends StatelessWidget {
 class _Icon extends StatelessWidget {
   const _Icon({
     required this.icon,
+    required this.isCurrent,
   });
 
   final IconData icon;
+  final bool isCurrent;
 
   @override
   Widget build(BuildContext context) {
@@ -153,8 +162,11 @@ class _Icon extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.primary
+            border: isCurrent ? Border.all(
+                color: Colors.greenAccent.shade400,
+                width: 2) : null,
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.primary
           ),
           alignment: Alignment.center,
           width: 50,
