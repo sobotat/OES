@@ -47,7 +47,7 @@ class UserInfoButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppApi.instance.useMuckApi ? Tooltip(
+                  AppApi.instance.useMockApi ? Tooltip(
                     message: 'Muck Api',
                     waitDuration: const Duration(milliseconds: 500),
                     child: Padding(
