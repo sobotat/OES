@@ -14,14 +14,9 @@ abstract class ExamItem extends SchedulableItem {
     required super.end,
     required super.isVisible,
     required this.duration,
+    required this.questions,
   });
 
   int duration;
-  List<Question>? _questions;
-
-  Future<List<Question>> get questions async {
-    if (_questions != null) return _questions!;
-    //TODO: Implement getting questions
-    throw UnimplementedError();
-  }
+  List<Question> questions;
 }

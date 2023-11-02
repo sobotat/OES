@@ -8,6 +8,6 @@ class FillInQuestion extends Question {
     required super.title,
     required super.description,
     required super.points
-  });
+  }) : super(type: 'fill-in');
 
 }

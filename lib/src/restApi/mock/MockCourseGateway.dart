@@ -34,6 +34,7 @@ class MockCourseGateway implements CourseGateway {
       end: DateTime(2023, 12, 31, 23, 59),
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
+      questions: [],
     ),
     Test(
       id: 3,
@@ -45,6 +46,7 @@ class MockCourseGateway implements CourseGateway {
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
       maxAttempts: 1,
+      questions: [],
     ),
     Test(
       id: 4,
@@ -56,6 +58,7 @@ class MockCourseGateway implements CourseGateway {
       scheduled: DateTime(2023, 1, 1, 0, 0),
       duration: 162000,
       maxAttempts: 3,
+      questions: [],
     ),
   ];
 

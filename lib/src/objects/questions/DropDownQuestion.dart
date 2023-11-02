@@ -8,6 +8,6 @@ class DropDownQuestion extends Question {
     required super.title,
     required super.description,
     required super.points
-  });
+  }) : super(type: 'dropdown');
 
 }

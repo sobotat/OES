@@ -8,6 +8,6 @@ class DragInQuestion extends Question {
     required super.title,
     required super.description,
     required super.points
-  });
+  }) : super(type: 'drag-in');
 
 }

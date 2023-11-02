@@ -9,7 +9,7 @@ abstract class MultipleChoiceQuestion extends Question {
     required super.description,
     required super.points,
     required this.options,
-  });
+  }) : super(type: 'multiple-choice');
 
   List<dynamic> options;
 
