@@ -9,5 +9,7 @@ abstract class TestGateway {
   static final TestGateway instance = AppApi.instance.useMockApi ? MockTestGateway() : ApiTestGateway();
 
   Future<Test?> get(int courseId, int id);
+  Future<Test?> create(int courseId, Test test);
+  Future<Test?> update(int courseId, Test test);
 
 }

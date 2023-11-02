@@ -7,7 +7,7 @@ class MockTestGateway implements TestGateway {
   @override
   Future<Test?> get(int courseId, int id) async {
     return Test(
-      id: id,
+      id: 1,
       name: 'Testing test',
       created: DateTime.now().subtract(const Duration(days: 1)),
       createdById: 1,
@@ -15,7 +15,40 @@ class MockTestGateway implements TestGateway {
       end: DateTime.now().add(const Duration(days: 1)),
       duration: 40,
       isVisible: true,
-      maxAttempts: 3
+      maxAttempts: 3,
+      questions: [],
+    );
+  }
+
+  @override
+  Future<Test?> create(int courseId, Test test) async {
+    return Test(
+      id: 1,
+      name: 'Testing test',
+      created: DateTime.now().subtract(const Duration(days: 1)),
+      createdById: 1,
+      scheduled: DateTime.now(),
+      end: DateTime.now().add(const Duration(days: 1)),
+      duration: 40,
+      isVisible: true,
+      maxAttempts: 3,
+      questions: [],
+    );
+  }
+
+  @override
+  Future<Test?> update(int courseId, Test test) async {
+    return Test(
+      id: 1,
+      name: 'Testing test',
+      created: DateTime.now().subtract(const Duration(days: 1)),
+      createdById: 1,
+      scheduled: DateTime.now(),
+      end: DateTime.now().add(const Duration(days: 1)),
+      duration: 40,
+      isVisible: true,
+      maxAttempts: 3,
+      questions: [],
     );
   }
 

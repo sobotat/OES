@@ -23,12 +23,67 @@ class ApiTestGateway implements TestGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Test-getTest] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Test-get] ${result.statusCode} -> ${result.message}');
       return null;
     }
 
     if (!result.checkOk() || result.data is! Map<String, dynamic>) {
-      debugPrint('Api Error: [Test-getTest] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Test-get] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return Test.fromJson(result.data);
+  }
+
+  @override
+  Future<Test?> create(int courseId, Test test) async {
+
+    Map<String, dynamic> data = test.toMap();
+    data.remove('id');
+
+    RequestResult result = await HttpRequest.instance.post('$basePath/${test.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+      data: data,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-create] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Test-create] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return Test.fromJson(result.data);
+  }
+
+  @override
+  Future<Test?> update(int courseId, Test test) async {
+
+    Map<String, dynamic> data = test.toMap();
+
+    RequestResult result = await HttpRequest.instance.put('$basePath/${test.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+      data: data,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-update] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Test-update] ${result.statusCode} -> ${result.message}');
       return null;
     }
 
