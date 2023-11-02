@@ -32,6 +32,11 @@ class Course extends ApiObject {
     return _items!;
   }
 
+
+  void setTeachers(List<User> value) {
+    _teachers = value;
+  }
+
   Future<List<User>> get teachers async {
     if (_teachers != null) return _teachers!;
     _teachers = await CourseGateway.instance.getCourseTeachers(id);
@@ -44,6 +49,17 @@ class Course extends ApiObject {
     if (user == null) return [];
     _userQuizzes = await CourseGateway.instance.getUserQuizzes(user);
     return _userQuizzes!;
+  }
+
+  Future<bool> isTeacherInCourse(User user) async {
+
+    for(User teacher in await teachers) {
+      if (user.id == teacher.id) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @override
