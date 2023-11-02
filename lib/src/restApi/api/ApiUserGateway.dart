@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
@@ -114,6 +115,44 @@ class ApiUserGateway implements UserGateway {
   Future<User?> getUser(int userId) {
     // TODO: implement getUser
     throw UnimplementedError();
+  }
+
+  @override
+  Future<PagedData<User>?> getAllUsers(int index, {int? count, List<UserRole>? roles}) async {
+
+    Map<String, dynamic> query = {
+      'page': index,
+    };
+    if (count != null) {
+      query['pageSize'] = count;
+    }
+    if (roles != null) {
+      query['userRoles'] = roles.map((e) => e.index).toList();
+    }
+
+    RequestResult result = await HttpRequest.instance.get('$basePath/user',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: query,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [User-getAllUsers] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [User-getAllUsers] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    PagedData<User> users = PagedData.fromJson(result.data);
+
+    for(Map<String, dynamic> userJson in result.data['items']) {
+        users.data.add(User.fromJson(userJson));
+    }
+
+    return users;
   }
 
 }

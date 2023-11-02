@@ -13,8 +13,10 @@ abstract class CourseGateway {
   static final CourseGateway instance = AppApi.instance.useMockApi ? MockCourseGateway() : ApiCourseGateway();
 
   Future<List<Course>> getUserCourses(SignedUser user);
-
   Future<Course?> getCourse(int id);
+  Future<Course?> createCourse(Course course);
+  Future<bool> updateCourse(Course course);
+  Future<bool> deleteCourse(Course course);
 
   Future<List<CourseItem>> getCourseItems(int id);
   Future<List<User>> getCourseTeachers(int id);

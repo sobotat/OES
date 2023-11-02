@@ -181,4 +181,37 @@ class MockCourseGateway implements CourseGateway {
     return '1234' == password;
   }
 
+  @override
+  Future<bool> updateCourse(Course course) async {
+    for (SignedUser user in data.keys) {
+       List<Course>? courses = data[user];
+       if (courses == null) continue;
+       courses[courses.indexWhere((element) => element.id == course.id)] = course;
+       data[user] = courses;
+    }
+    return true;
+  }
+
+  @override
+  Future<Course?> createCourse(Course course) async {
+    course.id = Random.secure().nextInt(1000) + 1000;
+    for (SignedUser user in data.keys) {
+      List<Course>? courses = data[user];
+      if (courses == null) continue;
+      courses[courses.indexWhere((element) => element.id == course.id)] = course;
+      data[user] = courses;
+    }
+    return course;
+  }
+
+  @override
+  Future<bool> deleteCourse(Course course) async {
+    for (SignedUser user in data.keys) {
+      List<Course>? courses = data[user];
+      if (courses == null) continue;
+      courses.removeAt(courses.indexWhere((element) => element.id == course.id));
+      data[user] = courses;
+    }
+    return true;
+  }
 }

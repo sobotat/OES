@@ -1,5 +1,7 @@
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/DevicePlatform.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
@@ -125,5 +127,23 @@ class MockUserGateway implements UserGateway {
     ];
 
     return users.where((element) => element.id == userId).single;
+  }
+
+  @override
+  Future<PagedData<User>?> getAllUsers(int index, {int? count, List<UserRole>? roles}) async {
+
+    List<User> users = [
+      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
+      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
+      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      AppSecurity.instance.user!
+    ];
+
+    return PagedData<User>(
+      page: 0,
+      pageSize: users.length,
+      havePrev: false,
+      haveNext: false,
+    )..data.addAll(users);
   }
 }

@@ -135,6 +135,7 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<List<Course>> getUserCourses(SignedUser user) async {
+
     RequestResult result = await HttpRequest.instance.get('$basePath/course',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       queryParameters: {
@@ -198,6 +199,89 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.statusCode != 200) {
       debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
+  }
+
+  @override
+  Future<bool> updateCourse(Course course) async {
+
+    List<int> teachers = [];
+    for (User user in await course.teachers) {
+      teachers.add(user.id);
+    }
+
+    Map<String, dynamic> data = course.toMap();
+    data.remove('id');
+    data.addAll({
+      'teacherIds': teachers,
+    });
+
+    RequestResult result = await HttpRequest.instance.put('$basePath/course/${course.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      data: data,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-updateCourse] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Course-updateCourse] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    map[course.id] = course;
+    return true;
+  }
+
+  @override
+  Future<Course?> createCourse(Course course) async {
+
+    Map<String, dynamic> data = course.toMap()
+      ..remove('id')
+      ..addAll({'teacherIds' : [ AppSecurity.instance.user!.id ]});
+
+    RequestResult result = await HttpRequest.instance.post('$basePath/course',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      data: data,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-createCourse] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Course-createCourse] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    course = Course.fromJson(result.data);
+    map[course.id] = course;
+
+    return course;
+  }
+
+  @override
+  Future<bool> deleteCourse(Course course) async {
+    RequestResult result = await HttpRequest.instance.delete('$basePath/course/${course.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-deleteCourse] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Course-deleteCourse] ${result.statusCode} -> ${result.message}');
       return false;
     }
 
