@@ -167,16 +167,6 @@ class MockCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<CourseItem?> getCourseItem(int courseId, int itemId, String type) {
-    return Future.delayed(const Duration(seconds: 1), () {
-      for (CourseItem item in items) {
-        if (item.id == itemId) return item;
-      }
-      return null;
-    });
-  }
-
-  @override
   Future<bool> checkTestPassword(int courseId, int itemId, String password) async {
     return '1234' == password;
   }

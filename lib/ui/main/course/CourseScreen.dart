@@ -10,6 +10,7 @@ import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
@@ -295,7 +296,7 @@ class _TestWidgetState extends State<_TestWidget> {
   void initState() {
     super.initState();
     Future(() async {
-      test = await CourseGateway.instance.getCourseItem(widget.course.id, widget.item.id, 'test') as Test;
+      test = await TestGateway.instance.get(widget.course.id, widget.item.id);
       if (mounted) {
         setState(() {});
       }

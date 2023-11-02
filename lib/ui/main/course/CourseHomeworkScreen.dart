@@ -30,14 +30,15 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
       body: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, child) {
-          return FutureBuilder(
-            future: CourseGateway.instance.getCourseItem(widget.courseId, widget.homeworkId, 'homework'),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Center(child: WidgetLoading());
-              homework = snapshot.data as CourseItem;
-              return Center(child: Text(homework!.name));
-            },
-          );
+          // return FutureBuilder(
+          //   future: CourseGateway.instance.getCourseItem(widget.courseId, widget.homeworkId, 'homework'),
+          //   builder: (context, snapshot) {
+          //     if (!snapshot.hasData) return const Center(child: WidgetLoading());
+          //     homework = snapshot.data as CourseItem;
+          //     return Center(child: Text(homework!.name));
+          //   },
+          // );
+          throw UnimplementedError("Homework\\ is not Implemented");
         },
       ),
     );

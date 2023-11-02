@@ -31,14 +31,15 @@ class _CourseQuizScreenState extends State<CourseQuizScreen> {
       body: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, child) {
-          return FutureBuilder(
-            future: CourseGateway.instance.getCourseItem(widget.courseId, widget.quizId, 'quiz'),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Center(child: WidgetLoading());
-              quiz = snapshot.data as Quiz;
-              return Center(child: Text(quiz!.name));
-            },
-          );
+          // return FutureBuilder(
+          //   future: CourseGateway.instance.getCourseItem(widget.courseId, widget.quizId, 'quiz'),
+          //   builder: (context, snapshot) {
+          //     if (!snapshot.hasData) return const Center(child: WidgetLoading());
+          //     quiz = snapshot.data as Quiz;
+          //     return Center(child: Text(quiz!.name));
+          //   },
+          // );
+          throw UnimplementedError("Quiz is not Implemented");
         },
       ),
     );

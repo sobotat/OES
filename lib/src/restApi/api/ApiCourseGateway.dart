@@ -47,32 +47,6 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<CourseItem?> getCourseItem(int courseId, int itemId, String type) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/$type/$itemId',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId': courseId,
-      }
-    );
-
-    if (result.checkUnauthorized()) {
-      AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
-      return null;
-    }
-
-    if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
-      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
-      return null;
-    }
-
-    switch(type) {
-      case 'test' : return Test.fromJson(result.data);
-      default: return null;
-    }
-  }
-
-  @override
   Future<List<CourseItem>> getCourseItems(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/course/items/$id',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
