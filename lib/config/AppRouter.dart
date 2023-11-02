@@ -10,6 +10,7 @@ import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/main/course/CourseTestScreen.dart';
 import 'package:oes/ui/main/course/CourseUserQuizScreen.dart';
+import 'package:oes/ui/network/NoApiScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
@@ -176,8 +177,14 @@ class AppRouter {
         path: '/no-internet',
         name: 'no-internet',
         builder: (context, state) {
-          _setActiveUri(context, state);
           return NoInternetScreen(path: state.uri.queryParameters['path'] ?? '/');
+        },
+      ),
+      GoRoute(
+        path: '/no-api',
+        name: 'no-api',
+        builder: (context, state) {
+          return NoApiScreen(path: activeUri);
         },
       ),
     ],

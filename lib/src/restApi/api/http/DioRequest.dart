@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:oes/config/AppRouter.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
 import 'package:oes/src/restApi/api/http/RequestResult.dart';
@@ -69,7 +70,10 @@ class DioRequest extends HttpRequest {
       data: data,
       queryParameters: queryParameters,
       options: _getOptionsFromHttpRequestOptions(options),
-    );
+    ).onError((error, stackTrace) {
+      AppRouter.instance.router.goNamed('no-api');
+      throw error!;
+    });
 
     return _getResultFromResponse(response);
   }
@@ -85,7 +89,10 @@ class DioRequest extends HttpRequest {
       data: data,
       queryParameters: queryParameters,
       options: _getOptionsFromHttpRequestOptions(options)
-    );
+    ).onError((error, stackTrace) {
+      AppRouter.instance.router.goNamed('no-api');
+      throw error!;
+    });
 
     return _getResultFromResponse(response);
   }
@@ -101,7 +108,10 @@ class DioRequest extends HttpRequest {
         data: data,
         queryParameters: queryParameters,
         options: _getOptionsFromHttpRequestOptions(options)
-    );
+    ).onError((error, stackTrace) {
+      AppRouter.instance.router.goNamed('no-api');
+      throw error!;
+    });
 
     return _getResultFromResponse(response);
   }
@@ -117,7 +127,10 @@ class DioRequest extends HttpRequest {
         data: data,
         queryParameters: queryParameters,
         options: _getOptionsFromHttpRequestOptions(options)
-    );
+    ).onError((error, stackTrace) {
+      AppRouter.instance.router.goNamed('no-api');
+      throw error!;
+    });
 
     return _getResultFromResponse(response);
   }
@@ -133,7 +146,10 @@ class DioRequest extends HttpRequest {
         data: data,
         queryParameters: queryParameters,
         options: _getOptionsFromHttpRequestOptions(options)
-    );
+    ).onError((error, stackTrace) {
+      AppRouter.instance.router.goNamed('no-api');
+      throw error!;
+    });
 
     return _getResultFromResponse(response);
   }
