@@ -41,7 +41,7 @@ class AuthHttpRequestOptions extends HttpRequestOptions {
     super.persistentConnection
   }) {
     super.headers = {
-      'Authorization': token
+      'Authorization': 'Bearer $token'
     };
 
     if (headers != null) {
