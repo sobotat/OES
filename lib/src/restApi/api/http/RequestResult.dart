@@ -19,4 +19,9 @@ class RequestResult {
   bool checkUnauthorized() {
     return statusCode == 401;
   }
+
+  bool checkOk() {
+    if (statusCode == null) return false;
+    return statusCode! >= 200 && statusCode! < 300;
+  }
 }
