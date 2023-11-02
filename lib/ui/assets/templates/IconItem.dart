@@ -76,9 +76,9 @@ class IconItem extends StatelessWidget {
                       ) : Container(),
                     ],
                   ),
-                  width > overflow ? Row(
+                  Row(
                     children: actions,
-                  ) : Container(),
+                  ),
                 ],
               ),
             ),
