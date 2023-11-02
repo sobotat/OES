@@ -1,5 +1,7 @@
 
 import 'package:oes/src/objects/courseItems/ExamItem.dart';
+import 'package:oes/src/objects/questions/Question.dart';
+import 'package:oes/src/objects/questions/QuestionFactory.dart';
 
 class Test extends ExamItem {
 
@@ -12,6 +14,7 @@ class Test extends ExamItem {
     required super.end,
     required super.duration,
     required super.isVisible,
+    required super.questions,
     required this.maxAttempts,
   }) : super(type: 'test');
 
@@ -34,6 +37,13 @@ class Test extends ExamItem {
   }
 
   factory Test.fromJson(Map<String, dynamic> json) {
+    List<Question> questionsList = [];
+    for(Map<String, dynamic> questionJson in json['questions'] ?? []) {
+      Question? question = QuestionFactory.fromJson(questionJson);
+      if (question == null) continue;
+      questionsList.add(question);
+    }
+    
     return Test(
       id: json['id'],
       name: json['name'],
@@ -43,6 +53,7 @@ class Test extends ExamItem {
       scheduled: DateTime.tryParse(json['scheduled'])!,
       end: DateTime.tryParse(json['end'])!,
       duration: json['duration'],
+      questions: questionsList,
       maxAttempts: json['maxAttempts'],
     );
   }

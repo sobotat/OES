@@ -12,6 +12,7 @@ class Quiz extends ExamItem {
     required super.scheduled,
     required super.end,
     required super.duration,
+    required super.questions,
   }) : super(type: 'quiz');
 
 }
