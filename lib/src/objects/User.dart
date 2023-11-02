@@ -1,19 +1,40 @@
 
 import 'package:oes/src/objects/ApiObject.dart';
 
+enum UserRole {
+  admin,
+  teacher,
+  student,
+}
+
 class User extends ApiObject {
 
   User({
     required this.id,
     required this.firstName,
     required this.lastName,
-    required this.username
+    required this.username,
+    this.role = UserRole.student,
   });
 
   int id;
   String firstName;
   String lastName;
   String username;
+  UserRole role;
+
+  @override
+  String toString() {
+    return 'User{id: $id, firstName: $firstName, lastName: $lastName, username: $username}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 
   @override
   Map<String, dynamic> toMap() {
@@ -23,6 +44,7 @@ class User extends ApiObject {
         'firstName': firstName,
         'lastName': lastName,
         'username': username,
+        'role': role.index,
       });
   }
 
@@ -31,7 +53,8 @@ class User extends ApiObject {
       id: json['id'],
       firstName: json['firstName'],
       lastName: json['lastName'],
-      username: json['username']
+      username: json['username'],
+      role: UserRole.values[json['role']],
     );
   }
 }

@@ -9,6 +9,7 @@ class SignedUser extends User implements ClearCache {
     required super.firstName,
     required super.lastName,
     required super.username,
+    super.role,
     required this.token,
   });
 
@@ -50,6 +51,7 @@ class SignedUser extends User implements ClearCache {
       firstName: json['firstName'],
       lastName: json['lastName'],
       username: json['username'],
+      role: UserRole.values[json['role']],
       token: json['token'],
     );
   }
