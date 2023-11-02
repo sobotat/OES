@@ -10,7 +10,7 @@ import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
-import 'package:oes/src/restApi/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 
 class MockCourseGateway implements CourseGateway {
 

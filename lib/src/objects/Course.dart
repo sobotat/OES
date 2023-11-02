@@ -5,7 +5,7 @@ import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/objects/ApiObject.dart';
-import 'package:oes/src/restApi/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 
 class Course extends ApiObject {
 

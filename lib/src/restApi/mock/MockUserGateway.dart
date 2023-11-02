@@ -5,7 +5,7 @@ import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/SecureStorage.dart';
 

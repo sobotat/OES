@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedUser.dart';
-import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/SecureStorage.dart';
 

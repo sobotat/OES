@@ -7,7 +7,7 @@ import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
 import 'package:oes/src/restApi/api/http/RequestResult.dart';

@@ -9,7 +9,7 @@ import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
-import 'package:oes/src/restApi/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/buttons/UserInfoButton.dart';

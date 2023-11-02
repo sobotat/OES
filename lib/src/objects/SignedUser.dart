@@ -1,7 +1,7 @@
 import 'package:oes/src/interfaces/ClearCache.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/restApi/UserGateway.dart';
+import 'package:oes/src/restApi/interface/UserGateway.dart';
 
 class SignedUser extends User implements ClearCache {
   SignedUser({
