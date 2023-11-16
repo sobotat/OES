@@ -136,10 +136,6 @@ class _CoursesState extends State<_Courses> {
       courses = await CourseGateway.instance.getUserCourses(user);
       isInit = true;
 
-      for (Course c in courses) {
-        print("Course ${c.toMap()}");
-      }
-
       if (!mounted) return;
       setState(() {});
     }
