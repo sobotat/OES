@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
-import 'package:oes/ui/main/course/CourseEdit.dart';
+import 'package:oes/ui/main/course/CourseEditScreen.dart';
 import 'package:oes/ui/main/course/CourseHomeworkScreen.dart';
 import 'package:oes/ui/main/course/CourseQuizScreen.dart';
 import 'package:oes/ui/main/course/CourseScreen.dart';
@@ -77,7 +77,7 @@ class AppRouter {
             builder: (context, state) {
               _setActiveUri(context, state);
               int id = int.parse(state.pathParameters['course_id'] ?? '-1');
-              return CourseEditPage(courseId: id);
+              return CourseEditScreen(courseId: id);
             },
           ),
           GoRoute(

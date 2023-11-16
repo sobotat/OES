@@ -13,8 +13,8 @@ import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
-class CourseEditPage extends StatefulWidget {
-  const CourseEditPage({
+class CourseEditScreen extends StatefulWidget {
+  const CourseEditScreen({
     required this.courseId,
     super.key,
   });
@@ -22,10 +22,10 @@ class CourseEditPage extends StatefulWidget {
   final int courseId;
 
   @override
-  State<CourseEditPage> createState() => _CourseEditPageState();
+  State<CourseEditScreen> createState() => _CourseEditScreenState();
 }
 
-class _CourseEditPageState extends State<CourseEditPage> {
+class _CourseEditScreenState extends State<CourseEditScreen> {
 
   GlobalKey<_CourseEditWidgetState> editWidgetStateKey = GlobalKey<_CourseEditWidgetState>();
 
