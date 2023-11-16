@@ -22,12 +22,33 @@ class AppRouter {
 
   static final instance = AppRouter._();
   AppRouter._() {
-    _setAuthListener();
+    authCheckRedirect = (context, state) {
+      if (_authListener == null) {
+        _setAuthListener();
+      }
+      // Check if Active redirect
+      String uriNoParams = state.uri.toString().split('?')[0];
+      if (uriNoParams != state.matchedLocation) return null;
+
+      if (!AppSecurity.instance.isInit) return null;
+      if (AppSecurity.instance.isLoggedIn()) return null;
+
+      debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
+      return '/sign-in?path=${state.uri}';
+    };
+
+    removeAuthRedirect = (context, state) {
+      _removeAuthListener();
+      return null;
+    };
   }
 
   String _activeUri = '/';
   String get activeUri => _activeUri;
   bool disableNetworkCheck = false;
+  Function()? _authListener;
+  late GoRouterRedirect authCheckRedirect;
+  late GoRouterRedirect removeAuthRedirect;
 
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
@@ -35,6 +56,7 @@ class AppRouter {
         path: '/',
         name: '/',
         redirect: (context, state) {
+          removeAuthRedirect(context, state);
           if (!kIsWeb) {
             return '/main';
           }
@@ -48,6 +70,7 @@ class AppRouter {
       GoRoute(
         path: '/sign-in',
         name: 'sign-in',
+        redirect: removeAuthRedirect,
         builder: (context, state) {
           _setActiveUri(context, state);
           return SignIn(path: state.uri.queryParameters['path'] ?? '/');
@@ -56,6 +79,7 @@ class AppRouter {
       GoRoute(
         path: '/sign-out',
         name: 'sign-out',
+        redirect: removeAuthRedirect,
         builder: (context, state) {
           _setActiveUri(context, state);
           return const SignOut();
@@ -166,14 +190,6 @@ class AppRouter {
             ],
           ),
           GoRoute(
-            path: 'mobile-web',
-            name: 'mobile-web',
-            builder: (context, state) {
-              _setActiveUri(context, state);
-              return const WebHomeScreen();
-            },
-          ),
-          GoRoute(
             path: 'user-detail',
             name: 'user-detail',
             redirect: authCheckRedirect,
@@ -187,6 +203,7 @@ class AppRouter {
       GoRoute(
         path: '/no-internet',
         name: 'no-internet',
+        redirect: removeAuthRedirect,
         builder: (context, state) {
           return NoInternetScreen(path: state.uri.queryParameters['path'] ?? '/');
         },
@@ -194,6 +211,7 @@ class AppRouter {
       GoRoute(
         path: '/no-api',
         name: 'no-api',
+        redirect: removeAuthRedirect,
         builder: (context, state) {
           return NoApiScreen(path: activeUri);
         },
@@ -215,28 +233,22 @@ class AppRouter {
     _activeUri = state.uri.toString();
   }
 
-  GoRouterRedirect authCheckRedirect = (context, state) {
-    // Check if Active redirect
-    String uriNoParams = state.uri.toString().split('?')[0];
-    if (uriNoParams != state.matchedLocation) return null;
-
-    if (!AppSecurity.instance.isInit) return null;
-    if (AppSecurity.instance.isLoggedIn()) return null;
-
-    debugPrint('Redirecting to Sign-In Page (User Not LoggedIn)');
-    return '/sign-in?path=${state.uri}';
-  };
-
   void _setAuthListener() {
-    listener() {
+    _authListener = () {
+      if (!AppSecurity.instance.isInit) return;
       if (!AppSecurity.instance.isLoggedIn()) {
         debugPrint('Redirecting to Sign-In Page (User Not LoggedIn) [Listener]');
         AppRouter.instance.router.goNamed('sign-in', queryParameters: {
           'path': AppRouter.instance.activeUri,
         });
       }
-    }
-    AppSecurity.instance.addListener(listener);
+    };
+    if (_authListener != null) AppSecurity.instance.addListener(_authListener!);
+  }
+
+  void _removeAuthListener() {
+    if (_authListener != null) AppSecurity.instance.removeListener(_authListener!);
+    _authListener = null;
   }
 
   void setNetworkListener() {
