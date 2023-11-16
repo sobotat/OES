@@ -179,19 +179,22 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
             headingText: "Info",
             padding: EdgeInsets.all(5),
           ),
-          _CourseEditTexts(
-            nameController: nameController,
-            shortNameController: shortNameController,
-            descriptionController: descriptionController,
-            color: editCourse!.color,
-            onSubmitted: () => save(),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: _CourseEditTexts(
+              nameController: nameController,
+              shortNameController: shortNameController,
+              descriptionController: descriptionController,
+              color: editCourse!.color,
+              onSubmitted: () => save(),
+            ),
           ),
           const Heading(
             headingText: "Color",
             padding: EdgeInsets.all(5),
           ),
           Padding(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(10),
             child: Button(
               text: "Select Color",
               icon: Icons.color_lens,
@@ -218,15 +221,27 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
             headingText: "Teachers",
             padding: EdgeInsets.all(5),
           ),
-          _CourseEditTeachers(
-            course: editCourse!,
-            onTeacherSelectedChanged: (user, isTeacher) {
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: _CourseEditTeachers(
+              course: editCourse!,
+              onTeacherSelectedChanged: (user, isTeacher) {
 
-            },
+              },
+            ),
           ),
           const Heading(
             headingText: "Students",
             padding: EdgeInsets.all(5),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: _CourseEditTeachers(
+              course: editCourse!,
+              onTeacherSelectedChanged: (user, isTeacher) {
+
+              },
+            ),
           ),
         ],
       ),
