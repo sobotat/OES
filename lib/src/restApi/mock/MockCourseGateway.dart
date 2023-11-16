@@ -207,4 +207,7 @@ class MockCourseGateway implements CourseGateway {
     }
     return true;
   }
+
+  @override
+  void clearIdentityMap() {}
 }

@@ -24,4 +24,6 @@ abstract class CourseGateway {
   Future<UserQuiz> getUserQuiz(SignedUser user, int courseId, int itemId);
 
   Future<bool> checkTestPassword(int courseId, int itemId, String password);
+
+  void clearIdentityMap();
 }

@@ -7,10 +7,12 @@ class Heading extends StatelessWidget {
   const Heading({
     required this.headingText,
     this.actions,
+    this.padding,
     super.key,
   });
 
   final String headingText;
+  final EdgeInsets? padding;
   final List<Widget>? actions;
 
   @override
@@ -19,7 +21,7 @@ class Heading extends StatelessWidget {
     var overflow = 950;
 
     return Padding(
-      padding: EdgeInsets.only(
+      padding: padding ?? EdgeInsets.only(
         left: width > overflow ? 50 : 15,
         right: width > overflow ? 50 : 15,
         top: 40,

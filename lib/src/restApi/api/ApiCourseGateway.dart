@@ -262,4 +262,9 @@ class ApiCourseGateway implements CourseGateway {
     return true;
   }
 
+  @override
+  void clearIdentityMap() {
+    map.clear();
+  }
+
 }

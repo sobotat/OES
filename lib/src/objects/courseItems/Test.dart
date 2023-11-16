@@ -14,7 +14,7 @@ class Test extends ExamItem {
     required super.end,
     required super.duration,
     required super.isVisible,
-    required super.questions,
+    super.questions = const [],
     required this.maxAttempts,
   }) : super(type: 'test');
 
