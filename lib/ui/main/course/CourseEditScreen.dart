@@ -110,6 +110,8 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
   final nameController = TextEditingController();
   final shortNameController = TextEditingController();
   final descriptionController = TextEditingController();
+  List<User> teachers = [];
+  List<User> students = [];
   bool colorChanged = false;
   Color color = Colors.blue;
   Course? editCourse;
@@ -133,6 +135,10 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
     descriptionController.text = editCourse!.description;
     widget.course.teachers.then((value) {
       editCourse!.setTeachers(value);
+      if (mounted) {
+        teachers = value;
+        setState(() {});
+      }
     });
 
     if (editCourse!.color != null) {
@@ -147,6 +153,8 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
     course.name = nameController.text.trim();
     course.shortName = shortNameController.text.trim();
     course.description = descriptionController.text.trim();
+
+    course.setTeachers(teachers);
 
     if (colorChanged) course.color = color;
 
@@ -223,10 +231,18 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
           ),
           Padding(
             padding: const EdgeInsets.all(10),
-            child: _CourseEditTeachers(
+            child: _UserSelector(
               course: editCourse!,
-              onTeacherSelectedChanged: (user, isTeacher) {
-
+              hint: "Teacher Name",
+              selectedUsers: teachers,
+              filters: const [UserRole.teacher, UserRole.admin],
+              onSelected: (user, isSelected) {
+                if (isSelected) {
+                  teachers.add(user);
+                } else {
+                  teachers.remove(user);
+                }
+                setState(() {});
               },
             ),
           ),
@@ -236,10 +252,18 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
           ),
           Padding(
             padding: const EdgeInsets.all(10),
-            child: _CourseEditTeachers(
+            child: _UserSelector(
               course: editCourse!,
-              onTeacherSelectedChanged: (user, isTeacher) {
-
+              hint: "Student Name",
+              selectedUsers: students,
+              filters: const [UserRole.student, UserRole.teacher, UserRole.admin],
+              onSelected: (user, isSelected) {
+                if (isSelected) {
+                  students.add(user);
+                } else {
+                  students.remove(user);
+                }
+                setState(() {});
               },
             ),
           ),
@@ -249,23 +273,28 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
   }
 }
 
-class _CourseEditTeachers extends StatefulWidget {
-  const _CourseEditTeachers({
+class _UserSelector extends StatefulWidget {
+  const _UserSelector({
     required this.course,
-    required this.onTeacherSelectedChanged,
+    required this.selectedUsers,
+    required this.onSelected,
+    required this.hint,
+    required this.filters,
   });
 
   final Course course;
-  final Function(User user, bool isTeacher) onTeacherSelectedChanged;
+  final String hint;
+  final List<UserRole> filters;
+  final List<User> selectedUsers;
+  final Function(User user, bool isSelected) onSelected;
 
   @override
-  State<_CourseEditTeachers> createState() => _CourseEditTeachersState();
+  State<_UserSelector> createState() => _UserSelectorState();
 }
 
-class _CourseEditTeachersState extends State<_CourseEditTeachers> {
+class _UserSelectorState extends State<_UserSelector> {
 
   PagedData<User>? users;
-  List<User> teachers = [];
   List<User> filteredUsers = [];
   String filterStr = "";
   bool isInit = false;
@@ -274,8 +303,7 @@ class _CourseEditTeachersState extends State<_CourseEditTeachers> {
   void initState() {
     super.initState();
     Future(() async {
-      teachers = await widget.course.teachers;
-      users = await UserGateway.instance.getAllUsers(1, roles: [UserRole.teacher, UserRole.admin]);
+      users = await UserGateway.instance.getAllUsers(1, roles: widget.filters);
       filteredUsers = filter(filterStr);
       isInit = true;
       if (mounted) setState(() {});
@@ -313,7 +341,7 @@ class _CourseEditTeachersState extends State<_CourseEditTeachers> {
               child: TextField(
                 autocorrect: true,
                 decoration: InputDecoration(
-                  labelText: 'Teacher Name',
+                  labelText: widget.hint,
                   iconColor: filteredUsers.isEmpty ? Colors.red.shade700 : null,
                   icon: const Icon(Icons.search),
                 ),
@@ -366,18 +394,18 @@ class _CourseEditTeachersState extends State<_CourseEditTeachers> {
             itemCount: filteredUsers.length,
             itemBuilder: (context, index) {
               User user = filteredUsers[index];
-              return _CourseTeacherSelector(
+              return _UserSelectorButton(
                 user: user,
-                course: widget.course,
-                isTeacherInCourse: teachers.contains(user),
-                onSelectedChanged: (user, isTeacher) {
-                  if (teachers.contains(user) && !isTeacher && teachers.length > 1) {
-                    teachers.remove(user);
-                  } else if (!teachers.contains(user) && isTeacher) {
-                    teachers.add(user);
-                  }
-                  widget.course.setTeachers(teachers);
-                  if (mounted) setState(() {});
+                isInCourse: widget.selectedUsers.contains(user),
+                onSelectedChanged: (user, isSelected) {
+                  widget.onSelected(user, isSelected);
+                  // if (teachers.contains(user) && !isTeacher && teachers.length > 1) {
+                  //   teachers.remove(user);
+                  // } else if (!teachers.contains(user) && isTeacher) {
+                  //   teachers.add(user);
+                  // }
+                  //widget.course.setTeachers(teachers);
+                  //if (mounted) setState(() {});
                 },
               );
             },
@@ -388,18 +416,16 @@ class _CourseEditTeachersState extends State<_CourseEditTeachers> {
   }
 }
 
-class _CourseTeacherSelector extends StatelessWidget {
-  const _CourseTeacherSelector({
+class _UserSelectorButton extends StatelessWidget {
+  const _UserSelectorButton({
     required this.user,
-    required this.course,
-    required this.isTeacherInCourse,
+    required this.isInCourse,
     required this.onSelectedChanged,
   });
 
   final User user;
-  final Course course;
-  final bool isTeacherInCourse;
-  final Function(User user, bool isTeacher) onSelectedChanged;
+  final bool isInCourse;
+  final Function(User user, bool isSelected) onSelectedChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -407,9 +433,9 @@ class _CourseTeacherSelector extends StatelessWidget {
       padding: const EdgeInsets.all(5),
       child: Button(
         text: '${user.firstName} ${user.lastName}',
-        backgroundColor: isTeacherInCourse ? Colors.green.shade700 : null,
+        backgroundColor: isInCourse ? Colors.green.shade700 : null,
         onClick: (context) {
-          onSelectedChanged(user, !isTeacherInCourse);
+          onSelectedChanged(user, !isInCourse);
         },
       ),
     );
