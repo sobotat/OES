@@ -145,8 +145,7 @@ class _CoursesState extends State<_Courses> {
       }
     ) ?? false;
 
-    print("Connected to Course [$success]");
-    if (mounted) {
+    if (mounted && success) {
       await loadCourses();
     }
   }
