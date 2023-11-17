@@ -235,9 +235,10 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               course: editCourse!,
               hint: "Teacher Name",
               selectedUsers: teachers,
+              hiddenUsers: students,
               filters: const [UserRole.teacher, UserRole.admin],
               onSelected: (user, isSelected) {
-                if (isSelected) {
+                if (isSelected && !students.contains(user)) {
                   teachers.add(user);
                 } else {
                   teachers.remove(user);
@@ -256,9 +257,10 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               course: editCourse!,
               hint: "Student Name",
               selectedUsers: students,
+              hiddenUsers: teachers,
               filters: const [UserRole.student, UserRole.teacher, UserRole.admin],
               onSelected: (user, isSelected) {
-                if (isSelected) {
+                if (isSelected && !teachers.contains(user)) {
                   students.add(user);
                 } else {
                   students.remove(user);
@@ -277,6 +279,7 @@ class _UserSelector extends StatefulWidget {
   const _UserSelector({
     required this.course,
     required this.selectedUsers,
+    required this.hiddenUsers,
     required this.onSelected,
     required this.hint,
     required this.filters,
@@ -286,6 +289,7 @@ class _UserSelector extends StatefulWidget {
   final String hint;
   final List<UserRole> filters;
   final List<User> selectedUsers;
+  final List<User> hiddenUsers;
   final Function(User user, bool isSelected) onSelected;
 
   @override
@@ -316,7 +320,7 @@ class _UserSelectorState extends State<_UserSelector> {
 
     if (users != null) {
       out.addAll(users!.data.where((element) =>
-      searchingFor == '' ||
+          searchingFor == '' ||
           element.firstName.toLowerCase().contains(searchingFor) ||
           element.lastName.toLowerCase().contains(searchingFor) ||
           '${element.firstName} ${element.lastName}'.toLowerCase().contains(searchingFor) ||
@@ -330,6 +334,7 @@ class _UserSelectorState extends State<_UserSelector> {
 
   @override
   Widget build(BuildContext context) {
+    List<User> showUsers = filteredUsers.where((element) => !widget.hiddenUsers.contains(element)).toList();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -342,7 +347,7 @@ class _UserSelectorState extends State<_UserSelector> {
                 autocorrect: true,
                 decoration: InputDecoration(
                   labelText: widget.hint,
-                  iconColor: filteredUsers.isEmpty ? Colors.red.shade700 : null,
+                  iconColor: showUsers.isEmpty ? Colors.red.shade700 : null,
                   icon: const Icon(Icons.search),
                 ),
                 maxLines: 1,
@@ -391,21 +396,14 @@ class _UserSelectorState extends State<_UserSelector> {
           child: isInit ? ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: filteredUsers.length,
+            itemCount: showUsers.length,
             itemBuilder: (context, index) {
-              User user = filteredUsers[index];
+              User user = showUsers[index];
               return _UserSelectorButton(
                 user: user,
                 isInCourse: widget.selectedUsers.contains(user),
                 onSelectedChanged: (user, isSelected) {
                   widget.onSelected(user, isSelected);
-                  // if (teachers.contains(user) && !isTeacher && teachers.length > 1) {
-                  //   teachers.remove(user);
-                  // } else if (!teachers.contains(user) && isTeacher) {
-                  //   teachers.add(user);
-                  // }
-                  //widget.course.setTeachers(teachers);
-                  //if (mounted) setState(() {});
                 },
               );
             },
