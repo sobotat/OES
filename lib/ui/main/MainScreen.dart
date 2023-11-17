@@ -15,6 +15,7 @@ import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -200,40 +201,30 @@ class _CoursesState extends State<_Courses> {
               ],
             ),
             BackgroundBody(
-              child: Builder(
-                  builder: (context) {
-                    return isInit ? ListView.builder(
-                      itemCount: courses.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return FutureBuilder(
-                          future: courses[index].isTeacherInCourse(AppSecurity.instance.user!),
-                          builder: (context, snapshot) {
-                            return _CourseItem(
-                              course: courses[index],
-                              height: 50,
-                              role: role,
-                              isUserTeacher: snapshot.data ?? false,
-                              onUpdated: () async {
-                                await loadCourses();
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ) :
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(25),
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).extension<AppCustomColors>()!.accent,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
+              child: isInit ? ListView.builder(
+                itemCount: courses.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return FutureBuilder(
+                    future: courses[index].isTeacherInCourse(AppSecurity.instance.user!),
+                    builder: (context, snapshot) {
+                      return _CourseItem(
+                        course: courses[index],
+                        height: 50,
+                        role: role,
+                        isUserTeacher: snapshot.data ?? false,
+                        onUpdated: () async {
+                          await loadCourses();
+                        },
+                      );
+                    },
+                  );
+                },
+              ) :
+              const SizedBox(
+                height: 100,
+                child: Center(child: WidgetLoading(),)
               ),
             )
           ],
