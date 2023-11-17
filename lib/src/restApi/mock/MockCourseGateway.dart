@@ -225,4 +225,19 @@ class MockCourseGateway implements CourseGateway {
   @override
   void clearIdentityMap() {}
 
+  @override
+  Future<bool> joinCourse(String code) async {
+    return true;
+  }
+
+  @override
+  Future<String?> generateCode(Course course) async {
+    return "12ABC";
+  }
+
+  @override
+  Future<String?> getCode(Course course) async {
+    return "ABCDE";
+  }
+
 }

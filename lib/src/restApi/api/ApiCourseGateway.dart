@@ -309,4 +309,70 @@ class ApiCourseGateway implements CourseGateway {
   void clearIdentityMap() {
     map.clear();
   }
+
+  @override
+  Future<bool> joinCourse(String code) async {
+
+    RequestResult result = await HttpRequest.instance.put('$basePath/course/join/$code',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-joinCourse] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      if (result.statusCode == 404) {
+        return false;
+      }
+
+      debugPrint('Api Error: [Course-joinCourse] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
+  }
+
+  @override
+  Future<String?> generateCode(Course course) async {
+
+    RequestResult result = await HttpRequest.instance.put('$basePath/course/code/${course.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-generateCode] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! String) {
+      debugPrint('Api Error: [Course-generateCode] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return result.data;
+  }
+
+  @override
+  Future<String?> getCode(Course course) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/course/code/${course.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getCode] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! String) {
+      debugPrint('Api Error: [Course-getCode] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return result.data;
+  }
 }

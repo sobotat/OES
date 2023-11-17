@@ -18,6 +18,10 @@ abstract class CourseGateway {
   Future<bool> updateCourse(Course course);
   Future<bool> deleteCourse(Course course);
 
+  Future<bool> joinCourse(String code);
+  Future<String?> generateCode(Course course);
+  Future<String?> getCode(Course course);
+
   Future<List<CourseItem>> getCourseItems(int id);
   Future<List<User>> getCourseTeachers(int id);
   Future<List<User>> getCourseStudents(int id);

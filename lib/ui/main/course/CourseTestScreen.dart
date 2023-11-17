@@ -85,8 +85,8 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
+                const Padding(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 25,
                   ),

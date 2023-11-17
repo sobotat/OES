@@ -457,7 +457,7 @@ class _TestDialogState extends State<_TestDialog> {
                   Padding(
                     padding: const EdgeInsets.only(top: 10, left: 5),
                     child: Button(
-                      icon: hiddenPassword ? Icons.add_box_outlined : Icons.add_box,
+                      icon: hiddenPassword ? Icons.remove_red_eye_outlined : Icons.remove_red_eye_rounded,
                       maxWidth: 40,
                       onClick: (context) {
                         setState(() {

@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppIcons.dart';
-import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
-import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -18,7 +15,6 @@ import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
-import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -141,8 +137,18 @@ class _CoursesState extends State<_Courses> {
     }
   }
 
-  void joinCourse() {
-    print("Join");
+  Future<void> joinCourse() async {
+    bool success = await showDialog<bool>(
+      context: context, 
+      builder: (context) {
+        return const _JoinDialog();
+      }
+    ) ?? false;
+
+    print("Connected to Course [$success]");
+    if (mounted) {
+      await loadCourses();
+    }
   }
 
   void createCourse() async {
@@ -234,6 +240,116 @@ class _CoursesState extends State<_Courses> {
           ],
         );
       },
+    );
+  }
+}
+
+class _JoinDialog extends StatefulWidget {
+  const _JoinDialog({
+    super.key,
+  });
+
+  @override
+  State<_JoinDialog> createState() => _JoinDialogState();
+}
+
+class _JoinDialogState extends State<_JoinDialog> {
+
+  bool wrongCode = false;
+  TextEditingController controller = TextEditingController();
+
+  Future<bool> join() async {
+    if (controller.text.length != 5) {
+      callWrongCode();
+      return false;
+    }
+
+    bool success = await CourseGateway.instance.joinCourse(controller.text.toUpperCase());
+
+    if (success && mounted) {
+      return true;
+    }
+
+    callWrongCode();
+    return false;
+  }
+
+  void callWrongCode() {
+    setState(() {
+      wrongCode = true;
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        wrongCode = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupDialog(
+      alignment: Alignment.center,
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          width: 300,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 10
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Join Course",
+                  style: TextStyle(fontSize: 30),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: TextField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      hintText: "ABC12"
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLength: 5,
+                    maxLines: 1,
+                    onSubmitted: (value) {
+                      join().then((value) {
+                        if (value && mounted) {
+                          context.pop(true);
+                        }
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Button(
+                    text: "Enter",
+                    backgroundColor: wrongCode ? Colors.red.shade700 : null,
+                    maxWidth: double.infinity,
+                    onClick: (context) {
+                      join().then((value) {
+                        if (value && mounted) {
+                          context.pop(true);
+                        }
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      )
     );
   }
 }

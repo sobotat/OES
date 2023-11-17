@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/User.dart';
@@ -180,7 +181,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (editCourse == null) return Container();
+    if (editCourse == null) return const Center(child: WidgetLoading(),);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -233,6 +234,16 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
             ),
           ),
           const Heading(
+            headingText: "Join Code",
+            padding: EdgeInsets.all(5),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: _JoinCode(
+              course: editCourse!,
+            ),
+          ),
+          const Heading(
             headingText: "Teachers",
             padding: EdgeInsets.all(5),
           ),
@@ -282,6 +293,92 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
   }
 }
 
+class _JoinCode extends StatefulWidget {
+  const _JoinCode({
+    required this.course,
+    super.key,
+  });
+
+  final Course course;
+
+  @override
+  State<_JoinCode> createState() => _JoinCodeState();
+}
+
+class _JoinCodeState extends State<_JoinCode> {
+
+  TextEditingController controller = TextEditingController();
+  bool hidden = true;
+
+  @override
+  void initState() {
+    super.initState();
+    CourseGateway.instance.getCode(widget.course).then((value) {
+      if (mounted) {
+        setState(() {
+          controller.text = value ?? "";
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Flexible(
+          child: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: "Code",
+              enabled: false,
+            ),
+            obscureText: hidden,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10, left: 5),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Button(
+                icon: hidden ? Icons.remove_red_eye_outlined : Icons.remove_red_eye_rounded,
+                toolTip: hidden ? "Show" : "Hide",
+                maxWidth: 40,
+                onClick: (context) {
+                  setState(() {
+                    hidden = !hidden;
+                  });
+                },
+              ),
+              const SizedBox(width: 5,),
+              Button(
+                text: "Generate New Code",
+                backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+                icon: Icons.new_label,
+                onClick: (context) async {
+                  String? code = await CourseGateway.instance.generateCode(widget.course);
+                  if (mounted) {
+                    setState(() {
+                      controller.text = code ?? "";
+                    });
+                  }
+                },
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _UserSelector extends StatefulWidget {
   const _UserSelector({
     required this.course,
@@ -314,7 +411,7 @@ class _UserSelectorState extends State<_UserSelector> {
   void initState() {
     super.initState();
     Future(() async {
-      users = await UserGateway.instance.getAllUsers(1, roles: widget.filters);
+      users = await UserGateway.instance.getAllUsers(1, roles: widget.filters, count: 15);
       filteredUsers = filter(filterStr);
       isInit = true;
       if (mounted) setState(() {});
@@ -398,24 +495,21 @@ class _UserSelectorState extends State<_UserSelector> {
             ),
           ],
         ),
-        SizedBox(
-          height: 350,
-          child: isInit ? ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: showUsers.length,
-            itemBuilder: (context, index) {
-              User user = showUsers[index];
-              return _UserSelectorButton(
-                user: user,
-                isInCourse: widget.selectedUsers.contains(user),
-                onSelectedChanged: (user, isSelected) {
-                  widget.onSelected(user, isSelected);
-                },
-              );
-            },
-          ) : const Center(child: WidgetLoading()),
-        ),
+        isInit ? ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: showUsers.length,
+          itemBuilder: (context, index) {
+            User user = showUsers[index];
+            return _UserSelectorButton(
+              user: user,
+              isInCourse: widget.selectedUsers.contains(user),
+              onSelectedChanged: (user, isSelected) {
+                widget.onSelected(user, isSelected);
+              },
+            );
+          },
+        ) : const Center(child: WidgetLoading()),
       ],
     );
   }
