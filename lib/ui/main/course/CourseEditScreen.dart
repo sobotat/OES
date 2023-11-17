@@ -41,6 +41,7 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
           Course course = snapshot.data!;
 
           return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Heading(
                 headingText: "Edit Course",
@@ -72,14 +73,16 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
                   )
                 ],
               ),
-              BackgroundBody(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _CourseEditWidget(
-                    key: editWidgetStateKey,
-                    course: course,
-                    onDelete: () => context.pop(true),
-                    onUpdated: () => context.pop(true),
+              Flexible(
+                child: BackgroundBody(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _CourseEditWidget(
+                      key: editWidgetStateKey,
+                      course: course,
+                      onDelete: () => context.pop(true),
+                      onUpdated: () => context.pop(true),
+                    ),
                   ),
                 ),
               ),
@@ -359,7 +362,7 @@ class _JoinCodeState extends State<_JoinCode> {
               ),
               const SizedBox(width: 5,),
               Button(
-                text: "Generate New Code",
+                text: "Generate Code",
                 backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
                 icon: Icons.new_label,
                 onClick: (context) async {
@@ -438,10 +441,25 @@ class _UserSelectorState extends State<_UserSelector> {
 
   @override
   Widget build(BuildContext context) {
-    List<User> showUsers = filteredUsers.where((element) => !widget.hiddenUsers.contains(element)).toList();
+    List<User> showUsers = filteredUsers.where((element) => !widget.hiddenUsers.contains(element) && !widget.selectedUsers.contains(element)).toList();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        isInit ? ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: widget.selectedUsers.length,
+          itemBuilder: (context, index) {
+            User user = widget.selectedUsers[index];
+            return _UserSelectorButton(
+              user: user,
+              isInCourse: true,
+              onSelectedChanged: (user, isSelected) {
+                widget.onSelected(user, isSelected);
+              },
+            );
+          },
+        ) : Container(),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
