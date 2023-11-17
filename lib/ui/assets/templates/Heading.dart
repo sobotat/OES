@@ -18,13 +18,14 @@ class Heading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     var overflow = 950;
 
     return Padding(
       padding: padding ?? EdgeInsets.only(
         left: width > overflow ? 50 : 15,
         right: width > overflow ? 50 : 15,
-        top: 40,
+        top: height > overflow / 2 ? 40 : 5,
       ),
       child: Column(
         children: [
