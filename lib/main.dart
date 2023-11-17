@@ -21,15 +21,16 @@ Future<void> main() async {
   });
 
   await SecureStorage.instance.init();
-  await AppApi.instance.init();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   MyApp({super.key}) {
-    AppSecurity.instance.init();
-    NetworkChecker.instance.init();
-    AppRouter.instance.setNetworkListener();
+    AppApi.instance.init().then((value) {
+      AppSecurity.instance.init();
+      NetworkChecker.instance.init();
+      AppRouter.instance.setNetworkListener();
+    });
   }
 
   @override

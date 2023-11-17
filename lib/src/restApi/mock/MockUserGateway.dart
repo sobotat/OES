@@ -28,13 +28,23 @@ class MockUserGateway implements UserGateway {
     )
   ];
 
+  List<User> users = [
+    User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new', role: UserRole.teacher),
+    User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test', role: UserRole.teacher),
+    User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe', role: UserRole.admin),
+    User(id: 12, firstName: 'Karel', lastName: 'Student', username: 'karel.student', role: UserRole.student),
+    User(id: 23, firstName: 'Mark', lastName: 'Student', username: 'mark.student', role: UserRole.student),
+    User(id: 34, firstName: 'Jane', lastName: 'Student', username: 'jane.student', role: UserRole.student),
+  ];
+
   @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
     await Future.delayed(const Duration(seconds: 2));
     SecureStorage secureStorage = SecureStorage.instance;
 
-    if (username.toLowerCase() == 'admin' && password.toLowerCase() == 'admin') {
-      String token = '123456789';
+    List<User> possibleUsers = users.where((element) => element.username == username && password == '1234').toList();
+    if (possibleUsers.isNotEmpty) {
+      String token = possibleUsers.first.id.toString();
 
       if (rememberMe) {
         secureStorage.set('token', token);
@@ -49,10 +59,10 @@ class MockUserGateway implements UserGateway {
       ));
 
       return SignedUser(
-        id: 100,
-        firstName:'Karel',
-        lastName:'Novak',
-        username:username,
+        id: possibleUsers.first.id,
+        firstName: possibleUsers.first.firstName,
+        lastName: possibleUsers.first.lastName,
+        username: possibleUsers.first.username,
         token: token,
       );
     }
@@ -65,7 +75,8 @@ class MockUserGateway implements UserGateway {
   Future<SignedUser?> loginWithToken(String token) async {
     await Future.delayed(const Duration(seconds: 2));
 
-    if (token.toLowerCase() == '123456789') {
+    List<User> possibleUsers = users.where((element) => element.id.toString() == token).toList();
+    if (possibleUsers.isNotEmpty) {
       Device device = await DeviceInfo.getDevice();
       devices.add(
         SignedDevice(
@@ -78,10 +89,10 @@ class MockUserGateway implements UserGateway {
       );
 
       return SignedUser(
-        id: 100,
-        firstName:'Karel',
-        lastName:'Novak',
-        username: 'admin',
+        id: possibleUsers.first.id,
+        firstName: possibleUsers.first.firstName,
+        lastName: possibleUsers.first.lastName,
+        username: possibleUsers.first.username,
         token: token,
       );
     }
@@ -119,31 +130,23 @@ class MockUserGateway implements UserGateway {
 
   @override
   Future<User?> getUser(int userId) async {
-
-    List<User> users = [
-      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
-      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
-      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
-    ];
-
     return users.where((element) => element.id == userId).single;
   }
 
   @override
   Future<PagedData<User>?> getAllUsers(int index, {int? count, List<UserRole>? roles}) async {
 
-    List<User> users = [
-      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
-      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
-      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
-      AppSecurity.instance.user!
-    ];
+    if (!users.contains(AppSecurity.instance.user!)) {
+      users.add(AppSecurity.instance.user!);
+    }
 
-    return PagedData<User>(
-      page: 0,
+    PagedData<User> data = PagedData<User>(
+      page: 1,
       pageSize: users.length,
       havePrev: false,
       haveNext: false,
-    )..data.addAll(users);
+    );
+    data.data = users;
+    return data;
   }
 }

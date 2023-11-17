@@ -12,7 +12,7 @@ class AppApi {
   String apiServerUrl = 'http://oes-api.sobotovi.net:8001';
 
   Future<void> init() async {
-    String? setting = await LocalStorage.instance.get('useMuck');
+    String? setting = await LocalStorage.instance.get('useMock');
     if (setting == null) return;
 
     try {

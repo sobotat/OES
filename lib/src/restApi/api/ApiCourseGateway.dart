@@ -86,12 +86,12 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getCourseTeachers] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
     if (result.statusCode != 200 || result.data is! List<dynamic>) {
-      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getCourseTeachers] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
@@ -100,7 +100,39 @@ class ApiCourseGateway implements CourseGateway {
       try {
         users.add(User.fromJson(json));
       } on Exception catch (e) {
-        debugPrint('Api Error: [Course-getUserCourses] $e');
+        debugPrint('Api Error: [Course-getCourseTeachers] $e');
+      }
+    }
+
+    return users;
+  }
+
+  @override
+  Future<List<User>> getCourseStudents(int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseStudents',
+        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        queryParameters: {
+          'courseId': id,
+        }
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-getCourseStudents] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (result.statusCode != 200 || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Course-getCourseStudents] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<User> users = [];
+    for (Map<String, dynamic> json in result.data) {
+      try {
+        users.add(User.fromJson(json));
+      } on Exception catch (e) {
+        debugPrint('Api Error: [Course-getCourseStudents] $e');
       }
     }
 
@@ -266,5 +298,4 @@ class ApiCourseGateway implements CourseGateway {
   void clearIdentityMap() {
     map.clear();
   }
-
 }

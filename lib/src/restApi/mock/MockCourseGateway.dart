@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,10 +12,11 @@ import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/UserGateway.dart';
 
 class MockCourseGateway implements CourseGateway {
 
-  late Map<SignedUser, List<Course>> data;
+  late Map<User, List<Course>> data;
   List<CourseItem> items = [
     Homework(
       id: 1,
@@ -63,36 +65,39 @@ class MockCourseGateway implements CourseGateway {
   ];
 
   MockCourseGateway() {
-    data = <SignedUser, List<Course>> {};
+    data = <User, List<Course>> {};
 
-    var user = SignedUser(
-        id: 100,
-        firstName:'Karel',
-        lastName:'Novak',
-        username:'admin',
-        token: '123456789'
-    );
-
-    data.putIfAbsent(user, () {
-      return [
-        Course(id: 31, name: 'Python', shortName: 'P', description: 'You will learn basic skill about python'),
-        Course(id: 52, name: 'English', shortName: 'E', description: 'You will learn basic skill about english', color: Colors.deepOrange),
-        Course(id: 673, name: 'Java', shortName: 'J', description: 'You will learn basic skill about java', color: Colors.green),
-        Course(id: 1234, name: 'C#', shortName: 'C#', description: 'You will learn basic skill about c#. '
-            '\nLong description ........................................................................................'
-            '\n.......................................................................................'
-            '\n............................................................................'
-            '\n...............................................................'
-            '\n..................................................'),
-        Course(id: 225, name: 'Math', shortName: 'M', description: '', color: Colors.blue[900]),
-      ];
+    UserGateway.instance.getAllUsers(1).then((value) {
+      for(User user in value!.data) {
+        data.putIfAbsent(user, () {
+          return [
+            Course(id: 31, name: 'Python', shortName: 'P', description: 'You will learn basic skill about python'),
+            Course(id: 52, name: 'English', shortName: 'E', description: 'You will learn basic skill about english', color: Colors.deepOrange),
+            Course(id: 673, name: 'Java', shortName: 'J', description: 'You will learn basic skill about java', color: Colors.green),
+            Course(id: 1234, name: 'C#', shortName: 'C#', description: 'You will learn basic skill about c#. '
+                '\nLong description ........................................................................................'
+                '\n.......................................................................................'
+                '\n............................................................................'
+                '\n...............................................................'
+                '\n..................................................'),
+            Course(id: 225, name: 'Math', shortName: 'M', description: '', color: Colors.blue[900]),
+          ];
+        });
+      }
     });
   }
 
   @override
   Future<List<Course>> getUserCourses(SignedUser user) {
-    return Future.delayed(const Duration(seconds: 2), () {
-      return data[user] ?? [];
+    return Future.delayed(const Duration(seconds: 2), () async {
+      if (data.isEmpty) await Future.delayed(const Duration(seconds: 1));
+      List<Course> out = [];
+      data.forEach((key, value) {
+        if (key.id == user.id) {
+          out = value;
+        }
+      });
+      return out;
     });
   }
 
@@ -120,9 +125,9 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<List<User>> getCourseTeachers(int id) {
     List<User> users = [
-      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new'),
-      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test'),
-      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe'),
+      User(id: 10, firstName: 'Karel', lastName: 'New', username: 'karel.new', role: UserRole.teacher),
+      User(id: 20, firstName: 'Mark', lastName: 'Test', username: 'mark.test', role: UserRole.teacher),
+      User(id: 30, firstName: 'Jane', lastName: 'Doe', username: 'jane.doe', role: UserRole.admin),
     ];
 
     return Future.delayed(const Duration(seconds: 1), () {
@@ -139,6 +144,16 @@ class MockCourseGateway implements CourseGateway {
         }
       return out;
     },);
+  }
+
+  @override
+  Future<List<User>> getCourseStudents(int id) async {
+    List<User> users = [
+      User(id: 12, firstName: 'Karel', lastName: 'Student', username: 'karel.student', role: UserRole.student),
+      User(id: 23, firstName: 'Mark', lastName: 'Student', username: 'mark.student', role: UserRole.student),
+      User(id: 34, firstName: 'Jane', lastName: 'Student', username: 'jane.student', role: UserRole.student),
+    ];
+    return users;
   }
 
   @override
@@ -176,7 +191,7 @@ class MockCourseGateway implements CourseGateway {
 
   @override
   Future<bool> updateCourse(Course course) async {
-    for (SignedUser user in data.keys) {
+    for (User user in data.keys) {
        List<Course>? courses = data[user];
        if (courses == null) continue;
        courses[courses.indexWhere((element) => element.id == course.id)] = course;
@@ -188,7 +203,7 @@ class MockCourseGateway implements CourseGateway {
   @override
   Future<Course?> createCourse(Course course) async {
     course.id = Random.secure().nextInt(1000) + 1000;
-    for (SignedUser user in data.keys) {
+    for (User user in data.keys) {
       List<Course>? courses = data[user];
       if (courses == null) continue;
       courses[courses.indexWhere((element) => element.id == course.id)] = course;
@@ -199,7 +214,7 @@ class MockCourseGateway implements CourseGateway {
 
   @override
   Future<bool> deleteCourse(Course course) async {
-    for (SignedUser user in data.keys) {
+    for (User user in data.keys) {
       List<Course>? courses = data[user];
       if (courses == null) continue;
       courses.removeAt(courses.indexWhere((element) => element.id == course.id));
@@ -210,4 +225,5 @@ class MockCourseGateway implements CourseGateway {
 
   @override
   void clearIdentityMap() {}
+
 }
