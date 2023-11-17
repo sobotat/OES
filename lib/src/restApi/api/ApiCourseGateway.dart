@@ -77,10 +77,11 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<List<User>> getCourseTeachers(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseTeachers',
+    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseUsers',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
         queryParameters: {
           'courseId': id,
+          'userCourseRoles': [0],
         }
     );
 
@@ -109,10 +110,11 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<List<User>> getCourseStudents(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseStudents',
+    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseUsers',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
         queryParameters: {
           'courseId': id,
+          'userCourseRoles': [1],
         }
     );
 
@@ -219,10 +221,18 @@ class ApiCourseGateway implements CourseGateway {
       teachers.add(user.id);
     }
 
+    List<int> students = [];
+    for (User user in await course.students) {
+      students.add(user.id);
+    }
+
     Map<String, dynamic> data = course.toMap();
     data.remove('id');
     data.addAll({
       'teacherIds': teachers,
+    });
+    data.addAll({
+      'attendantIds': students,
     });
 
     RequestResult result = await HttpRequest.instance.put('$basePath/course/${course.id}',
@@ -250,7 +260,8 @@ class ApiCourseGateway implements CourseGateway {
 
     Map<String, dynamic> data = course.toMap()
       ..remove('id')
-      ..addAll({'teacherIds' : [ AppSecurity.instance.user!.id ]});
+      ..addAll({'teacherIds' : [ AppSecurity.instance.user!.id ]})
+      ..addAll({'attendantIds': []});
 
     RequestResult result = await HttpRequest.instance.post('$basePath/course',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
