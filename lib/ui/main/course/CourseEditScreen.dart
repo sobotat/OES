@@ -140,6 +140,13 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
         setState(() {});
       }
     });
+    widget.course.students.then((value) {
+      editCourse!.setStudents(value);
+      if (mounted) {
+        students = value;
+        setState(() {});
+      }
+    });
 
     if (editCourse!.color != null) {
       color = editCourse!.color!;
