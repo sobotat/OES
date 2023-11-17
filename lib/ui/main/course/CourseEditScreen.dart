@@ -247,7 +247,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               onSelected: (user, isSelected) {
                 if (isSelected && !students.contains(user)) {
                   teachers.add(user);
-                } else {
+                } else if (teachers.length > 1) {
                   teachers.remove(user);
                 }
                 setState(() {});
