@@ -276,7 +276,7 @@ class _CourseItem extends StatelessWidget {
             color: AppTheme.getActiveTheme().calculateTextColor(course.color ?? Colors.blueAccent, context)
         ),
       ),
-      body: SelectableText(
+      body: Text(
         course.name,
         maxLines: 1,
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
