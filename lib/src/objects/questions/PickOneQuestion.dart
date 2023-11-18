@@ -18,8 +18,13 @@ class PickOneQuestion extends MultipleChoiceQuestion {
   @override
   Map<String, dynamic> toMap() {
     return super.toMap()
+    ..remove('description')
     ..addAll({
-        'answer': answer,
+      'answer': answer,
+      'description': jsonEncode({
+        'description': description,
+        'options': options,
+      })
     });
   }
 

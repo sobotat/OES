@@ -18,9 +18,14 @@ class PickManyQuestion extends MultipleChoiceQuestion {
   @override
   Map<String, dynamic> toMap() {
     return super.toMap()
-    ..addAll({
-      'answers': answers,
-    });
+      ..remove('description')
+      ..addAll({
+        'answers': answers,
+        'description': jsonEncode({
+          'description': description,
+          'options': options,
+        })
+      });
   }
 
   factory PickManyQuestion.fromJson(Map<String, dynamic> json) {
