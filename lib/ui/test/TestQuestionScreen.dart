@@ -14,44 +14,49 @@ class TestQuestionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Question> questions = [
+      PickOneQuestion(
+        id: 1,
+        title: "Question 1",
+        description: "Select the best option to success",
+        points: 3,
+        options: [
+          "Option A", "Option B", "Option C"
+        ],
+      ),
+      PickManyQuestion(
+        id: 2,
+        title: "Question 2",
+        description: "Select the 2 options to success",
+        points: 3,
+        options: [
+          "Option A", "Option B", "Option C"
+        ],
+      ),
+      OpenQuestion(
+        id: 3,
+        title: "Question 3",
+        description: "Write what is best programing lang",
+        points: 10,
+      ),
+    ];
+
+    for(Question q in questions) {
+      print(q.toMap().toString());
+    }
+
     return Scaffold(
-      appBar: AppAppBar(),
+      appBar: const AppAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: ListView(
+        child: ListView.builder(
           shrinkWrap: true,
-          children: [
-            _QuestionBuilder(
-              question: PickOneQuestion(
-                id: 1,
-                title: "Question 1",
-                description: "Select the best option to success",
-                points: 3,
-                options: [
-                  "Option A", "Option B", "Option C"
-                ],
-              )
-            ),
-            _QuestionBuilder(
-              question: PickManyQuestion(
-                id: 2,
-                title: "Question 2",
-                description: "Select the 2 options to success",
-                points: 3,
-                options: [
-                  "Option A", "Option B", "Option C"
-                ],
-              )
-            ),
-            _QuestionBuilder(
-                question: OpenQuestion(
-                  id: 3,
-                  title: "Question 3",
-                  description: "Write what is best programing lang",
-                  points: 10,
-                )
-            ),
-          ],
+          itemCount: questions.length,
+          itemBuilder: (context, index) {
+            return _QuestionBuilder(
+              question: questions[index],
+            );
+          },
         ),
       ),
     );
