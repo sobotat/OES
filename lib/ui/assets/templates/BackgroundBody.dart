@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class BackgroundBody extends StatelessWidget {
   const BackgroundBody({
     this.child,
+    this.maxHeight,
     super.key,
   });
 
   final Widget? child;
+  final double? maxHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +19,8 @@ class BackgroundBody extends StatelessWidget {
       margin: EdgeInsets.symmetric(
         horizontal: width > overflow ? 50 : 15,
       ),
-      constraints: const BoxConstraints(
-        maxHeight: 600,
+      constraints: BoxConstraints(
+        maxHeight: maxHeight ?? 600,
       ),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(
