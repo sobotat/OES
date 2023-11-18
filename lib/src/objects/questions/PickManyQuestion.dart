@@ -11,7 +11,7 @@ class PickManyQuestion extends MultipleChoiceQuestion {
     required super.description,
     required super.points,
     required super.options
-  });
+  }) : super(type: 'pick-many');
 
   List<int> answers = [];
 

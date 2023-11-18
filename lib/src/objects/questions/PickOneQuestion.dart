@@ -11,7 +11,7 @@ class PickOneQuestion extends MultipleChoiceQuestion {
     required super.description,
     required super.points,
     required super.options
-  });
+  }) : super(type: 'pick-one');
 
   int? answer;
 
