@@ -10,6 +10,16 @@ class OpenQuestion extends Question {
     required super.points
   }) : super(type: 'open');
 
+  String? answer;
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()
+    ..addAll({
+      'answer': answer,
+    });
+  }
+
   factory OpenQuestion.fromJson(Map<String, dynamic> json) {
     return OpenQuestion(
       id: json['id'],
