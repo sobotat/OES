@@ -178,6 +178,7 @@ class _CoursesState extends State<_Courses> {
                   child: Button(
                     text: "Create",
                     maxWidth: 75,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                     onClick: (context) => createCourse(),
                   ),
                 ),
@@ -186,6 +187,7 @@ class _CoursesState extends State<_Courses> {
                   child: Button(
                     text: "Join",
                     maxWidth: 75,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                     onClick: (context) => joinCourse(),
                   ),
                 ),
@@ -195,6 +197,7 @@ class _CoursesState extends State<_Courses> {
                   child: Button(
                     text: "Join",
                     maxWidth: 75,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                     onClick: (context) => joinCourse(),
                   ),
                 ),
@@ -204,6 +207,7 @@ class _CoursesState extends State<_Courses> {
               child: isInit ? ListView.builder(
                 itemCount: courses.length,
                 shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return FutureBuilder(
