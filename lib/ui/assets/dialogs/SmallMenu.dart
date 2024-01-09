@@ -44,26 +44,26 @@ class SmallMenu extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const UserInfoButton(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          shouldPopOnClick: true,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ThemeModeButton(),
-                              SignOutButton(),
-                              SettingButton(),
-                            ],
-                          ),
-                        ),
-                        actions.isNotEmpty ? const Divider() : Container(),
                         actions.isNotEmpty ? Column(
                           mainAxisSize: MainAxisSize.min,
                           children: actions,
                         ) : Container(),
+                        actions.isNotEmpty ? const Divider() : Container(),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: UserInfoButton(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            shouldPopOnClick: true,
+                          ),
+                        ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ThemeModeButton(),
+                            SignOutButton(),
+                            SettingButton(),
+                          ],
+                        ),
                       ],
                     ),
                   ),
