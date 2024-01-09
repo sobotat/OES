@@ -1,10 +1,14 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/widgets/questions/OpenQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/PickManyQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/PickOneQuestionBuilder.dart';
@@ -49,14 +53,32 @@ class TestQuestionScreen extends StatelessWidget {
       appBar: const AppAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: questions.length,
-          itemBuilder: (context, index) {
-            return _QuestionBuilder(
-              question: questions[index],
-            );
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Button(
+              text: "Make Toast",
+              backgroundColor: Colors.red.shade700,
+              onClick: (context) {
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.add);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.ac_unit_sharp);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.account_circle_rounded);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.adb);
+              },
+            ),
+            Flexible(
+              fit: FlexFit.loose,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: questions.length,
+                itemBuilder: (context, index) {
+                  return _QuestionBuilder(
+                    question: questions[index],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
