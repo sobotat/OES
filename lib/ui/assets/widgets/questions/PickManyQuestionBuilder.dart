@@ -38,7 +38,10 @@ class PickManyQuestionBuilder extends QuestionBuilder<PickManyQuestion> {
                   question.description,
                 ),
               ),
-              _QuestionBody(question: question),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: _QuestionBody(question: question),
+              ),
             ],
           )
         ),
