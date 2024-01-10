@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
@@ -358,6 +359,15 @@ class _JoinCodeState extends State<_JoinCode> {
                   setState(() {
                     hidden = !hidden;
                   });
+                },
+              ),
+              const SizedBox(width: 5,),
+              Button(
+                icon: Icons.copy,
+                toolTip: "Copy",
+                maxWidth: 40,
+                onClick: (context) {
+                  Clipboard.setData(ClipboardData(text: controller.text));
                 },
               ),
               const SizedBox(width: 5,),
