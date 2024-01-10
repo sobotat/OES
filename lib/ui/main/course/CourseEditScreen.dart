@@ -332,61 +332,121 @@ class _JoinCodeState extends State<_JoinCode> {
     super.dispose();
   }
 
+  void onHideClicked() {
+    if (!mounted) return;
+    setState(() {
+      hidden = !hidden;
+    });
+  }
+
+  void onCodeChanged(String code) {
+    if (!mounted) return;
+    setState(() {
+      controller.text = code ?? "";
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 500;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Flexible(
+              child: TextField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  hintText: "Code",
+                  enabled: false,
+                ),
+                obscureText: hidden,
+              ),
+            ),
+            width > overflow ? Padding(
+              padding: const EdgeInsets.only(top: 10, left: 5),
+              child: _JoinCodeButtons(
+                hidden: hidden,
+                controller: controller,
+                course: widget.course,
+                onHideClicked: onHideClicked,
+                onCodeChanged: onCodeChanged,
+              ),
+            ) : Container(),
+          ],
+        ),
+        width <= overflow ? Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: _JoinCodeButtons(
+            hidden: hidden,
+            controller: controller,
+            course: widget.course,
+            expandGenerateButton: true,
+            onHideClicked: onHideClicked,
+            onCodeChanged: onCodeChanged
+          ),
+        ) : Container(),
+      ],
+    );
+  }
+}
+
+class _JoinCodeButtons extends StatelessWidget {
+  const _JoinCodeButtons({
+    super.key,
+    required this.hidden,
+    required this.controller,
+    required this.course,
+    required this.onHideClicked,
+    required this.onCodeChanged,
+    this.expandGenerateButton = false,
+  });
+
+  final bool hidden;
+  final bool expandGenerateButton;
+  final TextEditingController controller;
+  final Course course;
+  final Function() onHideClicked;
+  final Function(String code) onCodeChanged;
+
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
+        Button(
+          icon: hidden ? Icons.remove_red_eye_outlined : Icons.remove_red_eye_rounded,
+          toolTip: hidden ? "Show" : "Hide",
+          maxWidth: 40,
+          onClick: (context) {
+            onHideClicked();
+          },
+        ),
+        const SizedBox(width: 5,),
+        Button(
+          icon: Icons.copy,
+          toolTip: "Copy",
+          maxWidth: 40,
+          onClick: (context) {
+            Clipboard.setData(ClipboardData(text: controller.text));
+          },
+        ),
+        const SizedBox(width: 5,),
         Flexible(
-          child: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: "Code",
-              enabled: false,
-            ),
-            obscureText: hidden,
+          child: Button(
+            text: "Generate Code",
+            backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+            icon: Icons.new_label,
+            maxWidth: expandGenerateButton ? double.infinity : null,
+            onClick: (context) async {
+              String? code = await CourseGateway.instance.generateCode(course);
+              if (code != null) onCodeChanged(code);
+            },
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, left: 5),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Button(
-                icon: hidden ? Icons.remove_red_eye_outlined : Icons.remove_red_eye_rounded,
-                toolTip: hidden ? "Show" : "Hide",
-                maxWidth: 40,
-                onClick: (context) {
-                  setState(() {
-                    hidden = !hidden;
-                  });
-                },
-              ),
-              const SizedBox(width: 5,),
-              Button(
-                icon: Icons.copy,
-                toolTip: "Copy",
-                maxWidth: 40,
-                onClick: (context) {
-                  Clipboard.setData(ClipboardData(text: controller.text));
-                },
-              ),
-              const SizedBox(width: 5,),
-              Button(
-                text: "Generate Code",
-                backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-                icon: Icons.new_label,
-                onClick: (context) async {
-                  String? code = await CourseGateway.instance.generateCode(widget.course);
-                  if (mounted) {
-                    setState(() {
-                      controller.text = code ?? "";
-                    });
-                  }
-                },
-              )
-            ],
-          ),
-        ),
+        )
       ],
     );
   }
