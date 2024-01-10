@@ -259,11 +259,11 @@ class _JoinDialogState extends State<_JoinDialog> {
     }
 
     bool success = await CourseGateway.instance.joinCourse(controller.text.toUpperCase());
-
     if (success && mounted) {
       return true;
     }
 
+    debugPrint("Wrong Join Code\n");
     callWrongCode();
     return false;
   }
@@ -520,7 +520,7 @@ class _CourseCreateDialogState extends State<_CourseCreateDialog> {
                   onSubmitted: (value) => create(),
                 ),
                 SlidePicker(
-                  pickerColor: Colors.black,
+                  pickerColor: Theme.of(context).extension<AppCustomColors>()!.accent,
                   onColorChanged: (value) {
                     color = value;
                   },
@@ -531,6 +531,7 @@ class _CourseCreateDialogState extends State<_CourseCreateDialog> {
                 Button(
                   text: "Create Course",
                   maxWidth: double.infinity,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   onClick: (context) => create(),
                 )
               ],
