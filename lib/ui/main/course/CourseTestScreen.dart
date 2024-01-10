@@ -211,6 +211,7 @@ class _TestBody extends StatelessWidget {
       children: [
         ListView.builder(
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: test.questions.length,
           itemBuilder: (context, index) {
             return _QuestionBuilder(question: test.questions[index]);
