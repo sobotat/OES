@@ -342,7 +342,7 @@ class _JoinCodeState extends State<_JoinCode> {
   void onCodeChanged(String code) {
     if (!mounted) return;
     setState(() {
-      controller.text = code ?? "";
+      controller.text = code;
     });
   }
 
