@@ -117,7 +117,7 @@ class AppRouter {
             // },
             builder: (context, state) {
               _setActiveUri(context, state);
-              return const TestQuestionScreen();
+              return const TestScreen();
             },
           ),
           GoRoute(

@@ -1,10 +1,13 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/objects/Achievement.dart';
 import 'package:oes/ui/assets/dialogs/AchievementDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
 import 'package:signalr_netcore/itransport.dart';
@@ -84,6 +87,16 @@ class _TestScreenState extends State<TestScreen> {
       body: Center(
         child: Column(
           children: [
+            Button(
+              text: "Make Toast",
+              backgroundColor: Colors.red.shade700,
+              onClick: (context) {
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.add);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.ac_unit_sharp);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.account_circle_rounded);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.adb);
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: InkWell(
