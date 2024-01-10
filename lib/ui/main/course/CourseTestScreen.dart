@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/objects/questions/OpenQuestion.dart';
+import 'package:oes/src/objects/questions/PickManyQuestion.dart';
+import 'package:oes/src/objects/questions/PickOneQuestion.dart';
+import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
+import 'package:oes/ui/assets/widgets/questions/OpenQuestionBuilder.dart';
+import 'package:oes/ui/assets/widgets/questions/PickManyQuestionBuilder.dart';
+import 'package:oes/ui/assets/widgets/questions/PickOneQuestionBuilder.dart';
 
 class CourseTestScreen extends StatefulWidget {
   const CourseTestScreen({
@@ -29,25 +36,36 @@ class CourseTestScreen extends StatefulWidget {
 class _CourseTestScreenState extends State<CourseTestScreen> {
 
   Test? test;
+  bool allowPop = false;
 
   @override
   void initState() {
     super.initState();
   }
 
+  Future<void> onFinishTest() async {
+    print("Do Something Exiting Test");
+    await Future.delayed(const Duration(seconds: 1));
+    allowPop = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppAppBar(),
+      appBar: const AppAppBar(
+
+      ),
       body: WillPopScope(
-        onWillPop: () => onWillPop(context),
+        onWillPop: () async {
+          if (!allowPop) await startReallyFinishTest(context);
+          return allowPop;
+        },
         child: ListenableBuilder(
           listenable: AppSecurity.instance,
           builder: (context, child) {
             if (AppSecurity.instance.isLoggedIn()) {
               Future.delayed(Duration.zero, () async {
                 bool okPassword = await CourseGateway.instance.checkTestPassword(widget.courseId, widget.testId, widget.password);
-                print(okPassword);
                 if (!okPassword && mounted) {
                   context.goNamed('/');
                 }
@@ -58,7 +76,52 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
                 test = snapshot.data;
-                return Center(child: Text(test!.name));
+                if (test == null) {
+                  return const Center(
+                    child: Text(
+                      "Failed to load test",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 30),
+                    ),
+                  );
+                }
+
+                final List<Question> questions = [
+                  PickOneQuestion(
+                    id: 1,
+                    title: "Question 1",
+                    description: "Select the best option to success",
+                    points: 3,
+                    options: [
+                      "Option A", "Option B", "Option C"
+                    ],
+                  ),
+                  PickManyQuestion(
+                    id: 2,
+                    title: "Question 2",
+                    description: "Select the 2 options to success",
+                    points: 3,
+                    options: [
+                      "Option A", "Option B", "Option C"
+                    ],
+                  ),
+                  OpenQuestion(
+                    id: 3,
+                    title: "Question 3",
+                    description: "Write what is best programing lang",
+                    points: 10,
+                  ),
+                ];
+                test!.questions = questions;
+
+                return _TestBody(
+                  test: test!,
+                  onFinishTest: () async {
+                    if (!await startReallyFinishTest(context)) return;
+                    if (mounted) context.pop();
+                  },
+                );
               },
             );
           },
@@ -67,7 +130,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
     );
   }
 
-  Future<bool> onWillPop(BuildContext context) async {
+  Future<bool> startReallyFinishTest(BuildContext context) async {
     bool wantFinishTest = false;
     await showDialog(
       context: context,
@@ -124,6 +187,73 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
         ),
       ),
     );
+
+    if (wantFinishTest) await onFinishTest();
     return Future.value(wantFinishTest);
+  }
+}
+
+class _TestBody extends StatelessWidget {
+  const _TestBody({
+    required this.test,
+    required this.onFinishTest,
+  });
+
+  final Test test;
+  final Function() onFinishTest;
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return ListView(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: test.questions.length,
+          itemBuilder: (context, index) {
+            return _QuestionBuilder(question: test.questions[index]);
+          },
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            top: 20,
+            left: width > overflow ? 50 : 15,
+            right: width > overflow ? 50 : 15
+          ),
+          child: Button(
+            text: "Finish Test",
+            maxWidth: double.infinity,
+            backgroundColor: Colors.red,
+            onClick: (context) {
+              onFinishTest();
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _QuestionBuilder extends StatelessWidget {
+  const _QuestionBuilder({
+    required this.question,
+    super.key,
+  });
+
+  final Question question;
+
+  @override
+  Widget build(BuildContext context) {
+    if (question is PickOneQuestion) {
+      return PickOneQuestionBuilder(question: question as PickOneQuestion);
+    } else if (question is PickManyQuestion) {
+      return PickManyQuestionBuilder(question: question as PickManyQuestion);
+    } else if (question is OpenQuestion) {
+      return OpenQuestionBuilder(question: question as OpenQuestion);
+    } else {
+      return Text("Question [${question.type}] is Not Supported");
+    }
   }
 }
