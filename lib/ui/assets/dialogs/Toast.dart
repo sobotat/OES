@@ -117,6 +117,7 @@ class Toast {
 
         await Future.delayed(Duration(milliseconds: data.duration.duration));
         if (isActive) AppRouter.instance.router.pop();
+        await Future.delayed(const Duration(milliseconds: 200));
 
         if (_pendingMessages.isEmpty) {
           _displayFuture = null;
