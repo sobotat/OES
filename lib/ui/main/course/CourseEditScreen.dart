@@ -247,51 +247,71 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
             ),
           ),
           const SizedBox(height: 50,),
-          const Heading(
-            headingText: "Teachers",
-            padding: EdgeInsets.all(5),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: _UserSelector(
-              course: editCourse!,
-              hint: "Teacher Name",
-              selectedUsers: teachers,
-              hiddenUsers: students,
-              filters: const [UserRole.teacher, UserRole.admin],
-              onSelected: (user, isSelected) {
-                if (isSelected && !students.contains(user)) {
-                  teachers.add(user);
-                } else if (teachers.length > 1) {
-                  teachers.remove(user);
-                }
-                setState(() {});
-              },
-            ),
-          ),
-          const SizedBox(height: 50,),
-          const Heading(
-            headingText: "Students",
-            padding: EdgeInsets.all(5),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: _UserSelector(
-              course: editCourse!,
-              hint: "Student Name",
-              selectedUsers: students,
-              hiddenUsers: teachers,
-              filters: const [UserRole.student, UserRole.teacher, UserRole.admin],
-              onSelected: (user, isSelected) {
-                if (isSelected && !teachers.contains(user)) {
-                  students.add(user);
-                } else {
-                  students.remove(user);
-                }
-                setState(() {});
-              },
-            ),
-          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Heading(
+                      headingText: "Teachers",
+                      padding: EdgeInsets.all(5),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: _UserSelector(
+                        course: editCourse!,
+                        hint: "Teacher Name",
+                        selectedUsers: teachers,
+                        hiddenUsers: students,
+                        filters: const [UserRole.teacher, UserRole.admin],
+                        onSelected: (user, isSelected) {
+                          if (isSelected && !students.contains(user)) {
+                            teachers.add(user);
+                          } else if (teachers.length > 1) {
+                            teachers.remove(user);
+                          }
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Heading(
+                      headingText: "Students",
+                      padding: EdgeInsets.all(5),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: _UserSelector(
+                        course: editCourse!,
+                        hint: "Student Name",
+                        selectedUsers: students,
+                        hiddenUsers: teachers,
+                        filters: const [UserRole.student, UserRole.teacher, UserRole.admin],
+                        onSelected: (user, isSelected) {
+                          if (isSelected && !teachers.contains(user)) {
+                            students.add(user);
+                          } else {
+                            students.remove(user);
+                          }
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
         ],
       ),
     );
@@ -624,11 +644,18 @@ class _UserSelectorButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Button(
-        text: '${user.firstName} ${user.lastName}',
+        maxHeight: 50,
         backgroundColor: isInCourse ? Colors.green.shade700 : null,
         onClick: (context) {
           onSelectedChanged(user, !isInCourse);
         },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('${user.firstName} ${user.lastName}'),
+            Text(user.username, style: const TextStyle(fontStyle: FontStyle.italic),)
+          ],
+        ),
       ),
     );
   }
