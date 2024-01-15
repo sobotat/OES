@@ -47,14 +47,6 @@ class UserInfoButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppApi.instance.useMockApi ? Tooltip(
-                    message: 'Mock Api',
-                    waitDuration: const Duration(milliseconds: 500),
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 5),
-                      child: Icon(Icons.account_tree, size: 20, color: textColor,),
-                    ),
-                  ) : Container(),
                   Text(
                     user != null ? '${user.firstName} ${user.lastName}' : 'Not Logged',
                     style: TextStyle(
