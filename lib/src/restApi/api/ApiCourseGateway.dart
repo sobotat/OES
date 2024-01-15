@@ -162,6 +162,8 @@ class ApiCourseGateway implements CourseGateway {
       return [];
     }
 
+    //TODO: Add support for paged data
+
     List<Course> courses = [];
     for (Map<String, dynamic> json in result.data['items']) {
       try {
