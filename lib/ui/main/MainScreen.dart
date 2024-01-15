@@ -17,22 +17,35 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+
+  GlobalKey<_CoursesState> coursesKey = GlobalKey<_CoursesState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppAppBar(
+      appBar: AppAppBar(
         actions: kIsWeb ? ([
-          _BackToWeb(),
+          const _BackToWeb(),
         ]) : [],
+        onRefresh: () {
+          coursesKey.currentState?.loadCourses();
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: ListView(
-          children: const [
-            _Courses(),
+          children: [
+            _Courses(
+              key: coursesKey,
+            ),
           ],
         ),
       ),
@@ -128,6 +141,7 @@ class _CoursesState extends State<_Courses> {
   }
 
   Future<void> loadCourses() async {
+    print("Loading Courses");
     var user = AppSecurity.instance.user;
     if (user != null) {
       courses = await CourseGateway.instance.getUserCourses(user);

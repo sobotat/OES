@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oes/ui/assets/buttons/RefreshButton.dart';
 import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
@@ -11,12 +12,14 @@ class AppAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.title,
     this.leading,
     this.actions = const [],
+    this.onRefresh,
     super.key
   });
 
   final Widget? title;
   final Widget? leading;
   final List<Widget> actions;
+  final Function()? onRefresh;
 
   @override
   final Size preferredSize = const Size.fromHeight(kToolbarHeight); // default is 56.0
@@ -54,6 +57,7 @@ class _AppAppBarState extends State<AppAppBar> {
                       mainAxisSize: MainAxisSize.min,
                       children: widget.actions,
                     ),
+                    widget.onRefresh != null ? RefreshButton(onRefresh: widget.onRefresh!) : Container(),
                     const UserInfoButton(width: 150),
                     const SignOutButton(),
                     const ThemeModeButton(),
@@ -62,8 +66,14 @@ class _AppAppBarState extends State<AppAppBar> {
                 ),
               ),
             ],
-          ) : SmallMenu(
-            actions: widget.actions,
+          ) : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.onRefresh != null ? RefreshButton(onRefresh: widget.onRefresh!) : Container(),
+              SmallMenu(
+                actions: widget.actions,
+              ),
+            ],
           ),
         ),
       ],
