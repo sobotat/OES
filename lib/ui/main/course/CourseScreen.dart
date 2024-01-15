@@ -290,28 +290,14 @@ class _TestWidget extends StatefulWidget {
 
 class _TestWidgetState extends State<_TestWidget> {
 
-  Test? test;
-
-  @override
-  void initState() {
-    super.initState();
-    Future(() async {
-      test = await TestGateway.instance.get(widget.course.id, widget.item.id);
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
   Future<void> openPasswordDialog(BuildContext context) async {
-    if (test == null) return;
     await showDialog(
       context: context,
       builder: (context) => PopupDialog(
         alignment: Alignment.center,
         child: _TestDialog(
           course: widget.course,
-          test: test!,
+          test: widget.item,
         )
       ),
     );
@@ -340,7 +326,7 @@ class _TestDialog extends StatefulWidget {
   });
 
   final Course course;
-  final Test test;
+  final CourseItem test;
 
   @override
   State<_TestDialog> createState() => _TestDialogState();
