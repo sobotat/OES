@@ -55,10 +55,14 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
       appBar: const AppAppBar(
 
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          if (!allowPop) await startReallyFinishTest(context);
-          return allowPop;
+      body: PopScope(
+        canPop: allowPop,
+        onPopInvoked: (didPop) async {
+          if (!allowPop) {
+            startReallyFinishTest(context).then((value) {
+              if (value) context.pop();
+            });
+          }
         },
         child: ListenableBuilder(
           listenable: AppSecurity.instance,
@@ -86,35 +90,6 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
                     ),
                   );
                 }
-
-                final List<Question> questions = [
-                  PickOneQuestion(
-                    id: 1,
-                    title: "Question 1",
-                    description: "Select the best option to success",
-                    points: 3,
-                    options: [
-                      "Option A", "Option B", "Option C"
-                    ],
-                  ),
-                  PickManyQuestion(
-                    id: 2,
-                    title: "Question 2",
-                    description: "Select the 2 options to success",
-                    points: 3,
-                    options: [
-                      "Option A", "Option B", "Option C"
-                    ],
-                  ),
-                  OpenQuestion(
-                    id: 3,
-                    title: "Question 3",
-                    description: "Write what is best programing lang",
-                    points: 10,
-                  ),
-                ];
-                test!.questions = questions;
-
                 return _TestBody(
                   test: test!,
                   onFinishTest: () async {
