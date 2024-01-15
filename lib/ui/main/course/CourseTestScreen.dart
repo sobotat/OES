@@ -78,6 +78,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
             return FutureBuilder(
               future: TestGateway.instance.get(widget.courseId, widget.testId),
               builder: (context, snapshot) {
+                print("Load Test Error: ${snapshot.error}");
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
                 test = snapshot.data;
                 if (test == null) {
