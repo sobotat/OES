@@ -132,7 +132,6 @@ class _Actions extends StatelessWidget {
           await AppSecurity.instance.logoutFromDevice(device.deviceToken);
           if (context.mounted) {
             Toast.makeToast(
-                context: context,
                 text: 'You have been signed out of device',
                 duration: ToastDuration.large,
                 icon: Icons.add_moderator

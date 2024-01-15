@@ -53,7 +53,7 @@ class _TestScreenState extends State<TestScreen> {
     connection!.onclose(({error}) {
       if (mounted) {
         setState(() {});
-        Toast.makeToast(text: 'Connection Closed', context: context);
+        Toast.makeToast(text: 'Connection Closed');
       }
       print('Connection Closed');
     },);
@@ -62,7 +62,7 @@ class _TestScreenState extends State<TestScreen> {
     connection!.on('test', (arguments) {
       if (mounted) {
         setState(() {});
-        Toast.makeToast(text: 'Message: $arguments', context: context);
+        Toast.makeToast(text: 'Message: $arguments');
       }
       print('Message: $arguments');
     });
@@ -73,7 +73,7 @@ class _TestScreenState extends State<TestScreen> {
     await connection!.invoke('SendMessage').onError((error, stackTrace) {
       if (mounted) {
         setState(() {});
-        Toast.makeToast(text: 'Error Invoke: $error', context: context);
+        Toast.makeToast(text: 'Error Invoke: $error');
       }
       print('Error Invoke: $error');
     });
@@ -91,10 +91,10 @@ class _TestScreenState extends State<TestScreen> {
               text: "Make Toast",
               backgroundColor: Colors.red.shade700,
               onClick: (context) {
-                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.add);
-                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.ac_unit_sharp);
-                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.account_circle_rounded);
-                Toast.makeToast(text: Random().nextInt(1000).toString(), context: context, icon: Icons.adb);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), icon: Icons.add);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), icon: Icons.ac_unit_sharp);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), icon: Icons.account_circle_rounded);
+                Toast.makeToast(text: Random().nextInt(1000).toString(), icon: Icons.adb);
               },
             ),
             Padding(

@@ -171,7 +171,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
     if (colorChanged) course.color = color;
 
     await CourseGateway.instance.updateCourse(course);
-    if (mounted) Toast.makeToast(text: "Course Saved", icon: Icons.save, context: context);
+    if (mounted) Toast.makeToast(text: "Course Saved", icon: Icons.save);
     if (widget.onUpdated != null) {
       widget.onUpdated!();
     }

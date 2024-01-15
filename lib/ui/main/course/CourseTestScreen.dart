@@ -9,6 +9,7 @@ import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -78,7 +79,10 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
             return FutureBuilder(
               future: TestGateway.instance.get(widget.courseId, widget.testId),
               builder: (context, snapshot) {
-                print("Load Test Error: ${snapshot.error}");
+                if (snapshot.hasError) {
+                  print("Load Test Error: ${snapshot.error}");
+                  Toast.makeToast(text: "Failed to load Test");
+                }
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
                 test = snapshot.data;
                 if (test == null) {

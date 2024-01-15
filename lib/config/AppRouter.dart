@@ -265,6 +265,10 @@ class AppRouter {
     NetworkChecker.instance.addListener(listener);
     NetworkChecker.instance.checkConnection();
   }
+
+  BuildContext? getCurrentContext() {
+    return router.routerDelegate.navigatorKey.currentContext;
+  }
 }
 
 class _RouterObserver extends NavigatorObserver {
