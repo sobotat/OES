@@ -186,6 +186,9 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 500;
+
     if (editCourse == null) return const Center(child: WidgetLoading(),);
     return Container(
       decoration: BoxDecoration(
@@ -247,73 +250,131 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
             ),
           ),
           const SizedBox(height: 50,),
-          Row(
+          width > overflow ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Flexible(
                 flex: 1,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Heading(
-                      headingText: "Teachers",
-                      padding: EdgeInsets.all(5),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: _UserSelector(
-                        course: editCourse!,
-                        hint: "Teacher Name",
-                        selectedUsers: teachers,
-                        hiddenUsers: students,
-                        filters: const [UserRole.teacher, UserRole.admin],
-                        onSelected: (user, isSelected) {
-                          if (isSelected && !students.contains(user)) {
-                            teachers.add(user);
-                          } else if (teachers.length > 1) {
-                            teachers.remove(user);
-                          }
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  ],
+                child: _TeacherUserSelector(
+                  editCourse: editCourse,
+                  teachers: teachers,
+                  students: students
                 ),
               ),
               Flexible(
                 flex: 1,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Heading(
-                      headingText: "Students",
-                      padding: EdgeInsets.all(5),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: _UserSelector(
-                        course: editCourse!,
-                        hint: "Student Name",
-                        selectedUsers: students,
-                        hiddenUsers: teachers,
-                        filters: const [UserRole.student, UserRole.teacher, UserRole.admin],
-                        onSelected: (user, isSelected) {
-                          if (isSelected && !teachers.contains(user)) {
-                            students.add(user);
-                          } else {
-                            students.remove(user);
-                          }
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  ],
+                child: _StudentUserSelector(
+                  editCourse: editCourse,
+                  students: students,
+                  teachers: teachers
                 ),
               )
+            ],
+          ) : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _TeacherUserSelector(
+                editCourse: editCourse,
+                teachers: teachers,
+                students: students
+              ),
+              const SizedBox(height: 50,),
+              _StudentUserSelector(
+                editCourse: editCourse,
+                students: students,
+                teachers: teachers
+              ),
             ],
           )
         ],
       ),
+    );
+  }
+}
+
+class _StudentUserSelector extends StatelessWidget {
+  const _StudentUserSelector({
+    super.key,
+    required this.editCourse,
+    required this.students,
+    required this.teachers,
+  });
+
+  final Course? editCourse;
+  final List<User> students;
+  final List<User> teachers;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Heading(
+          headingText: "Students",
+          padding: EdgeInsets.all(5),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: _UserSelector(
+            course: editCourse!,
+            hint: "Name",
+            selectedUsers: students,
+            hiddenUsers: teachers,
+            filters: const [UserRole.student, UserRole.teacher, UserRole.admin],
+            onSelected: (user, isSelected) {
+              if (isSelected && !teachers.contains(user)) {
+                students.add(user);
+              } else {
+                students.remove(user);
+              }
+              //setState(() {});
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TeacherUserSelector extends StatelessWidget {
+  const _TeacherUserSelector({
+    required this.editCourse,
+    required this.teachers,
+    required this.students,
+  });
+
+  final Course? editCourse;
+  final List<User> teachers;
+  final List<User> students;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Heading(
+          headingText: "Teachers",
+          padding: EdgeInsets.all(5),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: _UserSelector(
+            course: editCourse!,
+            hint: "Name",
+            selectedUsers: teachers,
+            hiddenUsers: students,
+            filters: const [UserRole.teacher, UserRole.admin],
+            onSelected: (user, isSelected) {
+              if (isSelected && !students.contains(user)) {
+                teachers.add(user);
+              } else if (teachers.length > 1) {
+                teachers.remove(user);
+              }
+              //setState(() {});
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -481,7 +542,7 @@ class _UserSelector extends StatefulWidget {
     required this.onSelected,
     required this.hint,
     required this.filters,
-    this.count = 20,
+    this.count = 2,
   });
 
   final Course course;
@@ -514,7 +575,10 @@ class _UserSelectorState extends State<_UserSelector> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 500;
     List<User> showUsers = (users?.data ?? []).where((element) => !widget.hiddenUsers.contains(element) && !widget.selectedUsers.contains(element)).toList();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -564,50 +628,72 @@ class _UserSelectorState extends State<_UserSelector> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Button(
-                toolTip: 'Prev',
-                icon: Icons.arrow_back,
-                maxWidth: 40,
-                onClick: users != null ? (users!.havePrev ? (context) {
-                  if (filterStr.length < 3) {
-                    UserGateway.instance.getAllUsers(users!.page - 1, count: widget.count, roles: widget.filters).then((value) {
-                      users = value;
-                      if (mounted) setState(() {});
-                    });
-                  } else {
-                    UserGateway.instance.findUsers(users!.page - 1, filterStr, count: widget.count, roles: widget.filters).then((value) {
-                      users = value;
-                      if (mounted) setState(() {});
-                    });
-                  }
-                } : null) : null,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Button(
-                toolTip: 'Next',
-                icon: Icons.arrow_forward,
-                maxWidth: 40,
-                onClick: users != null ? (users!.haveNext ? (context) {
-                  if (filterStr.length < 3) {
-                    UserGateway.instance.getAllUsers(users!.page + 1, count: widget.count, roles: widget.filters).then((value) {
-                      users = value;
-                      if (mounted) setState(() {});
-                    });
-                  } else {
-                    UserGateway.instance.findUsers(users!.page + 1, filterStr, count: widget.count, roles: widget.filters).then((value) {
-                      users = value;
-                      if (mounted) setState(() {});
-                    });
-                  }
-                } : null) : null,
-              ),
-            ),
+            width > overflow && users != null && users!.havePrev ? _PageButton(
+              index: users!.page - 1,
+              icon: Icons.arrow_back,
+              toolTip: 'Prev',
+              count: widget.count,
+              filterStr: filterStr,
+              roles: widget.filters,
+              onData: (data) {
+                setState(() {
+                  users = data;
+                });
+              },
+            ) : Container(),
+            width > overflow && users != null && users!.haveNext ? _PageButton(
+              index: users!.page + 1,
+              icon: Icons.arrow_forward,
+              toolTip: 'Next',
+              count: widget.count,
+              filterStr: filterStr,
+              roles: widget.filters,
+              onData: (data) {
+                setState(() {
+                  users = data;
+                });
+              },
+            ) : Container(),
           ],
         ),
+        width <= overflow && users != null ? Row(
+          children: [
+            users!.havePrev ? Flexible(
+              flex: 1,
+              child: _PageButton(
+                index: users!.page - 1,
+                icon: Icons.arrow_back,
+                toolTip: 'Prev',
+                count: widget.count,
+                filterStr: filterStr,
+                roles: widget.filters,
+                width: double.infinity,
+                onData: (data) {
+                  setState(() {
+                    users = data;
+                  });
+                },
+              ),
+            ) : Container(),
+            users!.haveNext ? Flexible(
+              flex: 1,
+              child: _PageButton(
+                index: users!.page + 1,
+                icon: Icons.arrow_forward,
+                toolTip: 'Next',
+                count: widget.count,
+                filterStr: filterStr,
+                roles: widget.filters,
+                width: double.infinity,
+                onData: (data) {
+                  setState(() {
+                    users = data;
+                  });
+                },
+              ),
+            ) : Container()
+          ],
+        ) : Container(),
         isInit ? ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -624,6 +710,51 @@ class _UserSelectorState extends State<_UserSelector> {
           },
         ) : const Center(child: WidgetLoading()),
       ],
+    );
+  }
+}
+
+class _PageButton extends StatelessWidget {
+  const _PageButton({
+    this.index,
+    required this.icon,
+    required this.toolTip,
+    required this.count,
+    required this.filterStr,
+    required this.roles,
+    required this.onData,
+    this.width = 40,
+  });
+
+  final int? index;
+  final IconData icon;
+  final String toolTip;
+  final String filterStr;
+  final int count;
+  final List<UserRole> roles;
+  final Function(PagedData<User>? data) onData;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Button(
+        toolTip: toolTip,
+        icon: icon,
+        maxWidth: width,
+        onClick: index != null ? (context) {
+          if (filterStr.length < 3) {
+            UserGateway.instance.getAllUsers(index ?? 1, count: count, roles: roles).then((value) {
+              onData(value);
+            });
+          } else {
+            UserGateway.instance.findUsers(index ?? 1, filterStr, count: count, roles: roles).then((value) {
+              onData(value);
+            });
+          }
+        } : null,
+      ),
     );
   }
 }
