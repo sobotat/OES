@@ -184,6 +184,10 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
     }
   }
 
+  void onUsersModified() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -258,7 +262,8 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
                 child: _TeacherUserSelector(
                   editCourse: editCourse,
                   teachers: teachers,
-                  students: students
+                  students: students,
+                  onModified: onUsersModified,
                 ),
               ),
               Flexible(
@@ -266,7 +271,8 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
                 child: _StudentUserSelector(
                   editCourse: editCourse,
                   students: students,
-                  teachers: teachers
+                  teachers: teachers,
+                  onModified: onUsersModified,
                 ),
               )
             ],
@@ -276,13 +282,15 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               _TeacherUserSelector(
                 editCourse: editCourse,
                 teachers: teachers,
-                students: students
+                students: students,
+                onModified: onUsersModified,
               ),
               const SizedBox(height: 50,),
               _StudentUserSelector(
                 editCourse: editCourse,
                 students: students,
-                teachers: teachers
+                teachers: teachers,
+                onModified: onUsersModified,
               ),
             ],
           )
@@ -298,11 +306,13 @@ class _StudentUserSelector extends StatelessWidget {
     required this.editCourse,
     required this.students,
     required this.teachers,
+    required this.onModified,
   });
 
   final Course? editCourse;
   final List<User> students;
   final List<User> teachers;
+  final Function() onModified;
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +337,7 @@ class _StudentUserSelector extends StatelessWidget {
               } else {
                 students.remove(user);
               }
-              //setState(() {});
+              onModified();
             },
           ),
         ),
@@ -341,11 +351,13 @@ class _TeacherUserSelector extends StatelessWidget {
     required this.editCourse,
     required this.teachers,
     required this.students,
+    required this.onModified,
   });
 
   final Course? editCourse;
   final List<User> teachers;
   final List<User> students;
+  final Function() onModified;
 
   @override
   Widget build(BuildContext context) {
@@ -370,7 +382,7 @@ class _TeacherUserSelector extends StatelessWidget {
               } else if (teachers.length > 1) {
                 teachers.remove(user);
               }
-              //setState(() {});
+              onModified();
             },
           ),
         ),
@@ -542,7 +554,7 @@ class _UserSelector extends StatefulWidget {
     required this.onSelected,
     required this.hint,
     required this.filters,
-    this.count = 2,
+    this.count = 15,
   });
 
   final Course course;
