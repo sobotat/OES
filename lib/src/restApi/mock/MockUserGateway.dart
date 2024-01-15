@@ -149,4 +149,10 @@ class MockUserGateway implements UserGateway {
     data.data = users;
     return data;
   }
+
+  @override
+  Future<PagedData<User>?> findUsers(int index, String text, {int? count, List<UserRole>? roles}) {
+    // TODO: implement findUsers
+    throw UnimplementedError();
+  }
 }

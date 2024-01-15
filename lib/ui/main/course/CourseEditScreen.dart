@@ -8,6 +8,7 @@ import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -41,8 +42,7 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
           if (!snapshot.hasData) return const Center(child: WidgetLoading());
           Course course = snapshot.data!;
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
+          return ListView(
             children: [
               Heading(
                 headingText: "Edit Course",
@@ -74,19 +74,19 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
                   )
                 ],
               ),
-              Flexible(
-                child: BackgroundBody(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _CourseEditWidget(
-                      key: editWidgetStateKey,
-                      course: course,
-                      onDelete: () => context.pop(true),
-                      onUpdated: () => context.pop(true),
-                    ),
+              BackgroundBody(
+                maxHeight: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _CourseEditWidget(
+                    key: editWidgetStateKey,
+                    course: course,
+                    onDelete: () => context.pop(true),
+                    onUpdated: () => context.pop(true),
                   ),
                 ),
               ),
+              const SizedBox(height: 10,)
             ],
           );
         },
@@ -171,6 +171,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
     if (colorChanged) course.color = color;
 
     await CourseGateway.instance.updateCourse(course);
+    if (mounted) Toast.makeToast(text: "Course Saved", icon: Icons.save, context: context);
     if (widget.onUpdated != null) {
       widget.onUpdated!();
     }
@@ -192,8 +193,8 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
         borderRadius: BorderRadius.circular(10),
       ),
       padding: const EdgeInsets.all(10),
-      child: ListView(
-        shrinkWrap: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Heading(
             headingText: "Info",
@@ -209,34 +210,32 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               onSubmitted: () => save(),
             ),
           ),
-          const Heading(
-            headingText: "Color",
-            padding: EdgeInsets.all(5),
-          ),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Button(
               text: "Select Color",
               icon: Icons.color_lens,
+              maxWidth: double.infinity,
               backgroundColor: color,
               onClick: (context) async {
                 await showDialog(
                   context: context,
                   builder: (context) =>
-                    _ColorDialog(
-                      color: color,
-                      onColorChanged: (color) {
-                        this.color = color;
-                        colorChanged = true;
-                        if (mounted) {
-                          setState(() {});
-                        }
-                      },
-                  ),
+                      _ColorDialog(
+                        color: color,
+                        onColorChanged: (color) {
+                          this.color = color;
+                          colorChanged = true;
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        },
+                      ),
                 );
               },
             ),
           ),
+          const SizedBox(height: 50,),
           const Heading(
             headingText: "Join Code",
             padding: EdgeInsets.all(5),
@@ -247,6 +246,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               course: editCourse!,
             ),
           ),
+          const SizedBox(height: 50,),
           const Heading(
             headingText: "Teachers",
             padding: EdgeInsets.all(5),
@@ -269,6 +269,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
               },
             ),
           ),
+          const SizedBox(height: 50,),
           const Heading(
             headingText: "Students",
             padding: EdgeInsets.all(5),
@@ -460,6 +461,7 @@ class _UserSelector extends StatefulWidget {
     required this.onSelected,
     required this.hint,
     required this.filters,
+    this.count = 20,
   });
 
   final Course course;
@@ -467,6 +469,7 @@ class _UserSelector extends StatefulWidget {
   final List<UserRole> filters;
   final List<User> selectedUsers;
   final List<User> hiddenUsers;
+  final int count;
   final Function(User user, bool isSelected) onSelected;
 
   @override
@@ -476,7 +479,6 @@ class _UserSelector extends StatefulWidget {
 class _UserSelectorState extends State<_UserSelector> {
 
   PagedData<User>? users;
-  List<User> filteredUsers = [];
   String filterStr = "";
   bool isInit = false;
 
@@ -484,34 +486,15 @@ class _UserSelectorState extends State<_UserSelector> {
   void initState() {
     super.initState();
     Future(() async {
-      users = await UserGateway.instance.getAllUsers(1, roles: widget.filters, count: 15);
-      filteredUsers = filter(filterStr);
+      users = await UserGateway.instance.getAllUsers(1, roles: widget.filters, count: widget.count);
       isInit = true;
       if (mounted) setState(() {});
     },);
   }
 
-  List<User> filter(String searchingFor) {
-    List<User> out = [];
-    searchingFor = searchingFor.toLowerCase();
-
-    if (users != null) {
-      out.addAll(users!.data.where((element) =>
-          searchingFor == '' ||
-          element.firstName.toLowerCase().contains(searchingFor) ||
-          element.lastName.toLowerCase().contains(searchingFor) ||
-          '${element.firstName} ${element.lastName}'.toLowerCase().contains(searchingFor) ||
-          '${element.lastName} ${element.firstName}'.toLowerCase().contains(searchingFor) ||
-          element.username.toLowerCase().contains(searchingFor)
-      ));
-    }
-
-    return out;
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<User> showUsers = filteredUsers.where((element) => !widget.hiddenUsers.contains(element) && !widget.selectedUsers.contains(element)).toList();
+    List<User> showUsers = (users?.data ?? []).where((element) => !widget.hiddenUsers.contains(element) && !widget.selectedUsers.contains(element)).toList();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -538,16 +521,26 @@ class _UserSelectorState extends State<_UserSelector> {
               child: TextField(
                 autocorrect: true,
                 decoration: InputDecoration(
-                  labelText: widget.hint,
+                  labelText: '${widget.hint} (Min length is 3)',
                   iconColor: showUsers.isEmpty ? Colors.red.shade700 : null,
                   icon: const Icon(Icons.search),
                 ),
+                style: TextStyle(color: filterStr.length < 3 ? Colors.red.shade700 : null),
                 maxLines: 1,
                 textInputAction: TextInputAction.done,
                 onChanged: (value) {
                   filterStr = value;
-                  filteredUsers = filter(filterStr);
-                  if (mounted) setState(() {});
+                  if (filterStr.length < 3) {
+                    UserGateway.instance.getAllUsers(1, count: widget.count, roles: widget.filters).then((value) {
+                      users = value;
+                      if (mounted) setState(() {});
+                    });
+                    return;
+                  }
+                  UserGateway.instance.findUsers(1, filterStr, count: widget.count, roles: widget.filters).then((value) {
+                    users = value;
+                    if (mounted) setState(() {});
+                  });
                 },
               ),
             ),
@@ -558,11 +551,17 @@ class _UserSelectorState extends State<_UserSelector> {
                 icon: Icons.arrow_back,
                 maxWidth: 40,
                 onClick: users != null ? (users!.havePrev ? (context) {
-                  UserGateway.instance.getAllUsers(users!.page - 1, roles: [UserRole.teacher, UserRole.admin]).then((value) {
-                    users = value;
-                    filteredUsers = filter(filterStr);
-                    if (mounted) setState(() {});
-                  });
+                  if (filterStr.length < 3) {
+                    UserGateway.instance.getAllUsers(users!.page - 1, count: widget.count, roles: widget.filters).then((value) {
+                      users = value;
+                      if (mounted) setState(() {});
+                    });
+                  } else {
+                    UserGateway.instance.findUsers(users!.page - 1, filterStr, count: widget.count, roles: widget.filters).then((value) {
+                      users = value;
+                      if (mounted) setState(() {});
+                    });
+                  }
                 } : null) : null,
               ),
             ),
@@ -573,11 +572,17 @@ class _UserSelectorState extends State<_UserSelector> {
                 icon: Icons.arrow_forward,
                 maxWidth: 40,
                 onClick: users != null ? (users!.haveNext ? (context) {
-                  UserGateway.instance.getAllUsers(users!.page + 1, roles: [UserRole.teacher, UserRole.admin]).then((value) {
-                    users = value;
-                    filteredUsers = filter(filterStr);
-                    if (mounted) setState(() {});
-                  });
+                  if (filterStr.length < 3) {
+                    UserGateway.instance.getAllUsers(users!.page + 1, count: widget.count, roles: widget.filters).then((value) {
+                      users = value;
+                      if (mounted) setState(() {});
+                    });
+                  } else {
+                    UserGateway.instance.findUsers(users!.page + 1, filterStr, count: widget.count, roles: widget.filters).then((value) {
+                      users = value;
+                      if (mounted) setState(() {});
+                    });
+                  }
                 } : null) : null,
               ),
             ),

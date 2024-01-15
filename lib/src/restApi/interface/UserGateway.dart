@@ -13,6 +13,7 @@ abstract class UserGateway {
 
   Future<User?> getUser(int userId);
   Future<PagedData<User>?> getAllUsers(int index, {int? count, List<UserRole>? roles});
+  Future<PagedData<User>?> findUsers(int index, String text, {int? count, List<UserRole>? roles});
 
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device);
   Future<SignedUser?> loginWithToken(String token);

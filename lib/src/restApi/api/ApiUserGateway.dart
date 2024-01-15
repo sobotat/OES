@@ -122,13 +122,9 @@ class ApiUserGateway implements UserGateway {
 
     Map<String, dynamic> query = {
       'page': index,
+      'pageSize': count ?? 15,
+      'userRoles': (roles ?? const [UserRole.student, UserRole.teacher, UserRole.admin]).map((e) => e.index).toList(),
     };
-    if (count != null) {
-      query['pageSize'] = count;
-    }
-    if (roles != null) {
-      query['userRoles'] = roles.map((e) => e.index).toList();
-    }
 
     RequestResult result = await HttpRequest.instance.get('$basePath/user',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
@@ -150,6 +146,41 @@ class ApiUserGateway implements UserGateway {
 
     for(Map<String, dynamic> userJson in result.data['items']) {
         users.data.add(User.fromJson(userJson));
+    }
+
+    return users;
+  }
+
+  @override
+  Future<PagedData<User>?> findUsers(int index, String text, {int? count, List<UserRole>? roles}) async {
+
+    Map<String, dynamic> query = {
+      'page': index,
+      'pageSize': count ?? 15,
+      'userRoles': (roles ?? const [UserRole.student, UserRole.teacher, UserRole.admin]).map((e) => e.index).toList(),
+      'search': text,
+    };
+
+    RequestResult result = await HttpRequest.instance.get('$basePath/user/search',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: query,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [User-getAllUsers] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [User-getAllUsers] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    PagedData<User> users = PagedData.fromJson(result.data);
+
+    for(Map<String, dynamic> userJson in result.data['items']) {
+      users.data.add(User.fromJson(userJson));
     }
 
     return users;
