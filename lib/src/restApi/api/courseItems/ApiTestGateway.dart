@@ -90,4 +90,11 @@ class ApiTestGateway implements TestGateway {
     return Test.fromJson(result.data);
   }
 
+  @override
+  Future<bool> submit(Test test) async {
+    print("Submitting");
+    await Future.delayed(const Duration(seconds: 1));
+    return true;
+  }
+
 }

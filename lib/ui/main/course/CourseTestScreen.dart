@@ -44,10 +44,16 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
     super.initState();
   }
 
-  Future<void> onFinishTest() async {
-    print("Do Something Exiting Test");
-    await Future.delayed(const Duration(seconds: 1));
-    allowPop = true;
+  Future<bool> onFinishTest() async {
+    if(test == null) return false;
+
+    bool success = await TestGateway.instance.submit(test!);
+    if (!success) {
+      Toast.makeToast(text: "Failed to Finish Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
+      return false;
+    }
+
+    return true;
   }
 
   @override
@@ -81,7 +87,8 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print("Load Test Error: ${snapshot.error}");
-                  Toast.makeToast(text: "Failed to load Test");
+                  Toast.makeToast(text: "Failed to load Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
+                  context.pop();
                 }
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
                 test = snapshot.data;
@@ -168,8 +175,10 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
       ),
     );
 
-    if (wantFinishTest) await onFinishTest();
-    return Future.value(wantFinishTest);
+    if (wantFinishTest) {
+      allowPop = await onFinishTest();
+    }
+    return allowPop;
   }
 }
 

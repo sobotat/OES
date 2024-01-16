@@ -10,4 +10,6 @@ abstract class TestGateway {
   Future<Test?> create(int courseId, Test test);
   Future<Test?> update(int courseId, Test test);
 
+  Future<bool> submit(Test test);
+
 }
