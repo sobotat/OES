@@ -4,13 +4,14 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/ui/main/course/CourseEditScreen.dart';
-import 'package:oes/ui/main/course/CourseHomeworkScreen.dart';
-import 'package:oes/ui/main/course/CourseQuizScreen.dart';
 import 'package:oes/ui/main/course/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
-import 'package:oes/ui/main/course/CourseTestScreen.dart';
-import 'package:oes/ui/main/course/CourseUserQuizScreen.dart';
+import 'package:oes/ui/main/courseItems/homework/CourseHomeworkScreen.dart';
+import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
+import 'package:oes/ui/main/courseItems/test/CourseTestEditScreen.dart';
+import 'package:oes/ui/main/courseItems/test/CourseTestScreen.dart';
+import 'package:oes/ui/main/courseItems/userQuiz/CourseUserQuizScreen.dart';
 import 'package:oes/ui/network/NoApiScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
@@ -129,6 +130,33 @@ class AppRouter {
               return CourseScreen(courseID: id);
             },
             routes: [
+              GoRoute(
+                path: 'create-course-test',
+                name: 'create-course-test',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  return CourseTestEditScreen(
+                    courseId: courseId,
+                    testId: -1
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'edit-course-test/:test_id',
+                name: 'edit-course-test',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                  return CourseTestEditScreen(
+                    courseId: courseId,
+                    testId: id,
+                  );
+                },
+              ),
               GoRoute(
                 path: 'course-test/:test_id/:password',
                 name: 'course-test',

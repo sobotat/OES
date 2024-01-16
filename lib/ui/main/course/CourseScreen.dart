@@ -8,13 +8,7 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
-import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
-import 'package:oes/ui/assets/buttons/Sign-OutButton.dart';
-import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
-import 'package:oes/ui/assets/buttons/UserInfoButton.dart';
-import 'package:oes/ui/assets/dialogs/SmallMenu.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -39,6 +33,7 @@ class CourseScreen extends StatefulWidget {
 class _CourseScreenState extends State<CourseScreen> {
 
   bool isInit = false;
+  bool isTeacher = false;
   Course? course;
   Function() listenerFunction = () {};
 
@@ -64,6 +59,10 @@ class _CourseScreenState extends State<CourseScreen> {
       debugPrint('Loading Course');
       course = await CourseGateway.instance.getCourse(widget.courseID);
       isInit = true;
+
+      if (course != null && AppSecurity.instance.isLoggedIn()) {
+          isTeacher = await course!.isTeacherInCourse(AppSecurity.instance.user!);
+      }
 
       if (context.mounted) {
         setState(() {});
@@ -131,6 +130,7 @@ class _CourseScreenState extends State<CourseScreen> {
                               return _TestWidget(
                                 course: course!,
                                 item: item,
+                                isTeacher: isTeacher,
                               );
                             }
                             return _CourseItemWidget(
@@ -253,20 +253,17 @@ class _TeachersBuilder extends StatelessWidget {
   }
 }
 
-class _TestWidget extends StatefulWidget {
+
+class _TestWidget extends StatelessWidget {
   const _TestWidget({
     required this.course,
     required this.item,
+    required this.isTeacher,
   });
 
   final Course course;
   final CourseItem item;
-
-  @override
-  State<_TestWidget> createState() => _TestWidgetState();
-}
-
-class _TestWidgetState extends State<_TestWidget> {
+  final bool isTeacher;
 
   Future<void> openPasswordDialog(BuildContext context) async {
     await showDialog(
@@ -274,11 +271,18 @@ class _TestWidgetState extends State<_TestWidget> {
       builder: (context) => PopupDialog(
         alignment: Alignment.center,
         child: _TestDialog(
-          course: widget.course,
-          test: widget.item,
+          course: course,
+          test: item,
         )
       ),
     );
+  }
+
+  void edit(BuildContext context) {
+    context.goNamed("edit-course-test", pathParameters: {
+      "course_id": course.id.toString(),
+      "test_id": item.id.toString(),
+    });
   }
 
   @override
@@ -290,9 +294,24 @@ class _TestWidgetState extends State<_TestWidget> {
           backgroundColor: Colors.red
       ),
       body: _ItemBody(
-        bodyText: widget.item.name,
+        bodyText: item.name,
       ),
       color: Colors.red,
+      actions: [
+         isTeacher ? Padding(
+          padding: const EdgeInsets.all(5),
+          child: Button(
+            text: "",
+            toolTip: "Edit",
+            iconSize: 18,
+            maxWidth: 40,
+            icon: Icons.edit,
+            onClick: (context) {
+              edit(context);
+            },
+          ),
+        ) : Container(),
+      ],
     );
   }
 }
