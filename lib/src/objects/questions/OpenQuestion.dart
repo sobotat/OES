@@ -8,22 +8,14 @@ class OpenQuestion extends Question {
     required super.title,
     required super.description,
     required super.points
-  }) : super(type: 'open');
+  }) : super(type: 'open', options: []);
 
   String? answer;
-
-  @override
-  Map<String, dynamic> toMap() {
-    return super.toMap()
-    ..addAll({
-      'answer': answer,
-    });
-  }
 
   factory OpenQuestion.fromJson(Map<String, dynamic> json) {
     return OpenQuestion(
       id: json['id'],
-      title: json['title'],
+      title: json['name'],
       description: json['description'],
       points: json['points']
     );

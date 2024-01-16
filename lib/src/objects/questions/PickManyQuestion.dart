@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:oes/src/objects/questions/MultipleChoiceQuestion.dart';
+import 'package:oes/src/objects/questions/QuestionOption.dart';
 
 class PickManyQuestion extends MultipleChoiceQuestion {
 
@@ -15,28 +16,15 @@ class PickManyQuestion extends MultipleChoiceQuestion {
 
   List<int> answers = [];
 
-  @override
-  Map<String, dynamic> toMap() {
-    return super.toMap()
-      ..remove('description')
-      ..addAll({
-        'answers': answers,
-        'description': jsonEncode({
-          'description': description,
-          'options': options,
-        })
-      });
-  }
-
   factory PickManyQuestion.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> questionData = jsonDecode(json['description']);
+    List<Map<String, dynamic>> optionsData = json['options'] ?? [];
 
     return PickManyQuestion(
       id: json['id'],
-      title: json['title'],
-      description: questionData['description'],
+      title: json['name'],
+      description: json['description'],
       points: json['points'],
-      options: questionData['options'],
+      options: optionsData.map((e) => QuestionOption.fromJson(e)).toList(),
     );
   }
 }

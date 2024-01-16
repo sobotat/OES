@@ -115,7 +115,7 @@ class _Option extends StatelessWidget {
         ),
       ),
       body: SelectableText(
-        question.options[index],
+        question.options[index].text,
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
           fontSize: 16,
         ),

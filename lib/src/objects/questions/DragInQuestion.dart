@@ -7,6 +7,7 @@ class DragInQuestion extends Question {
     required super.id,
     required super.title,
     required super.description,
+    required super.options,
     required super.points
   }) : super(type: 'drag-in');
 
