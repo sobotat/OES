@@ -47,7 +47,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
   Future<bool> onFinishTest() async {
     if(test == null) return false;
 
-    bool success = await TestGateway.instance.submit(test!);
+    bool success = await TestGateway.instance.submit(test!.id, []);
     if (!success) {
       Toast.makeToast(text: "Failed to Finish Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
       return false;

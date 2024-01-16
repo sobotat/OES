@@ -1,5 +1,6 @@
 
 import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/restApi/api/courseItems/ApiTestGateway.dart';
 
 abstract class TestGateway {
@@ -10,6 +11,6 @@ abstract class TestGateway {
   Future<Test?> create(int courseId, Test test);
   Future<Test?> update(int courseId, Test test);
 
-  Future<bool> submit(Test test);
+  Future<bool> submit(int testId, List<AnswerOption> answers);
 
 }
