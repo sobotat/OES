@@ -17,7 +17,7 @@ class PickManyQuestion extends MultipleChoiceQuestion {
   List<int> answers = [];
 
   factory PickManyQuestion.fromJson(Map<String, dynamic> json) {
-    List<Map<String, dynamic>> optionsData = json['options'] ?? [];
+    List<dynamic> optionsData = json['options'] ?? [];
 
     return PickManyQuestion(
       id: json['id'],
