@@ -16,30 +16,24 @@ class RefreshButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: AppSecurity.instance,
-      builder: (context, child) {
-        return AppSecurity.instance.isLoggedIn() ? SizedBox(
-          width: 50,
-          child: Padding(
-            padding: padding ?? const EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 10,
-            ),
-            child: Button(
-              icon: Icons.refresh,
-              iconSize: 18,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              text: '',
-              toolTip: 'Refresh',
-              onClick: (context) {
-                onRefresh();
-              },
-            ),
-          ),
-        ) :
-        Container();
-      },
+    return SizedBox(
+      width: 50,
+      child: Padding(
+        padding: padding ?? const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 10,
+        ),
+        child: Button(
+          icon: Icons.refresh,
+          iconSize: 18,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          text: '',
+          toolTip: 'Refresh',
+          onClick: (context) {
+            onRefresh();
+          },
+        ),
+      ),
     );
   }
 }
