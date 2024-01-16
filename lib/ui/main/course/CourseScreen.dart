@@ -93,19 +93,24 @@ class _CourseScreenState extends State<CourseScreen> {
                 children: [
                   Heading(
                     headingText: course!.name,
-                    actions: width > overflow ? [
-                      SizedBox(
-                        height: 40,
-                        child: _TeachersBuilder(
-                          course: course!,
-                          axis: Axis.horizontal,
+                    actions: isTeacher ? [
+                      Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Button(
+                          icon: Icons.add,
+                          toolTip: "Create",
+                          maxWidth: 40,
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          onClick: (context) {
+                            print("Sending Create");
+                          },
                         ),
-                      )
+                      ),
                     ] : null,
                   ),
                   const SizedBox(height: 10,),
                   _Description(width: width, overflow: overflow, course: course!),
-                  (width > overflow && course!.description != '') || width <= overflow ? Padding(
+                  course!.description != '' ? Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: width > overflow ? 50 : 15,
                     ),
@@ -195,25 +200,27 @@ class _Description extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         horizontal: width > overflow ? 50 : 15,
       ),
-      child: width > overflow ? Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          child: course.description != '' ? SelectableText(
-            course.description,
-          ) : Container(),
-        ),
-      ) : Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          course.description != '' ? SelectableText(
-            course.description,
+          course.description != '' ? Align(
+            alignment: width > overflow ? Alignment.centerLeft : Alignment.center,
+            child: SelectableText(
+              course.description,
+            ),
           ) : Container(),
           course.description != '' ? const SizedBox(height: 20,) : Container(),
           SizedBox(
             height: 40,
-            child: _TeachersBuilder(
-              course: course,
-              axis: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: width > overflow ? MainAxisAlignment.start : MainAxisAlignment.center,
+              children: [
+                width > overflow ? const Text("Teachers:  ", style: TextStyle(fontWeight: FontWeight.bold)) : Container(),
+                _TeachersBuilder(
+                  course: course,
+                  axis: Axis.horizontal,
+                ),
+              ],
             ),
           ),
         ],
@@ -600,18 +607,17 @@ class TeacherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      message: '${teacher.firstName} ${teacher.lastName}',
-      child: IconItem(
-        icon: _IconText(
-          text: (teacher.firstName[0] + teacher.lastName[0]).toUpperCase(),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.secondary,
-        height: 35,
-        mainSize: MainAxisSize.min,
-        padding: const EdgeInsets.symmetric(horizontal: 2),
       ),
+      padding: const EdgeInsets.all(5),
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      child: Center(
+        child: Text("${teacher.firstName} ${teacher.lastName}",
+        )
+      )
     );
   }
 }

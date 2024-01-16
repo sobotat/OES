@@ -190,8 +190,9 @@ class _CoursesState extends State<_Courses> {
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: Button(
-                    text: "Create",
-                    maxWidth: 75,
+                    icon: Icons.add,
+                    toolTip: "Create",
+                    maxWidth: 40,
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     onClick: (context) => createCourse(),
                   ),
@@ -199,8 +200,9 @@ class _CoursesState extends State<_Courses> {
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: Button(
-                    text: "Join",
-                    maxWidth: 75,
+                    icon: Icons.edit,
+                    toolTip: "Join",
+                    maxWidth: 40,
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     onClick: (context) => joinCourse(),
                   ),
