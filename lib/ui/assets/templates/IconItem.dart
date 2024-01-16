@@ -76,8 +76,11 @@ class IconItem extends StatelessWidget {
                       ) : Container(),
                     ],
                   ),
-                  Row(
-                    children: actions,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: Row(
+                      children: actions,
+                    ),
                   ),
                 ],
               ),
