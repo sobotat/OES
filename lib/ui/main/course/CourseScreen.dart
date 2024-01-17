@@ -70,6 +70,74 @@ class _CourseScreenState extends State<CourseScreen> {
     }
   }
 
+  void showCreateDialog(BuildContext context) {
+    if (course == null) return;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return PopupDialog(
+          alignment: Alignment.center,
+          child: Container(
+            width: 490,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "Create",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 26),
+                    ),
+                  ),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      _BigIconButton(
+                        icon: Icons.text_increase,
+                        text: "Test",
+                        onClick: () {
+                          print("Create Test");
+                          context.goNamed("create-course-test", pathParameters: {
+                            "course_id": course!.id.toString(),
+                          });
+                          context.pop();
+                        },
+                      ),
+                      _BigIconButton(
+                        icon: Icons.quiz,
+                        text: "Quiz",
+                        onClick: () {
+                          print("Create Quiz");
+                          context.pop();
+                        },
+                      ),
+                      _BigIconButton(
+                        icon: Icons.home_work,
+                        text: "Homework",
+                        onClick: () {
+                          print("Create Homework");
+                          context.pop();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -102,7 +170,7 @@ class _CourseScreenState extends State<CourseScreen> {
                           maxWidth: 40,
                           backgroundColor: Theme.of(context).colorScheme.secondary,
                           onClick: (context) {
-                            print("Sending Create");
+                            showCreateDialog(context);
                           },
                         ),
                       ),
@@ -177,6 +245,48 @@ class _CourseScreenState extends State<CourseScreen> {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _BigIconButton extends StatelessWidget {
+
+  const _BigIconButton({
+    required this.icon,
+    required this.text,
+    required this.onClick,
+    super.key,
+  });
+
+  final IconData icon;
+  final String text;
+  final Function() onClick;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onClick,
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          width: 150,
+          height: 150,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon,
+                size: 60,
+              ),
+              Text(text),
+            ]
+          ),
+        ),
       ),
     );
   }
