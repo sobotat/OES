@@ -61,6 +61,8 @@ class Toast {
 
         bool isActive = true;
         BuildContext? currentContext = AppRouter.instance.getCurrentContext();
+
+        print("🔷 Toast -> ${data.text}");
         if (currentContext != null) {
           showDialog(
               barrierColor: Colors.transparent,
