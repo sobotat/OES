@@ -48,9 +48,8 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
         future: Future(() async {
           if (!isNewTest()) {
             return await TestGateway.instance.get(widget.courseId, widget.testId) ?? test;
-          } else {
-            return test;
           }
+          return test;
         },),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -71,13 +70,14 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
                       icon: Icons.save,
                       toolTip: "Save",
                       maxWidth: 40,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       onClick: (context) {
                         print("Sending Save");
                         save();
                       },
                     ),
                   ),
-                  isNewTest() ? Padding(
+                  !isNewTest() ? Padding(
                     padding: const EdgeInsets.all(5),
                     child: Button(
                       icon: Icons.delete,

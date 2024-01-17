@@ -53,6 +53,7 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
                       icon: Icons.save,
                       toolTip: "Save",
                       maxWidth: 40,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       onClick: (context) {
                         print("Sending Save");
                         editWidgetStateKey.currentState?.save();
