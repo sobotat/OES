@@ -473,10 +473,7 @@ class _CourseCreateDialogState extends State<_CourseCreateDialog> {
               maxWidth: 500,
             ),
             decoration: BoxDecoration(
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .background,
+              color: Theme.of(context).colorScheme.background,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.all(10),
