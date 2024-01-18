@@ -39,6 +39,7 @@ class ApiTestGateway implements TestGateway {
   @override
   Future<Test?> create(int courseId, Test test) async {
 
+    test.created = DateTime.now();
     Map<String, dynamic> data = test.toMap();
     data.remove('id');
 
@@ -115,6 +116,12 @@ class ApiTestGateway implements TestGateway {
       return false;
     }
 
+    return true;
+  }
+
+  @override
+  Future<bool> delete(int courseId, int id) async {
+    // TODO: implement delete
     return true;
   }
 
