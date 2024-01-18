@@ -17,6 +17,7 @@ import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 import 'package:oes/ui/assets/widgets/questions/OpenQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/PickManyQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/PickOneQuestionBuilder.dart';
+import 'package:oes/ui/assets/widgets/questions/QuestionBuilderFactory.dart';
 
 class CourseTestScreen extends StatefulWidget {
   const CourseTestScreen({
@@ -203,7 +204,7 @@ class _TestBody extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: test.questions.length,
           itemBuilder: (context, index) {
-            return _QuestionBuilder(question: test.questions[index]);
+            return QuestionBuilderFactory(question: test.questions[index]);
           },
         ),
         Padding(
@@ -223,27 +224,5 @@ class _TestBody extends StatelessWidget {
         )
       ],
     );
-  }
-}
-
-class _QuestionBuilder extends StatelessWidget {
-  const _QuestionBuilder({
-    required this.question,
-    super.key,
-  });
-
-  final Question question;
-
-  @override
-  Widget build(BuildContext context) {
-    if (question is PickOneQuestion) {
-      return PickOneQuestionBuilder(question: question as PickOneQuestion);
-    } else if (question is PickManyQuestion) {
-      return PickManyQuestionBuilder(question: question as PickManyQuestion);
-    } else if (question is OpenQuestion) {
-      return OpenQuestionBuilder(question: question as OpenQuestion);
-    } else {
-      return Text("Question [${question.type}] is Not Supported");
-    }
   }
 }
