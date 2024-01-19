@@ -97,7 +97,7 @@ class ApiTestGateway implements TestGateway {
 
     Map<String, dynamic> query = {
       'testId': testId,
-      'answerRequests': answers.map((e) => e.toMap()).toList(),
+      'answers': answers.map((e) => e.toMap()).toList(),
     };
 
     RequestResult result = await HttpRequest.instance.post('$basePath/submit',
