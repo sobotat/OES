@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
@@ -48,7 +49,12 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
   Future<bool> onFinishTest() async {
     if(test == null) return false;
 
-    bool success = await TestGateway.instance.submit(test!.id, []);
+    List<AnswerOption> answers = [];
+    for(Question question in test!.questions) {
+      answers.addAll(question.getAnswerOptions());
+    }
+
+    bool success = await TestGateway.instance.submit(test!.id, answers);
     if (!success) {
       Toast.makeToast(text: "Failed to Finish Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
       return false;

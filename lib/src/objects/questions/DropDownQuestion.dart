@@ -1,4 +1,5 @@
 
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 
 class DropDownQuestion extends Question {
@@ -10,5 +11,11 @@ class DropDownQuestion extends Question {
     required super.options,
     required super.points
   }) : super(type: 'dropdown');
+
+  @override
+  List<AnswerOption> getAnswerOptions() {
+    // TODO: implement getAnswerOptions
+    throw UnimplementedError();
+  }
 
 }

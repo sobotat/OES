@@ -1,6 +1,7 @@
 
 import 'package:oes/src/objects/ApiObject.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 
 abstract class Question extends ApiObject {
 
@@ -19,6 +20,8 @@ abstract class Question extends ApiObject {
   String description;
   List<QuestionOption> options;
   int points;
+
+  List<AnswerOption> getAnswerOptions();
 
   @override
   Map<String, dynamic> toMap() {

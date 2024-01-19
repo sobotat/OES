@@ -1,4 +1,5 @@
 
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 
 class DragInQuestion extends Question {
@@ -10,5 +11,11 @@ class DragInQuestion extends Question {
     required super.options,
     required super.points
   }) : super(type: 'drag-in');
+
+  @override
+  List<AnswerOption> getAnswerOptions() {
+    // TODO: implement getAnswerOptions
+    throw UnimplementedError();
+  }
 
 }

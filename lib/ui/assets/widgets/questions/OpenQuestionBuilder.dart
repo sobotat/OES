@@ -95,11 +95,7 @@ class _QuestionBodyState extends State<_QuestionBody> {
             keyboardType: TextInputType.multiline,
             maxLines: null,
             onChanged: (value) {
-              if (value.isNotEmpty) {
-                widget.question.answer = value;
-              } else {
-                widget.question.answer = null;
-              }
+              widget.question.answer = value;
             },
           ),
         ),

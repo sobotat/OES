@@ -1,4 +1,5 @@
 
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 
 class OpenQuestion extends Question {
@@ -10,7 +11,7 @@ class OpenQuestion extends Question {
     required super.points
   }) : super(type: 'open', options: []);
 
-  String? answer;
+  String answer = "";
 
   factory OpenQuestion.fromJson(Map<String, dynamic> json) {
     return OpenQuestion(
@@ -20,4 +21,13 @@ class OpenQuestion extends Question {
       points: json['points']
     );
   }
+
+  @override
+  List<AnswerOption> getAnswerOptions() {
+    return [
+      AnswerOption(questionId: id, id: 1, text: answer),
+    ];
+  }
+
+
 }
