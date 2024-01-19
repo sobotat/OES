@@ -405,7 +405,16 @@ class _TestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconItem(
-      onClick: (context) => openPasswordDialog(context),
+      onClick: (context) {
+        if(isTeacher) {
+          context.goNamed("info-course-test", pathParameters: {
+            'course_id': course.id.toString(),
+            'test_id': item.id.toString()
+          });
+          return;
+        }
+        openPasswordDialog(context);
+      },
       icon: const _IconText(
           text: 'Test',
           backgroundColor: Colors.red
