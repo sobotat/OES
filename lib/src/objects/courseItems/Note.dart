@@ -18,11 +18,6 @@ class Note extends CourseItem {
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
-        'id': id,
-        'name': name,
-        'created': created.toUtc().toString(),
-        'createdById': createdById,
-        'isVisible': isVisible,
         'data': data,
       });
   }
