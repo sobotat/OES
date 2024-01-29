@@ -55,13 +55,11 @@ class Course extends ApiObject {
   }
 
   Future<bool> isTeacherInCourse(User user) async {
-
     for(User teacher in await teachers) {
       if (user.id == teacher.id) {
         return true;
       }
     }
-
     return false;
   }
 
