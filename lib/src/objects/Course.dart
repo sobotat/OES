@@ -22,17 +22,9 @@ class Course extends ApiObject {
   String shortName;
   String description;
   Color? color;
-  List<CourseItem>? _items;
   List<UserQuiz>? _userQuizzes;
   List<User>? _teachers;
   List<User>? _students;
-
-  Future<List<CourseItem>> get items async {
-    if (_items != null) return _items!;
-    _items = await CourseGateway.instance.getCourseItems(id);
-    return _items!;
-  }
-
 
   void setTeachers(List<User> value) {
     _teachers = value;

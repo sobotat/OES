@@ -202,7 +202,7 @@ class _CourseScreenState extends State<CourseScreen> {
                   ) : Container(),
                   BackgroundBody(
                     child: FutureBuilder<List<CourseItem>>(
-                      future: course!.items,
+                      future: CourseGateway.instance.getCourseItems(course!.id),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) return const WidgetLoading();
                         return ListView.builder(
@@ -667,7 +667,7 @@ class _CourseItemWidget extends StatelessWidget {
 
   Color getColor() {
     switch(item.type.toLowerCase()) {
-      case 'note': return Colors.lightBlueAccent;
+      case 'note': return Colors.deepPurple.shade400;
       case 'homework': return Colors.teal;
       case 'quiz': return Colors.greenAccent;
       case 'user-quiz': return Colors.lightGreen;
