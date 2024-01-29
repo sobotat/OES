@@ -271,7 +271,11 @@ class _EditorState extends State<_Editor> {
     bool success = await NoteGateway.instance.delete(widget.courseId, widget.note.id);
     if (success) {
       Toast.makeSuccessToast(text: "Note was Deleted", duration: ToastDuration.short);
-      if (mounted) context.pop();
+      if (mounted) {
+        context.goNamed('course', pathParameters: {
+          'course_id': widget.courseId.toString(),
+        });
+      }
       return;
     }
     Toast.makeErrorToast(text: "Failed to Delete Note", duration: ToastDuration.large);

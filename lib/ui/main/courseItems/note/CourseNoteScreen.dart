@@ -3,12 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/Note.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/NoteGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
+import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
@@ -42,7 +45,37 @@ class CourseNoteScreen extends StatelessWidget {
 
               return ListView(
                 children: [
-                  Heading(headingText: note.name),
+                  Heading(
+                    headingText: note.name,
+                    actions: [
+                      FutureBuilder<bool>(
+                        future: Future(() async {
+                          Course? course = await CourseGateway.instance.getCourse(courseId);
+                          return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
+                        }),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return Container();
+                          bool isTeacher = snapshot.data!;
+                          if (!isTeacher) return Container();
+                          return Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Button(
+                              icon: Icons.edit,
+                              toolTip: "Edit",
+                              maxWidth: 40,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              onClick: (context) {
+                                context.goNamed('edit-course-note', pathParameters: {
+                                  'course_id': courseId.toString(),
+                                  'note_id': noteId.toString(),
+                                });
+                              },
+                            ),
+                          );
+                        }
+                      ),
+                    ],
+                  ),
                   BackgroundBody(
                     maxHeight: double.infinity,
                     child: AppMarkdown(
