@@ -69,30 +69,30 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
   Future<void> save() async {
 
     if (nameController.text.isEmpty) {
-      Toast.makeToast(text: "Name cannot be Empty", duration: ToastDuration.large, icon: Icons.error, iconColor: Colors.red.shade700);
+      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
       return;
     }
     test.name = nameController.text;
     
     Test? response = await TestGateway.instance.create(widget.courseId, test);
     if (response != null) {
-      Toast.makeToast(text: "Test was Saved", duration: ToastDuration.short, icon: Icons.done, iconColor: Colors.green.shade700);
+      Toast.makeSuccessToast(text: "Test was Saved", duration: ToastDuration.short);
       context.pop();
       return;
     }
 
-    Toast.makeToast(text: "Failed to Save Test", duration: ToastDuration.large, icon: Icons.error, iconColor: Colors.red.shade700);
+    Toast.makeErrorToast(text: "Failed to Save Test", duration: ToastDuration.large);
   }
 
   Future<void> delete() async {
     if(isNewTest()) return;
     bool success = await TestGateway.instance.delete(widget.courseId, widget.testId);
     if (success) {
-      Toast.makeToast(text: "Test was Deleted", duration: ToastDuration.short, icon: Icons.done, iconColor: Colors.green.shade700);
+      Toast.makeSuccessToast(text: "Test was Deleted", duration: ToastDuration.short);
       context.pop();
       return;
     }
-    Toast.makeToast(text: "Failed to Delete Test", duration: ToastDuration.large, icon: Icons.error, iconColor: Colors.red.shade700);
+    Toast.makeErrorToast(text: "Failed to Delete Test", duration: ToastDuration.large);
   }
 
   bool isNewTest() { return widget.testId == -1; }
