@@ -127,4 +127,19 @@ class Toast {
       }
     });
   }
+
+  static void makeSuccessToast({
+    required String text,
+    ToastDuration duration = ToastDuration.short,
+  }) {
+    Toast.makeToast(text: text, duration: duration, icon: Icons.done, iconColor: Colors.green.shade700);
+  }
+
+  static void makeErrorToast({
+    required String text,
+    ToastDuration duration = ToastDuration.short,
+  }) {
+    Toast.makeToast(text: text, duration: duration, icon: Icons.error, iconColor: Colors.red.shade700);
+  }
+
 }
