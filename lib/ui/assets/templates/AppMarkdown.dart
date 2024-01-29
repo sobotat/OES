@@ -5,6 +5,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AppMarkdown extends StatelessWidget {
   const AppMarkdown({
@@ -23,20 +24,20 @@ class AppMarkdown extends StatelessWidget {
         data: data,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        onTapText: () {
-          print("Clicked");
-        },
         onTapLink: (text, href, title) async {
           Uri uri = Uri.parse(href.toString());
-          Toast.makeToast(text: "Opening $uri in Browser", icon: Icons.info);
-          if (await canLaunchUrl(uri)) {
+          Toast.makeToast(text: "Opening url in Browser", icon: Icons.info);
+          if (await canLaunchUrl(uri) ) {
             await launchUrl(
               uri,
-              mode: LaunchMode.externalApplication,
+              mode: kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
             );
           } else {
-          throw 'Could not launch $uri';
+            Toast.makeErrorToast(text: 'Could not launch $uri', duration: ToastDuration.large);
           }
+        },
+        builders: {
+          'code': _CodeElementBuilder(),
         },
         styleSheet: MarkdownStyleSheet(
           h1: TextStyle(
