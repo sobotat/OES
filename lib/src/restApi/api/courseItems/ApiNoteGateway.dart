@@ -1,71 +1,120 @@
 
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Note.dart';
+import 'package:oes/src/restApi/api/http/HttpRequest.dart';
+import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
+import 'package:oes/src/restApi/api/http/RequestResult.dart';
 import 'package:oes/src/restApi/interface/courseItems/NoteGateway.dart';
+import 'package:oes/config/AppApi.dart';
 
 class ApiNoteGateway extends NoteGateway {
 
+  String basePath = '${AppApi.instance.apiServerUrl}/api/note';
+
   @override
-  Future<Note?> get(int courseId, int id) {
-    return Future.delayed(Duration(milliseconds: 200),() {
-      return Note(
-          id: id,
-          name:'Programing 1',
-          created: DateTime.now(),
-          createdById: AppSecurity.instance.user!.id,
-          isVisible: true,
-          data: """          
-- First
-- Second
-- Third
-                   
-Some **more** *text*
-              
-## Types    
-1. Vars
-2. Functions
-3. Classes
+  Future<Note?> get(int courseId, int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+    );
 
-> some info
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Note-get] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
 
----
-### Code
-```java
-public static void main(String args[]) {  
-  System.out.println("Hello World");  
-}
-```
-```bash
-  ./something
-```
----
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Note-get] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
 
-# Image
-![Image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfjL9xNhvpuUtKH9v-a1X_FD0BRg7lrFBTIo0Fz7reTywPZwVMRVkYrzVp1q0v-BlVrnw&usqp=CAU)
-
-                """
-      );
-    });
+    return Note.fromJson(result.data);
   }
 
   @override
   Future<Note?> create(int courseId, Note note) async {
-    // TODO: implement create
-    print("Creating -> ${note.toMap()}");
-    return note;
+    note.created = DateTime.now();
+    Map<String, dynamic> data = note.toMap();
+    data.remove('id');
+    data.remove('type');
+    print(basePath.toString());
+
+    RequestResult result = await HttpRequest.instance.post(basePath,
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+      data: data,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Note-create] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Note-create] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return Note.fromJson(result.data);
   }
 
   @override
   Future<Note?> update(int courseId, Note note) async {
-    // TODO: implement update
-    print("Updating -> ${note.toMap()}");
-    return note;
+    Map<String, dynamic> data = note.toMap();
+    data.remove('id');
+
+    RequestResult result = await HttpRequest.instance.put('$basePath/${note.id}',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+      data: data,
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Note-update] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Note-update] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return get(courseId, note.id);
   }
 
   @override
-  Future<bool> delete(int courseId, int id) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<bool> delete(int courseId, int id) async {
+    RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Note-delete] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Note-delete] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
   }
 
 }
