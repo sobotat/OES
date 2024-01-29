@@ -36,7 +36,7 @@ class CourseItem extends ApiObject {
         'type': type,
         'id': id,
         'name': name,
-        'created': created.toUtc().toString(),
+        'created': created.toUtc().toString().replaceAll(' ', 'T'),
         'createdById': createdById,
         'isVisible': isVisible,
       });
