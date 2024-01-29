@@ -121,7 +121,24 @@ class ApiTestGateway implements TestGateway {
 
   @override
   Future<bool> delete(int courseId, int id) async {
-    // TODO: implement delete
+    RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-delete] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Test-delete] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
     return true;
   }
 
