@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_selectionarea/flutter_markdown_selectionarea.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:oes/ui/assets/dialogs/Toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppMarkdown extends StatelessWidget {
   const AppMarkdown({
@@ -21,8 +23,20 @@ class AppMarkdown extends StatelessWidget {
         data: data,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        builders: {
-          'code': _CodeElementBuilder(), // new
+        onTapText: () {
+          print("Clicked");
+        },
+        onTapLink: (text, href, title) async {
+          Uri uri = Uri.parse(href.toString());
+          Toast.makeToast(text: "Opening $uri in Browser", icon: Icons.info);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(
+              uri,
+              mode: LaunchMode.externalApplication,
+            );
+          } else {
+          throw 'Could not launch $uri';
+          }
         },
         styleSheet: MarkdownStyleSheet(
           h1: TextStyle(
