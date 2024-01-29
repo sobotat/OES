@@ -8,6 +8,8 @@ import 'package:oes/ui/main/course/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/main/courseItems/homework/CourseHomeworkScreen.dart';
+import 'package:oes/ui/main/courseItems/note/CourseNoteEditScreen.dart';
+import 'package:oes/ui/main/courseItems/note/CourseNoteScreen.dart';
 import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestEditScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestInfoScreen.dart';
@@ -132,7 +134,7 @@ class AppRouter {
             },
             routes: [
               GoRoute(
-                path: 'create-course-test',
+                path: 'create-test',
                 name: 'create-course-test',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -145,7 +147,7 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'edit-course-test/:test_id',
+                path: 'edit-test/:test_id',
                 name: 'edit-course-test',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -159,7 +161,7 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'info-course-test/:test_id',
+                path: 'info-test/:test_id',
                 name: 'info-course-test',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -173,7 +175,7 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'course-test/:test_id/:password',
+                path: 'test/:test_id/:password',
                 name: 'course-test',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -189,7 +191,7 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'course-quiz/:quiz_id',
+                path: 'quiz/:quiz_id',
                 name: 'course-quiz',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -203,7 +205,7 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'course-user-quiz/:quiz_id',
+                path: 'user-quiz/:quiz_id',
                 name: 'course-user-quiz',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -217,7 +219,7 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'course-homework/:homework_id',
+                path: 'homework/:homework_id',
                 name: 'course-homework',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
@@ -229,7 +231,50 @@ class AppRouter {
                     homeworkId: id,
                   );
                 },
-              )
+              ),
+              GoRoute(
+                path: 'note/:note_id',
+                name: 'course-note',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  int id = int.parse(state.pathParameters['note_id'] ?? '-1');
+                  return CourseNoteScreen(
+                    courseId: courseId,
+                    noteId: id,
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    name: 'edit-course-note',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['note_id'] ?? '-1');
+                      return CourseNoteEditScreen(
+                        courseId: courseId,
+                        noteId: id,
+                      );
+                    },
+                  )
+                ]
+              ),
+              GoRoute(
+                path: 'create-note',
+                name: 'create-course-note',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  return CourseNoteEditScreen(
+                    courseId: courseId,
+                    noteId: -1,
+                  );
+                },
+              ),
             ],
           ),
           GoRoute(

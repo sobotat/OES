@@ -128,6 +128,17 @@ class _CourseScreenState extends State<CourseScreen> {
                           context.pop();
                         },
                       ),
+                      _BigIconButton(
+                        icon: Icons.file_open,
+                        text: "Notes",
+                        onClick: () {
+                          print("Create Notes");
+                          context.goNamed("create-course-note", pathParameters: {
+                            "course_id": course!.id.toString(),
+                          });
+                          context.pop();
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -207,6 +218,7 @@ class _CourseScreenState extends State<CourseScreen> {
                               );
                             }
                             return _CourseItemWidget(
+                              isTeacher: isTeacher,
                               course: course!,
                               item: item
                             );
@@ -617,15 +629,17 @@ class _TestDialogState extends State<_TestDialog> {
 
 class _CourseItemWidget extends StatelessWidget {
   const _CourseItemWidget({
+    required this.isTeacher,
     required this.course,
     required this.item,
     super.key
   });
 
+  final bool isTeacher;
   final Course course;
   final CourseItem item;
 
-  void openHomework(BuildContext context) {
+  void open(BuildContext context) {
     debugPrint('Open ${item.type} ${item.name}');
     context.goNamed('course-${item.type}', pathParameters: {
       'course_id': course.id.toString(),
@@ -633,9 +647,17 @@ class _CourseItemWidget extends StatelessWidget {
     );
   }
 
+  void edit(BuildContext context) {
+    debugPrint('Edit ${item.type} ${item.name}');
+    context.goNamed('edit-course-${item.type}', pathParameters: {
+      'course_id': course.id.toString(),
+      '${item.type}_id': item.id.toString()}
+    );
+  }
+
   String getIconText() {
     switch(item.type.toLowerCase()) {
-      case 'document': return 'F';
+      case 'note': return 'Note';
       case 'homework': return 'Hw';
       case 'quiz': return 'Qz';
       case 'user-quiz': return 'U-Qz';
@@ -645,7 +667,7 @@ class _CourseItemWidget extends StatelessWidget {
 
   Color getColor() {
     switch(item.type.toLowerCase()) {
-      case 'document': return Colors.lightBlueAccent;
+      case 'note': return Colors.lightBlueAccent;
       case 'homework': return Colors.teal;
       case 'quiz': return Colors.greenAccent;
       case 'user-quiz': return Colors.lightGreen;
@@ -656,7 +678,7 @@ class _CourseItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconItem(
-      onClick: (context) => openHomework(context),
+      onClick: (context) => open(context),
       icon: _IconText(
           text: getIconText(),
           backgroundColor: getColor()
@@ -665,6 +687,21 @@ class _CourseItemWidget extends StatelessWidget {
         bodyText: item.name,
       ),
       color: getColor(),
+      actions: [
+        isTeacher ? Padding(
+          padding: const EdgeInsets.all(5),
+          child: Button(
+            text: "",
+            toolTip: "Edit",
+            iconSize: 18,
+            maxWidth: 40,
+            icon: Icons.edit,
+            onClick: (context) {
+              edit(context);
+            },
+          ),
+        ) : Container(),
+      ],
     );
   }
 }
