@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class AppMarkdown extends StatelessWidget {
   const AppMarkdown({
     required this.data,
-    this.flipBlocksColors = false,
+    this.flipBlocksColors = true,
     super.key
   });
 
