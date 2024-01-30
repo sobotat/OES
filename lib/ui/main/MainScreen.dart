@@ -344,7 +344,7 @@ class _JoinDialogState extends State<_JoinDialog> {
                   padding: const EdgeInsets.all(5),
                   child: Button(
                     text: "Enter",
-                    backgroundColor: wrongCode ? Colors.red.shade700 : null,
+                    backgroundColor: wrongCode ? Colors.red.shade700 : Theme.of(context).colorScheme.secondary,
                     maxWidth: double.infinity,
                     onClick: (context) {
                       join().then((value) {
