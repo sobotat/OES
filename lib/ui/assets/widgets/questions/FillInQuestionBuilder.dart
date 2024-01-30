@@ -17,7 +17,7 @@ class FillInQuestionBuilder extends QuestionBuilder<FillInQuestion> {
       width: 100,
       height: 100,
       alignment: Alignment.center,
-      child: Text(super.question.title),
+      child: Text(super.question.name),
     );
   }
 }

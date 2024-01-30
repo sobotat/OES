@@ -17,7 +17,7 @@ class DropDownQuestionBuilder extends QuestionBuilder<DropDownQuestion> {
       width: 100,
       height: 100,
       alignment: Alignment.center,
-      child: Text(super.question.title),
+      child: Text(super.question.name),
     );
   }
 }

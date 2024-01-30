@@ -17,4 +17,12 @@ abstract class SchedulableItem extends CourseItem {
   DateTime scheduled;
   DateTime end;
 
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()..addAll({
+      'scheduled': scheduled.toUtc().toString().replaceAll(' ', 'T'),
+      'end': end.toUtc().toString().replaceAll(' ', 'T'),
+    });
+  }
+
 }

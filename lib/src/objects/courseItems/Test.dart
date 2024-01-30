@@ -24,9 +24,6 @@ class Test extends ExamItem {
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
-        'scheduled': scheduled.toUtc().toString().replaceAll(' ', 'T'),
-        'end': end.toUtc().toString(),
-        'duration': duration,
         'maxAttempts': maxAttempts,
       });
   }

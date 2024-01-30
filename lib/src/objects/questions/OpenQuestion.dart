@@ -6,7 +6,7 @@ class OpenQuestion extends Question {
 
   OpenQuestion({
     required super.id,
-    required super.title,
+    required super.name,
     required super.description,
     required super.points
   }) : super(type: 'open', options: []);
@@ -16,7 +16,7 @@ class OpenQuestion extends Question {
   factory OpenQuestion.fromJson(Map<String, dynamic> json) {
     return OpenQuestion(
       id: json['id'],
-      title: json['name'],
+      name: json['name'],
       description: json['description'],
       points: json['points']
     );

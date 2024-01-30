@@ -6,7 +6,7 @@ class DragInQuestion extends Question {
 
   DragInQuestion({
     required super.id,
-    required super.title,
+    required super.name,
     required super.description,
     required super.options,
     required super.points

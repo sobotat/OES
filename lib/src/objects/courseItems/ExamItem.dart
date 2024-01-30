@@ -19,4 +19,12 @@ abstract class ExamItem extends SchedulableItem {
 
   int duration;
   List<Question> questions;
+
+  @override
+  Map<String, dynamic> toMap() {
+    return super.toMap()..addAll({
+      'duration': duration,
+      'questions': questions.map((e) => e.toMap()).toList(),
+    });
+  }
 }

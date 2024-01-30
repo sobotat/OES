@@ -6,7 +6,7 @@ class DropDownQuestion extends Question {
 
   DropDownQuestion({
     required super.id,
-    required super.title,
+    required super.name,
     required super.description,
     required super.options,
     required super.points

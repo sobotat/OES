@@ -8,7 +8,7 @@ abstract class Question extends ApiObject {
   Question({
     required this.id,
     required this.type,
-    required this.title,
+    required this.name,
     required this.description,
     required this.options,
     required this.points,
@@ -16,7 +16,7 @@ abstract class Question extends ApiObject {
 
   int id;
   String type;
-  String title;
+  String name;
   String description;
   List<QuestionOption> options;
   int points;
@@ -28,10 +28,11 @@ abstract class Question extends ApiObject {
     return {
       'id': id,
       'type': type,
-      'title': title,
+      'name': name,
       'description': description,
       'options': options.map((e) => e.toMap()).toList(),
       'points': points
     };
   }
+
 }

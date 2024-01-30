@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
+import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
@@ -21,7 +22,7 @@ class PickManyQuestionBuilder extends QuestionBuilder<PickManyQuestion> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Heading(
-          headingText: question.title,
+          headingText: question.name,
           actions: [
             Text("Max ${question.points} points")
           ],
@@ -32,11 +33,8 @@ class PickManyQuestionBuilder extends QuestionBuilder<PickManyQuestion> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: SelectableText(
-                  question.description,
-                ),
+              AppMarkdown(
+                data: question.description,
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 5),

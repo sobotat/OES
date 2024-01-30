@@ -9,7 +9,7 @@ class PickOneQuestion extends MultipleChoiceQuestion {
 
   PickOneQuestion({
     required super.id,
-    required super.title,
+    required super.name,
     required super.description,
     required super.points,
     required super.options
@@ -22,7 +22,7 @@ class PickOneQuestion extends MultipleChoiceQuestion {
 
     return PickOneQuestion(
       id: json['id'],
-      title: json['name'],
+      name: json['name'],
       description: json['description'],
       points: json['points'],
       options: optionsData.map((e) => QuestionOption.fromJson(e)).toList(),
