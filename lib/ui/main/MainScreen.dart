@@ -279,7 +279,7 @@ class _JoinDialogState extends State<_JoinDialog> {
       return true;
     }
 
-    debugPrint("Wrong Join Code\n");
+    debugPrint("Wrong Join Code");
     callWrongCode();
     return false;
   }
