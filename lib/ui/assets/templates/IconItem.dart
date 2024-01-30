@@ -5,9 +5,11 @@ class IconItem extends StatelessWidget {
   const IconItem({
     required this.icon,
     this.body,
+    this.bodyFlex = 2,
     this.actions = const [],
     this.height = 50,
     this.color = Colors.blueAccent,
+    this.backgroundColor,
     this.onClick,
     this.onHold,
     this.mainSize = MainAxisSize.max,
@@ -18,9 +20,11 @@ class IconItem extends StatelessWidget {
 
   final Widget icon;
   final Widget? body;
+  final int bodyFlex;
   final List<Widget> actions;
   final double height;
   final Color color;
+  final Color? backgroundColor;
   final Function(BuildContext context)? onClick, onHold;
   final MainAxisSize mainSize;
   final Alignment alignment;
@@ -50,36 +54,47 @@ class IconItem extends StatelessWidget {
               height: height,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).colorScheme.primary
+                  color: backgroundColor ?? Theme.of(context).colorScheme.primary
               ),
               child: Row(
                 mainAxisAlignment: mainSize == MainAxisSize.max ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
                 mainAxisSize: mainSize,
                 children: [
-                  Row(
-                    mainAxisSize: mainSize,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: color,
-                        ),
-                        alignment: Alignment.center,
-                        child: icon,
-                      ),
-                      body != null ? Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: body!,
-                      ) : Container(),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5),
+                  Flexible(
+                    flex: bodyFlex,
                     child: Row(
-                      children: actions,
+                      mainAxisSize: mainSize,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          width: 40,
+                          height: height,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: color,
+                          ),
+                          alignment: Alignment.center,
+                          child: icon,
+                        ),
+                        body != null ? Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: body!,
+                          ),
+                        ) : Container(),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    flex: actions.isEmpty ? 0 : 1,
+                    fit: FlexFit.tight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: actions,
+                      ),
                     ),
                   ),
                 ],
