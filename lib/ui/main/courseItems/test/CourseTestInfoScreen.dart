@@ -3,7 +3,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
+import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -27,18 +32,6 @@ class CourseTestInfoScreen extends StatefulWidget {
 
 class _CourseTestInfoScreenState extends State<CourseTestInfoScreen> {
 
-  bool isInit = false;
-
-  @override
-  void initState() {
-    super.initState();
-    Future(() async {
-
-      isInit = true;
-      setState(() {});
-    },);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,45 +40,93 @@ class _CourseTestInfoScreenState extends State<CourseTestInfoScreen> {
           setState(() {});
         },
       ),
-      body: Builder(
-        builder: (context) {
-          if (!isInit) return const Center(child: WidgetLoading(),);
-          return ListView(
-            children: [
-              const Heading(
-                headingText: "Test Info"
-              ),
-              const BackgroundBody(
-                maxHeight: double.infinity,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+      body: ListenableBuilder(
+        listenable: AppSecurity.instance,
+        builder: (context, child) {
+          if (!AppSecurity.instance.isInit) {
+            return const Center(child: WidgetLoading(),);
+          }
+          return FutureBuilder(
+            future: TestGateway.instance.get(widget.courseId, widget.testId),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Toast.makeErrorToast(text: "Failed to get Test");
+                context.pop();
+              }
+              if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+              Test test = snapshot.data!;
+
+              return ListView(
+                children: [
+                  _Info(test: test),
+                  const SizedBox(height: 10,),
+                  const Heading(headingText: "Score"),
+                  BackgroundBody(
+                    maxHeight: double.infinity,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return _Item(
+                          index: index,
+                        );
+                      },
+                    ),
+                  )
+                ],
+              );
+            },
+          );
+        }
+      ),
+    );
+  }
+}
+
+class _Info extends StatelessWidget {
+  const _Info({
+    required this.test,
+    super.key,
+  });
+
+  final Test test;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Heading(
+            headingText: "Test Info"
+        ),
+        BackgroundBody(
+          maxHeight: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
                     children: [
-                      SizedBox(height: 300, child: Text("Same Info"))
+                      const Expanded(
+                          flex: 1,
+                          child: Text("Test Name:")
+                      ),
+                      Expanded(
+                          flex: 1,
+                          child: Text(test.name, textAlign: TextAlign.right,)
+                      ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 10,),
-              const Heading(headingText: "Score"),
-              BackgroundBody(
-                maxHeight: double.infinity,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return _Item(
-                      index: index,
-                    );
-                  },
-                ),
-              )
-            ],
-          );
-        },
-      ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
