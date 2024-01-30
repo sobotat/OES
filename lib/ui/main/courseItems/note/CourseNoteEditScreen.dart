@@ -246,17 +246,12 @@ class _EditorState extends State<_Editor> {
   }
 
   Future<void> save() async {
-    Note note = Note(
-      id: widget.note.id,
-      createdById: widget.note.createdById,
-      created: widget.note.created,
-      isVisible: isVisible,
-      name: nameController.text,
-      data: editorController.text,
-    );
+    widget.note.isVisible = isVisible;
+    widget.note.name = nameController.text;
+    widget.note.data = editorController.text;
 
-    Note? response = isNew() ? await NoteGateway.instance.create(widget.courseId, note) :
-                               await NoteGateway.instance.update(widget.courseId, note);
+    Note? response = isNew() ? await NoteGateway.instance.create(widget.courseId, widget.note) :
+                               await NoteGateway.instance.update(widget.courseId, widget.note);
 
     if (response != null) {
       Toast.makeSuccessToast(text: "Note was Saved", duration: ToastDuration.short);
@@ -336,6 +331,10 @@ class _EditorState extends State<_Editor> {
                   decoration: const InputDecoration(
                     labelText: "Name",
                   ),
+                  onChanged: (value) {
+                    widget.note.name = value;
+                    widget.onUpdated(widget.note);
+                  },
                 ),
                 const SizedBox(height: 10,),
                 Row(
@@ -399,7 +398,7 @@ class _Preview extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Heading(headingText: 'Preview'),
+        Heading(headingText: note.name),
         BackgroundBody(
           maxHeight: double.infinity,
           child: AppMarkdown(
