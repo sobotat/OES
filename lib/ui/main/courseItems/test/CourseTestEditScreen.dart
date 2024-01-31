@@ -1030,7 +1030,7 @@ class _InfoState extends State<_Info> {
                     autocorrect: true,
                     keyboardType: const TextInputType.numberWithOptions(),
                     decoration: const InputDecoration(
-                      labelText: 'Max Duration (seconds)',
+                      labelText: 'Max Duration (minutes)',
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly
