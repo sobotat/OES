@@ -1003,6 +1003,9 @@ class _InfoState extends State<_Info> {
                 maxLength: 60,
                 maxLines: 1,
                 textInputAction: TextInputAction.done,
+                onChanged: (value) {
+                  widget.test.name = value;
+                },
               ),
             ),
             Flexible(
@@ -1032,7 +1035,12 @@ class _InfoState extends State<_Info> {
                     ],
                     maxLines: 1,
                     onChanged: (value) {
-                      if(value.isEmpty) durationController.text = "0";
+                      try {
+                        widget.test.duration = int.parse(value);
+                      } on FormatException catch(_) {
+                        widget.test.duration = 0;
+                        durationController.text = "0";
+                      }
                     },
                   ),
                 ),
