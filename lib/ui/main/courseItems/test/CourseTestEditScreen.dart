@@ -155,7 +155,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var overflow = 750;
+    var overflow = 900;
 
     if (width > overflow) {
       return Scaffold(
@@ -890,55 +890,64 @@ class _PickOptionsState extends State<_PickOptions> {
             color: AppTheme.getActiveTheme().calculateTextColor(color, context)
         ),
       ),
-      body: TextField(
-        controller: textController,
-        keyboardType: TextInputType.text,
-        maxLines: 1,
-        maxLength: 60,
-        onChanged: (value) {
-          widget.option.text = value;
-          widget.onUpdated(widget.index);
-        },
+      body: Row(
+        children: [
+          Flexible(
+            child: TextField(
+              controller: textController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                labelText: "Option Text",
+                counter: Container(height: 0,),
+              ),
+              maxLines: 1,
+              maxLength: 60,
+              onChanged: (value) {
+                widget.option.text = value;
+                widget.onUpdated(widget.index);
+              },
+            ),
+          ),
+          const SizedBox(width: 5,),
+          SizedBox(
+            width: 75,
+            child: TextField(
+              controller: pointsController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: "Points +/-",
+                counter: Container(height: 0,),
+              ),
+              maxLines: 1,
+              maxLength: 10,
+              onChanged: (value) {
+                try {
+                  widget.option.points = int.parse(value);
+                } on FormatException catch (_) {
+                  widget.option.points = 0;
+                  pointsController.text = '0';
+                }
+                widget.onUpdated(widget.index);
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Button(
+              icon: Icons.delete,
+              toolTip: "Delete",
+              maxWidth: 40,
+              backgroundColor: Colors.red.shade700,
+              onClick: (context) {
+                widget.onDeleted(widget.index);
+              },
+            ),
+          )
+        ],
       ),
-      bodyFlex: 2,
       height: 65,
       color: color,
       backgroundColor: Theme.of(context).colorScheme.secondary,
-      actions: [
-        SizedBox(
-          width: 75,
-          child: TextField(
-            controller: pointsController,
-            keyboardType: TextInputType.number,
-            maxLines: 1,
-            onChanged: (value) {
-              try {
-                widget.option.points = int.parse(value);
-              } on FormatException catch (_) {
-                widget.option.points = 0;
-                pointsController.text = '0';
-              }
-              widget.onUpdated(widget.index);
-            },
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(10),
-          child: Text("Points", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(5),
-          child: Button(
-            icon: Icons.delete,
-            toolTip: "Delete",
-            maxWidth: 40,
-            backgroundColor: Colors.red.shade700,
-            onClick: (context) {
-              widget.onDeleted(widget.index);
-            },
-          ),
-        )
-      ],
     );
   }
 }
