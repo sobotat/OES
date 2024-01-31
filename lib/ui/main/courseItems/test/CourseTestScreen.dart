@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
@@ -41,9 +43,12 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
   Test? test;
   bool allowPop = false;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> checkPassword() async {
+    bool okPassword = await CourseGateway.instance.checkTestPassword(widget.courseId, widget.testId, widget.password);
+    if (!okPassword && mounted) {
+      context.goNamed('/');
+      return;
+    }
   }
 
   Future<bool> onFinishTest() async {
@@ -66,9 +71,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppAppBar(
-
-      ),
+      appBar: const AppAppBar(),
       body: PopScope(
         canPop: allowPop,
         onPopInvoked: (didPop) async {
@@ -81,13 +84,9 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
         child: ListenableBuilder(
           listenable: AppSecurity.instance,
           builder: (context, child) {
+            if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
             if (AppSecurity.instance.isLoggedIn()) {
-              Future.delayed(Duration.zero, () async {
-                bool okPassword = await CourseGateway.instance.checkTestPassword(widget.courseId, widget.testId, widget.password);
-                if (!okPassword && mounted) {
-                  context.goNamed('/');
-                }
-              },);
+              checkPassword();
             }
             return FutureBuilder(
               future: TestGateway.instance.get(widget.courseId, widget.testId),
@@ -98,23 +97,31 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
                   context.pop();
                 }
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
-                test = snapshot.data;
-                if (test == null) {
-                  return const Center(
-                    child: Text(
-                      "Failed to load test",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 30),
+                test = snapshot.data!;
+                DateTime startTime = DateTime.now();
+                return Stack(
+                  children: [
+                    _TestBody(
+                      test: test!,
+                      onFinishTest: () async {
+                        if (!await startReallyFinishTest(context)) return;
+                        if (mounted) context.pop();
+                      },
                     ),
-                  );
-                }
-                return _TestBody(
-                  test: test!,
-                  onFinishTest: () async {
-                    if (!await startReallyFinishTest(context)) return;
-                    if (mounted) context.pop();
-                  },
+                    _InfoBar(
+                      startTime: startTime,
+                      duration: test!.duration,
+                      onFinishTest: () async {
+                        if (!await startReallyFinishTest(context)) return;
+                        if (mounted) context.pop();
+                      },
+                      onTimeRunOut: () async {
+                        await onFinishTest();
+                        allowPop = true;
+                        if (mounted) context.pop();
+                      },
+                    )
+                  ],
                 );
               },
             );
@@ -186,6 +193,110 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
       allowPop = await onFinishTest();
     }
     return allowPop;
+  }
+}
+
+class _InfoBar extends StatefulWidget {
+  const _InfoBar({
+    required this.startTime,
+    required this.duration,
+    required this.onFinishTest,
+    required this.onTimeRunOut,
+    super.key,
+  });
+
+  final DateTime startTime;
+  final int duration;
+  final Function() onFinishTest;
+  final Function() onTimeRunOut;
+
+  @override
+  State<_InfoBar> createState() => _InfoBarState();
+}
+
+class _InfoBarState extends State<_InfoBar> {
+
+  late Timer updateTimer;
+  String time = "Loading ...";
+  bool shortTime = false;
+
+  @override
+  void initState() {
+    super.initState();
+    updateTimer = Timer(const Duration(milliseconds: 1), () { updateAndResetTimer(); });
+  }
+
+  @override
+  void dispose() {
+    updateTimer.cancel();
+    super.dispose();
+  }
+
+  void updateAndResetTimer() {
+    if (mounted) {
+      DateTime now = DateTime.now();
+      int totalSeconds = widget.duration * 60 - now.difference(widget.startTime).inSeconds + 1;
+      int remainsHours = (totalSeconds ~/ 60) ~/ 60;
+      int remainsMinutes = (totalSeconds ~/ 60) % 60;
+      int remainsSeconds = totalSeconds % 60;
+
+      shortTime = remainsHours == 0 && remainsMinutes <= 5;
+      print("$remainsHours $remainsMinutes $remainsSeconds");
+      if (remainsHours == 0 && remainsMinutes < 1) {
+        if (remainsSeconds <= 1) {
+          widget.onTimeRunOut();
+          return;
+        }
+
+        time = "Remains ${remainsSeconds}s";
+      } else {
+        time = "Remains ${remainsHours > 0 ? "${remainsHours}h" : ""} ${remainsHours > 0 && remainsMinutes < 10 ? "0" : ""}${remainsMinutes}m ${remainsSeconds < 10 ? "0" : ""}${remainsSeconds}s";
+      }
+
+      setState(() {});
+      updateTimer = Timer(const Duration(seconds: 1), () { updateAndResetTimer(); });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        width: 45,
+        margin: const EdgeInsets.only(top: 150),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 5),
+              child: RotatedBox(quarterTurns: 1,
+                child: Text(
+                  time,
+                  style: TextStyle(color: shortTime ? Colors.red.shade700 : Theme.of(context).textTheme.bodyMedium!.color),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.done_all,
+                toolTip: "Finish",
+                maxWidth: 40,
+                backgroundColor: Colors.red.shade700,
+                onClick: (context) async {
+                  widget.onFinishTest();
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
