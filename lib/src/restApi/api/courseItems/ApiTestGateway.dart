@@ -101,12 +101,12 @@ class ApiTestGateway implements TestGateway {
       return null;
     }
 
-    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+    if (!result.checkOk()) {
       debugPrint('Api Error: [Test-update] ${result.statusCode} -> ${result.message}');
       return null;
     }
 
-    return Test.fromJson(result.data);
+    return get(courseId, test.id);
   }
 
   @override
