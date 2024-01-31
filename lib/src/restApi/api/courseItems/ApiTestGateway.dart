@@ -77,8 +77,15 @@ class ApiTestGateway implements TestGateway {
   Future<Test?> update(int courseId, Test test, String password) async {
 
     Map<String, dynamic> data = test.toMap();
+    data.remove('id');
     data.remove('type');
     data['password'] = password;
+    for (Map<String, dynamic> question in data['questions']) {
+      question.remove('id');
+      for(Map<String, dynamic> option in question['options']) {
+        option.remove('id');
+      }
+    }
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${test.id}',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
