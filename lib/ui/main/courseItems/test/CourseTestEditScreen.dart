@@ -596,13 +596,6 @@ class _QuestionEditorState extends State<_QuestionEditor> {
   TextEditingController descriptionController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    titleController.text = widget.question.name;
-    descriptionController.text = widget.question.description;
-  }
-
-  @override
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
@@ -616,6 +609,8 @@ class _QuestionEditorState extends State<_QuestionEditor> {
   @override
   Widget build(BuildContext context) {
     String niceType = widget.question.type.replaceAll('-', ' ').split(' ').map((word) => capitalize(word)).join(' ');
+    titleController.text = widget.question.name;
+    descriptionController.text = widget.question.description;
 
     return Padding(
       padding: const EdgeInsets.all(20),
