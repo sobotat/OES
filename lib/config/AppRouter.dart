@@ -53,6 +53,7 @@ class AppRouter {
   Function()? _authListener;
   late GoRouterRedirect authCheckRedirect;
   late GoRouterRedirect removeAuthRedirect;
+  final PopNotifier popNotifier = PopNotifier();
 
   late final GoRouter router = GoRouter(
     routes: <GoRoute>[
@@ -147,22 +148,8 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'edit-test/:test_id',
-                name: 'edit-course-test',
-                redirect: authCheckRedirect,
-                builder: (context, state) {
-                  _setActiveUri(context, state);
-                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
-                  int id = int.parse(state.pathParameters['test_id'] ?? '-1');
-                  return CourseTestEditScreen(
-                    courseId: courseId,
-                    testId: id,
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'info-test/:test_id',
-                name: 'info-course-test',
+                path: 'test/:test_id',
+                name: 'course-test',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
@@ -170,25 +157,41 @@ class AppRouter {
                   int id = int.parse(state.pathParameters['test_id'] ?? '-1');
                   return CourseTestInfoScreen(
                     courseId: courseId,
-                    testId: id,
+                    testId: id
                   );
                 },
-              ),
-              GoRoute(
-                path: 'test/:test_id/:password',
-                name: 'course-test',
-                redirect: authCheckRedirect,
-                builder: (context, state) {
-                  _setActiveUri(context, state);
-                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
-                  int id = int.parse(state.pathParameters['test_id'] ?? '-1');
-                  String password = state.pathParameters['password'] ?? '';
-                  return CourseTestScreen(
-                    courseId: courseId,
-                    testId: id,
-                    password: password,
-                  );
-                },
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    name: 'edit-course-test',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                      return CourseTestEditScreen(
+                        courseId: courseId,
+                        testId: id,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: ':password',
+                    name: 'start-course-test',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                      String password = state.pathParameters['password'] ?? '';
+                      return CourseTestScreen(
+                        courseId: courseId,
+                        testId: id,
+                        password: password,
+                      );
+                    },
+                  ),
+                ]
               ),
               GoRoute(
                 path: 'quiz/:quiz_id',
@@ -233,6 +236,19 @@ class AppRouter {
                 },
               ),
               GoRoute(
+                path: 'create-note',
+                name: 'create-course-note',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  return CourseNoteEditScreen(
+                    courseId: courseId,
+                    noteId: -1,
+                  );
+                },
+              ),
+              GoRoute(
                 path: 'note/:note_id',
                 name: 'course-note',
                 redirect: authCheckRedirect,
@@ -261,19 +277,6 @@ class AppRouter {
                     },
                   )
                 ]
-              ),
-              GoRoute(
-                path: 'create-note',
-                name: 'create-course-note',
-                redirect: authCheckRedirect,
-                builder: (context, state) {
-                  _setActiveUri(context, state);
-                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
-                  return CourseNoteEditScreen(
-                    courseId: courseId,
-                    noteId: -1,
-                  );
-                },
               ),
             ],
           ),
@@ -306,7 +309,9 @@ class AppRouter {
       ),
     ],
 
-    observers: [ _RouterObserver() ],
+    observers: [ _RouterObserver(
+      popNotifier: popNotifier
+    ) ],
   );
 
   void _setActiveUri(BuildContext context, GoRouterState state) {
@@ -361,12 +366,27 @@ class AppRouter {
 
 class _RouterObserver extends NavigatorObserver {
 
+  _RouterObserver({
+    required this.popNotifier,
+  });
+
+  PopNotifier popNotifier;
+
   // Check on Pop (On going back)
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
     Future.delayed(const Duration(milliseconds: 100), () {
       AppRouter.instance.router.refresh();
+      popNotifier._onPopped();
     });
   }
+}
+
+class PopNotifier extends ChangeNotifier {
+
+  void _onPopped() {
+    notifyListeners();
+  }
+
 }
