@@ -8,6 +8,7 @@ import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -15,6 +16,7 @@ import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/RefreshWidget.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class MainScreen extends StatefulWidget {
@@ -26,7 +28,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
 
-  GlobalKey<_CoursesState> coursesKey = GlobalKey<_CoursesState>();
+  GlobalKey<RefreshWidgetState> refreshKey = GlobalKey<RefreshWidgetState>();
+  GlobalKey<_CoursesState> courseKey = GlobalKey<_CoursesState>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +39,30 @@ class _MainScreenState extends State<MainScreen> {
           const _BackToWeb(),
         ]) : [],
         onRefresh: () {
-          coursesKey.currentState?.loadCourses();
+          refreshKey.currentState?.refresh();
         },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: ListView(
-          children: [
-            _Courses(
-              key: coursesKey,
+      body: ListenableBuilder(
+        listenable: AppSecurity.instance,
+        builder: (context, x) {
+          if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
+          return RefreshWidget(
+            key: refreshKey,
+            onRefreshed: () {
+              setState(() {});
+              if (courseKey.currentState?.mounted ?? false) {
+                courseKey.currentState?.setState(() {});
+              }
+            },
+            child: ListView(
+              children: [
+                _Courses(
+                  key: courseKey,
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        }
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -120,38 +135,6 @@ class _Courses extends StatefulWidget {
 
 class _CoursesState extends State<_Courses> {
 
-  List<Course> courses = [];
-  Function() listenerFunction = () {};
-  bool isInit = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadCourses();
-    listenerFunction = () {
-      loadCourses();
-    };
-    AppSecurity.instance.addListener(listenerFunction);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    AppSecurity.instance.removeListener(listenerFunction);
-  }
-
-  Future<void> loadCourses() async {
-    print("Loading Courses");
-    var user = AppSecurity.instance.user;
-    if (user != null) {
-      courses = await CourseGateway.instance.getUserCourses(user);
-      isInit = true;
-
-      if (!mounted) return;
-      setState(() {});
-    }
-  }
-
   Future<void> joinCourse() async {
     bool success = await showDialog<bool>(
       context: context, 
@@ -161,7 +144,7 @@ class _CoursesState extends State<_Courses> {
     ) ?? false;
 
     if (mounted && success) {
-      await loadCourses();
+      setState(() {});
     }
   }
 
@@ -171,56 +154,66 @@ class _CoursesState extends State<_Courses> {
       builder: (context) => const PopupDialog(child: _CourseCreateDialog()),
     );
 
-    await loadCourses();
+    if(mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: AppSecurity.instance,
-      builder: (context, child) {
-        SignedUser? user = AppSecurity.instance.user;
-        UserRole role = user == null ? UserRole.student : user.role;
-        
-        return Column(
-          children: [
-            Heading(
-              headingText: 'Courses:',
-              actions: role != UserRole.student ? [
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Button(
-                    icon: Icons.add,
-                    toolTip: "Create",
-                    maxWidth: 40,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    onClick: (context) => createCourse(),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Button(
-                    icon: Icons.edit,
-                    toolTip: "Join",
-                    maxWidth: 40,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    onClick: (context) => joinCourse(),
-                  ),
-                ),
-              ] : [
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Button(
-                    text: "Join",
-                    maxWidth: 75,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    onClick: (context) => joinCourse(),
-                  ),
-                ),
-              ],
+    SignedUser user = AppSecurity.instance.user!;
+    UserRole role = user.role;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Heading(
+          headingText: 'Courses:',
+          actions: role != UserRole.student ? [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.add,
+                toolTip: "Create",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) => createCourse(),
+              ),
             ),
-            BackgroundBody(
-              child: isInit ? ListView.builder(
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.edit,
+                toolTip: "Join",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) => joinCourse(),
+              ),
+            ),
+          ] : [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                text: "Join",
+                maxWidth: 75,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) => joinCourse(),
+              ),
+            ),
+          ],
+        ),
+        BackgroundBody(
+          child: FutureBuilder(
+            future: CourseGateway.instance.getUserCourses(user),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Toast.makeErrorToast(text: "Failed to load User Courses -> ${snapshot.error}");
+              }
+              if (!snapshot.hasData) {
+                return const SizedBox(
+                  height: 100,
+                  child: Center(child: WidgetLoading(),)
+                );
+              }
+              List<Course> courses = snapshot.data!;
+              return ListView.builder(
                 itemCount: courses.length,
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(vertical: 5),
@@ -233,23 +226,16 @@ class _CoursesState extends State<_Courses> {
                         course: courses[index],
                         height: 50,
                         role: role,
-                        isUserTeacher: snapshot.data ?? false,
-                        onUpdated: () async {
-                          await loadCourses();
-                        },
+                        isUserTeacher: snapshot.data ?? false
                       );
                     },
                   );
                 },
-              ) :
-              const SizedBox(
-                height: 100,
-                child: Center(child: WidgetLoading(),)
-              ),
-            )
-          ],
-        );
-      },
+              );
+            }
+          ),
+        )
+      ],
     );
   }
 }
@@ -370,7 +356,6 @@ class _CourseItem extends StatelessWidget {
     this.height,
     required this.role,
     required this.isUserTeacher,
-    this.onUpdated,
     super.key,
   });
 
@@ -378,14 +363,10 @@ class _CourseItem extends StatelessWidget {
   final double? height;
   final UserRole role;
   final bool isUserTeacher;
-  final Function()? onUpdated;
 
   Future<void> edit(BuildContext context) async {
     if (!isUserTeacher) return;
-    await context.pushNamed<bool>('course-edit', pathParameters: {'course_id': course.id.toString()});
-    if (onUpdated != null) {
-      onUpdated!();
-    }
+    context.goNamed('course-edit', pathParameters: {'course_id': course.id.toString()});
   }
 
   void open(BuildContext context) {
@@ -399,6 +380,7 @@ class _CourseItem extends StatelessWidget {
         course.shortName,
         style: Theme.of(context).textTheme.displaySmall!.copyWith(
             fontSize: 12,
+            fontWeight: FontWeight.bold,
             color: AppTheme.getActiveTheme().calculateTextColor(course.color ?? Colors.blueAccent, context)
         ),
       ),
