@@ -223,7 +223,10 @@ class _InfoBarState extends State<_InfoBar> {
   @override
   void initState() {
     super.initState();
-    updateTimer = Timer(const Duration(milliseconds: 1), () { updateAndResetTimer(); });
+    updateTime();
+    updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      updateTime();
+    },);
   }
 
   @override
@@ -232,7 +235,7 @@ class _InfoBarState extends State<_InfoBar> {
     super.dispose();
   }
 
-  void updateAndResetTimer() {
+  void updateTime() {
     if (mounted) {
       DateTime now = DateTime.now();
       int totalSeconds = widget.duration * 60 - now.difference(widget.startTime).inSeconds + 1;
@@ -241,7 +244,7 @@ class _InfoBarState extends State<_InfoBar> {
       int remainsSeconds = totalSeconds % 60;
 
       shortTime = remainsHours == 0 && remainsMinutes <= 5;
-      print("$remainsHours $remainsMinutes $remainsSeconds");
+      //print("$remainsHours $remainsMinutes $remainsSeconds");
       if (remainsHours == 0 && remainsMinutes < 1) {
         if (remainsSeconds <= 1) {
           widget.onTimeRunOut();
@@ -254,7 +257,6 @@ class _InfoBarState extends State<_InfoBar> {
       }
 
       setState(() {});
-      updateTimer = Timer(const Duration(seconds: 1), () { updateAndResetTimer(); });
     }
   }
 
