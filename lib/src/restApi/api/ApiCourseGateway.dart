@@ -185,9 +185,9 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<List<UserQuiz>> getUserQuizzes(SignedUser user) {
+  Future<List<UserQuiz>> getUserQuizzes(SignedUser user) async {
     // TODO: implement getUserQuizzes
-    throw UnimplementedError();
+    return [];
   }
 
   @override
