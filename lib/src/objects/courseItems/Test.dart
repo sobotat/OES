@@ -50,3 +50,59 @@ class Test extends ExamItem {
     );
   }
 }
+
+class TestInfo {
+
+  TestInfo({
+    required this.testId,
+    required this.name,
+    required this.end,
+    required this.duration,
+    required this.maxAttempts,
+    required this.attempts,
+  });
+
+  int testId;
+  String name;
+  DateTime end;
+  int duration;
+  int maxAttempts;
+  List<TestAttempt> attempts;
+
+  factory TestInfo.fromJson(Map<String, dynamic> json) {
+    List<TestAttempt> attemptsList = [];
+    for(Map<String, dynamic> attemptJson in json['attempts'] ?? []) {
+      attemptsList.add(TestAttempt.fromJson(attemptJson));
+    }
+
+    return TestInfo(
+      testId: json['testId'],
+      name: json['name'],
+      end: DateTime.tryParse(json['end'])!,
+      duration: json['duration'],
+      attempts: attemptsList,
+      maxAttempts: json['maxAttempts'],
+    );
+  }
+}
+
+class TestAttempt{
+
+  TestAttempt({
+    required this.points,
+    required this.status,
+    required this.submitted,
+  });
+
+  int points;
+  String status;
+  DateTime submitted;
+
+  factory TestAttempt.fromJson(Map<String, dynamic> json) {
+    return TestAttempt(
+      points: json['testId'],
+      status: json['status'],
+      submitted: DateTime.tryParse(json['submitted'])!,
+    );
+  }
+}

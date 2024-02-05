@@ -110,10 +110,10 @@ class ApiTestGateway implements TestGateway {
   }
 
   @override
-  Future<bool> submit(int testId, List<AnswerOption> answers) async {
+  Future<bool> submit(int id, List<AnswerOption> answers) async {
 
     Map<String, dynamic> query = {
-      'testId': testId,
+      'testId': id,
       'answers': answers.map((e) => e.toMap()).toList(),
     };
 
@@ -157,6 +157,31 @@ class ApiTestGateway implements TestGateway {
     }
 
     return true;
+  }
+
+  @override
+  Future<TestInfo?> getInfo(int courseId, int id) async {
+    Test? test = await get(courseId, id);
+    if (test == null) return null;
+    return TestInfo(
+      testId: test.id,
+      name: test.name,
+      end: test.end,
+      duration: test.duration,
+      maxAttempts: test.maxAttempts,
+      attempts: [
+        TestAttempt(
+          points: 4,
+          status: 'Granted',
+          submitted: DateTime.now().subtract(const Duration(minutes: 10)),
+        ),
+        TestAttempt(
+          points: 3,
+          status: 'To Be Done',
+          submitted: DateTime.now(),
+        ),
+      ],
+    );
   }
 
 }
