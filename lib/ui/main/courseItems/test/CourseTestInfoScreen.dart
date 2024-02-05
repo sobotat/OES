@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
@@ -12,7 +13,10 @@ import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
+import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/Heading.dart';
+import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
@@ -39,24 +43,107 @@ class CourseTestInfoScreen extends StatelessWidget {
     );
   }
 
+  String formatDateTime(DateTime dateTime) {
+    return "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute < 10 ? "0" : ""}${dateTime.minute}";
+  }
+  
+  Color getStatusColor(TestAttempt attempt) {
+    switch(attempt.status) {
+      case 'Granted': return Colors.green.shade700;
+      case 'To Be Done': return Colors.orange.shade700;
+      default: return Colors.blue;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
     return Scaffold(
       appBar: const AppAppBar(),
       body: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, child) {
           if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
-          return Center(
-              child: Button(
-                maxHeight: 250,
-                maxWidth: 250,
-                backgroundColor: Colors.green.shade700,
-                text: "Start Test",
-                onClick: (context) {
-                  openPasswordDialog(context);
-                },
-              )
+          return FutureBuilder(
+            future: TestGateway.instance.getInfo(courseId, testId),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Toast.makeErrorToast(text: "Failed to get Info about Test", duration: ToastDuration.large);
+                context.pop();
+              }
+              if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+              TestInfo info = snapshot.data!;
+
+              return ListView(
+                children: [
+                  const Heading(headingText: "Info"),
+                  BackgroundBody(
+                    maxHeight: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SelectableText("Name: ${info.name}"),
+                          const SizedBox(height: 5,),
+                          SelectableText("Duration: ${info.duration} minutes"),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Heading(headingText: "Answers"),
+                  BackgroundBody(
+                    maxHeight: double.infinity,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: info.attempts.length,
+                      itemBuilder: (context, index) {
+                        TestAttempt attempt = info.attempts[index];
+                        Color background = getStatusColor(attempt);
+                        return IconItem(
+                          color: background,
+                          icon: Text(
+                            " ${index + 1}.",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.getActiveTheme().calculateTextColor(background, context),
+                            ),
+                          ),
+                          body: Text(
+                            formatDateTime(attempt.submitted)
+                          ),
+                          actions: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Text("${attempt.points} b"),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width > overflow ? 50 : 15,
+                      vertical: 20,
+                    ),
+                    child: Button(
+                      maxWidth: double.infinity,
+                      maxHeight: 100,
+                      backgroundColor: Colors.green.shade700,
+                      text: "Start Test",
+                      onClick: (context) {
+                        openPasswordDialog(context);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
           );
         },
       ),
