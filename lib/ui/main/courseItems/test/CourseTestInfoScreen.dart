@@ -30,7 +30,15 @@ class CourseTestInfoScreen extends StatelessWidget {
   final int courseId;
   final int testId;
 
-  Future<void> openPasswordDialog(BuildContext context) async {
+  Future<void> openPasswordDialog(BuildContext context, bool hasPassword) async {
+    if (!hasPassword) {
+      context.goNamed('start-course-test', pathParameters: {
+        'course_id': courseId.toString(),
+        'test_id': testId.toString(),
+      });
+      return;
+    }
+
     await showDialog(
       context: context,
       builder: (context) => PopupDialog(
@@ -49,8 +57,8 @@ class CourseTestInfoScreen extends StatelessWidget {
   
   Color getStatusColor(TestAttempt attempt) {
     switch(attempt.status) {
-      case 'Granted': return Colors.green.shade700;
-      case 'To Be Done': return Colors.orange.shade700;
+      case 'Graded': return Colors.green.shade700;
+      case 'Checked': return Colors.orange.shade700;
       default: return Colors.blue;
     }
   }
@@ -70,11 +78,12 @@ class CourseTestInfoScreen extends StatelessWidget {
             future: TestGateway.instance.getInfo(courseId, testId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                Toast.makeErrorToast(text: "Failed to get Info about Test", duration: ToastDuration.large);
+                Toast.makeErrorToast(text: "Failed to get Info about Test -> ${snapshot.error}", duration: ToastDuration.large);
                 context.pop();
               }
               if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
               TestInfo info = snapshot.data!;
+              int remainsAttempts = info.maxAttempts - info.attempts.length;
 
               return ListView(
                 children: [
@@ -137,7 +146,7 @@ class CourseTestInfoScreen extends StatelessWidget {
                       backgroundColor: Colors.green.shade700,
                       text: "Start Test",
                       onClick: (context) {
-                        openPasswordDialog(context);
+                        openPasswordDialog(context, info.hasPassword);
                       },
                     ),
                   ),
@@ -190,6 +199,7 @@ class _TestDialogState extends State<_TestDialog> {
       context.goNamed('start-course-test', pathParameters: {
         'course_id': widget.courseId.toString(),
         'test_id': widget.testId.toString(),
+      }, queryParameters: {
         'password': passwordController.text,
       });
     } else {

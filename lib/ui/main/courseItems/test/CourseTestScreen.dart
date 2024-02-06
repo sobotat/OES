@@ -43,14 +43,6 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
   Test? test;
   bool allowPop = false;
 
-  Future<void> checkPassword() async {
-    bool okPassword = await CourseGateway.instance.checkTestPassword(widget.courseId, widget.testId, widget.password);
-    if (!okPassword && mounted) {
-      context.goNamed('/');
-      return;
-    }
-  }
-
   Future<bool> onFinishTest() async {
     if(test == null) return false;
 
@@ -85,11 +77,8 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
           listenable: AppSecurity.instance,
           builder: (context, child) {
             if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
-            if (AppSecurity.instance.isLoggedIn()) {
-              checkPassword();
-            }
             return FutureBuilder(
-              future: TestGateway.instance.get(widget.courseId, widget.testId),
+              future: TestGateway.instance.get(widget.courseId, widget.testId, password: widget.password),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print("Load Test Error: ${snapshot.error}");

@@ -176,14 +176,14 @@ class AppRouter {
                     },
                   ),
                   GoRoute(
-                    path: ':password',
+                    path: 'start',
                     name: 'start-course-test',
                     redirect: authCheckRedirect,
                     builder: (context, state) {
                       _setActiveUri(context, state);
                       int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                       int id = int.parse(state.pathParameters['test_id'] ?? '-1');
-                      String password = state.pathParameters['password'] ?? '';
+                      String password = state.uri.queryParameters['password'] ?? '';
                       return CourseTestScreen(
                         courseId: courseId,
                         testId: id,
@@ -315,6 +315,7 @@ class AppRouter {
   );
 
   void _setActiveUri(BuildContext context, GoRouterState state) {
+
     // Check if Active uri
     String uriNoParams = state.uri.toString().split('?')[0];
     if (uriNoParams != state.matchedLocation) return;

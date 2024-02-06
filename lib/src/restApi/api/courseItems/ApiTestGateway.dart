@@ -14,12 +14,18 @@ class ApiTestGateway implements TestGateway {
   String basePath = '${AppApi.instance.apiServerUrl}/api/test';
 
   @override
-  Future<Test?> get(int courseId, int id) async {
+  Future<Test?> get(int courseId, int id, {String? password}) async {
+    Map<String, dynamic> query = {
+      'courseId': courseId,
+    };
+
+    if (password != null) {
+      query.addAll({'password': password,});
+    }
+
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
+      queryParameters: query,
     );
 
     if (result.checkUnauthorized()) {

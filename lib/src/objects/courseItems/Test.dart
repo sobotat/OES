@@ -14,7 +14,7 @@ class Test extends ExamItem {
     required super.end,
     required super.duration,
     required super.isVisible,
-    super.questions = const [],
+    required super.questions,
     required this.maxAttempts,
   }) : super(type: 'test');
 
@@ -54,20 +54,20 @@ class Test extends ExamItem {
 class TestInfo {
 
   TestInfo({
-    required this.testId,
     required this.name,
     required this.end,
     required this.duration,
     required this.maxAttempts,
     required this.attempts,
+    required this.hasPassword,
   });
 
-  int testId;
   String name;
   DateTime end;
   int duration;
   int maxAttempts;
   List<TestAttempt> attempts;
+  bool hasPassword;
 
   factory TestInfo.fromJson(Map<String, dynamic> json) {
     List<TestAttempt> attemptsList = [];
@@ -76,12 +76,12 @@ class TestInfo {
     }
 
     return TestInfo(
-      testId: json['testId'],
       name: json['name'],
       end: DateTime.tryParse(json['end'])!,
       duration: json['duration'],
       attempts: attemptsList,
       maxAttempts: json['maxAttempts'],
+      hasPassword: json['hasPassword'],
     );
   }
 }
@@ -100,7 +100,7 @@ class TestAttempt{
 
   factory TestAttempt.fromJson(Map<String, dynamic> json) {
     return TestAttempt(
-      points: json['testId'],
+      points: json['points'],
       status: json['status'],
       submitted: DateTime.tryParse(json['submitted'])!,
     );

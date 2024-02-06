@@ -24,4 +24,8 @@ class RequestResult {
     if (statusCode == null) return false;
     return statusCode! >= 200 && statusCode! < 300;
   }
+
+  bool checkLocked() {
+    return statusCode == 423;
+  }
 }
