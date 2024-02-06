@@ -164,27 +164,25 @@ class ApiTestGateway implements TestGateway {
 
   @override
   Future<TestInfo?> getInfo(int courseId, int id) async {
-    Test? test = await get(courseId, id);
-    if (test == null) return null;
-    return TestInfo(
-      testId: test.id,
-      name: test.name,
-      end: test.end,
-      duration: test.duration,
-      maxAttempts: test.maxAttempts,
-      attempts: [
-        TestAttempt(
-          points: 4,
-          status: 'Granted',
-          submitted: DateTime.now().subtract(const Duration(minutes: 10)),
-        ),
-        TestAttempt(
-          points: 3,
-          status: 'To Be Done',
-          submitted: DateTime.now(),
-        ),
-      ],
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/info',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId':courseId,
+      },
     );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-getInfo] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk() || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [Test-getInfo] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return TestInfo.fromJson(result.data);
   }
 
 }
