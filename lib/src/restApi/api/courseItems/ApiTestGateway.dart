@@ -110,7 +110,7 @@ class ApiTestGateway implements TestGateway {
   }
 
   @override
-  Future<bool> submit(int id, List<AnswerOption> answers) async {
+  Future<bool> submit(int courseId, int id, List<AnswerOption> answers) async {
 
     Map<String, dynamic> query = {
       'testId': id,
@@ -119,6 +119,9 @@ class ApiTestGateway implements TestGateway {
 
     RequestResult result = await HttpRequest.instance.post('$basePath/submit',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        'courseId': courseId,
+      },
       data: query,
     );
 

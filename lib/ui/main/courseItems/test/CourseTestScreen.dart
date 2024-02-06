@@ -59,7 +59,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
       answers.addAll(question.getAnswerOptions());
     }
 
-    bool success = await TestGateway.instance.submit(test!.id, answers);
+    bool success = await TestGateway.instance.submit( widget.courseId, widget.testId, answers);
     if (!success) {
       Toast.makeToast(text: "Failed to Finish Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
       return false;
