@@ -113,12 +113,6 @@ class _CodeElementBuilder extends MarkdownElementBuilder {
   }
 
   @override
-  void visitElementBefore(md.Element element) {
-    // TODO: implement visitElementBefore
-    super.visitElementBefore(element);
-  }
-
-  @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     if (!isCodeBlock(element)) {
       return Container(
