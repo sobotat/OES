@@ -45,6 +45,7 @@ dependencies:
   flutter_markdown_selectionarea: ^0.6.17+1
   markdown: ^7.2.1
   url_launcher: ^6.2.4
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:

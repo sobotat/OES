@@ -34,7 +34,7 @@ class CourseNoteScreen extends StatelessWidget {
         builder: (context, x) {
           if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
           return FutureBuilder(
-            future: NoteGateway.instance.get(courseId, noteId),
+            future: NoteGateway.instance.get(noteId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 Toast.makeErrorToast(text: "Failed to load Notes");

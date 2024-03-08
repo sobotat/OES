@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/MultipleChoiceQuestion.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';

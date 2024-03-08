@@ -6,7 +6,6 @@ import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
-import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
@@ -15,7 +14,7 @@ import 'package:oes/src/restApi/api/http/RequestResult.dart';
 
 class ApiCourseGateway implements CourseGateway {
 
-  String basePath = '${AppApi.instance.apiServerUrl}/api';
+  String basePath = '${AppApi.instance.apiServerUrl}/api/courses';
   Map<int, Course> map = {};
 
   @override
@@ -25,7 +24,7 @@ class ApiCourseGateway implements CourseGateway {
     Course? course = map[id];
     if (course != null) return course;
 
-    RequestResult result = await HttpRequest.instance.get('$basePath/course/$id',
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
     );
 
@@ -48,7 +47,7 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<List<CourseItem>> getCourseItems(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/course/items/$id',
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/items',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
     );
 
@@ -77,7 +76,7 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<List<User>> getCourseTeachers(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseUsers',
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
         queryParameters: {
           'courseId': id,
@@ -110,7 +109,7 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<List<User>> getCourseStudents(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/user/courseUsers',
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
         options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
         queryParameters: {
           'courseId': id,
@@ -144,7 +143,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<List<Course>> getUserCourses(SignedUser user) async {
 
-    RequestResult result = await HttpRequest.instance.get('$basePath/course',
+    RequestResult result = await HttpRequest.instance.get(basePath,
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       queryParameters: {
         'userId': user.id,
@@ -191,31 +190,6 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<bool> checkTestPassword(int courseId, int itemId, String password) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/test/checkPassword',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'id': itemId,
-        'password': password,
-        'courseId': courseId,
-      }
-    );
-
-    if (result.checkUnauthorized()) {
-      AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
-      return false;
-    }
-
-    if (result.statusCode != 200) {
-      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
-      return false;
-    }
-
-    return true;
-  }
-
-  @override
   Future<bool> updateCourse(Course course) async {
 
     List<int> teachers = [];
@@ -237,7 +211,7 @@ class ApiCourseGateway implements CourseGateway {
       'attendantIds': students,
     });
 
-    RequestResult result = await HttpRequest.instance.put('$basePath/course/${course.id}',
+    RequestResult result = await HttpRequest.instance.put('$basePath/${course.id}',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       data: data,
     );
@@ -265,7 +239,7 @@ class ApiCourseGateway implements CourseGateway {
       ..addAll({'teacherIds' : [ AppSecurity.instance.user!.id ]})
       ..addAll({'attendantIds': []});
 
-    RequestResult result = await HttpRequest.instance.post('$basePath/course',
+    RequestResult result = await HttpRequest.instance.post(basePath,
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       data: data,
     );
@@ -289,7 +263,7 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<bool> deleteCourse(Course course) async {
-    RequestResult result = await HttpRequest.instance.delete('$basePath/course/${course.id}',
+    RequestResult result = await HttpRequest.instance.delete('$basePath/${course.id}',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
     );
 
@@ -315,7 +289,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<bool> joinCourse(String code) async {
 
-    RequestResult result = await HttpRequest.instance.put('$basePath/course/join/$code',
+    RequestResult result = await HttpRequest.instance.put('$basePath/$code/join',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
     );
 
@@ -340,7 +314,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<String?> generateCode(Course course) async {
 
-    RequestResult result = await HttpRequest.instance.put('$basePath/course/code/${course.id}',
+    RequestResult result = await HttpRequest.instance.put('$basePath/${course.id}/code',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
     );
 
@@ -360,7 +334,7 @@ class ApiCourseGateway implements CourseGateway {
 
   @override
   Future<String?> getCode(Course course) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/course/code/${course.id}',
+    RequestResult result = await HttpRequest.instance.get('$basePath/${course.id}/code',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
     );
 

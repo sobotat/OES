@@ -67,7 +67,7 @@ class _QuestionBodyState extends State<_QuestionBody> {
     super.initState();
     Future(() {
       setState(() {
-        controller.text = widget.question.answer ?? "";
+        controller.text = widget.question.answer;
       });
     },);
   }

@@ -2,9 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
-import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
-import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseQuizScreen extends StatefulWidget {
   const CourseQuizScreen({

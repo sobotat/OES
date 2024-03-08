@@ -126,7 +126,7 @@ class ApiUserGateway implements UserGateway {
       'userRoles': (roles ?? const [UserRole.student, UserRole.teacher, UserRole.admin]).map((e) => e.index).toList(),
     };
 
-    RequestResult result = await HttpRequest.instance.get('$basePath/user',
+    RequestResult result = await HttpRequest.instance.get('$basePath/users',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       queryParameters: query,
     );
@@ -161,7 +161,7 @@ class ApiUserGateway implements UserGateway {
       'search': text,
     };
 
-    RequestResult result = await HttpRequest.instance.get('$basePath/user/search',
+    RequestResult result = await HttpRequest.instance.get('$basePath/users/search',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       queryParameters: query,
     );

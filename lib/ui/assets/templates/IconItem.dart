@@ -7,6 +7,7 @@ class IconItem extends StatelessWidget {
     this.body,
     this.bodyFlex = 2,
     this.actions = const [],
+    this.width = 40,
     this.height = 50,
     this.color = Colors.blueAccent,
     this.backgroundColor,
@@ -22,7 +23,8 @@ class IconItem extends StatelessWidget {
   final Widget? body;
   final int bodyFlex;
   final List<Widget> actions;
-  final double height;
+  final double? width;
+  final double? height;
   final Color color;
   final Color? backgroundColor;
   final Function(BuildContext context)? onClick, onHold;
@@ -32,9 +34,6 @@ class IconItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
@@ -66,8 +65,8 @@ class IconItem extends StatelessWidget {
                       mainAxisSize: mainSize,
                       children: [
                         Container(
-                          margin: EdgeInsets.all(5),
-                          width: 40,
+                          margin: const EdgeInsets.all(5),
+                          width: width,
                           height: height,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),

@@ -82,13 +82,21 @@ class DioRequest extends HttpRequest {
   Future<RequestResult> post(String url, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-    HttpRequestOptions? options
+    HttpRequestOptions? options,
+    Function(double progress)? onReceiveProgress,
+    Function(double progress)? onSendProgress,
   }) async {
 
     Response response = await _getDio().post(url,
       data: data,
       queryParameters: queryParameters,
-      options: _getOptionsFromHttpRequestOptions(options)
+      options: _getOptionsFromHttpRequestOptions(options),
+      onReceiveProgress: onReceiveProgress != null ? (count, total) {
+        onReceiveProgress(count / total);
+      } : null,
+      onSendProgress: onSendProgress != null ? (count, total) {
+        onSendProgress(count / total);
+      } : null,
     ).onError((error, stackTrace) {
       AppRouter.instance.router.goNamed('no-api');
       throw error!;

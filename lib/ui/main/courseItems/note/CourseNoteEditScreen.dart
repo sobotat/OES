@@ -34,7 +34,7 @@ class CourseNoteEditScreen extends StatelessWidget {
         return FutureBuilder(
           future: Future(() async {
             if (!isNew()) {
-              return await NoteGateway.instance.get(courseId, noteId);
+              return await NoteGateway.instance.get(noteId);
             }
             return Note(
                 id: -1,
@@ -251,7 +251,7 @@ class _EditorState extends State<_Editor> {
     widget.note.data = editorController.text;
 
     Note? response = isNew() ? await NoteGateway.instance.create(widget.courseId, widget.note) :
-                               await NoteGateway.instance.update(widget.courseId, widget.note);
+                               await NoteGateway.instance.update(widget.note);
 
     if (response != null) {
       Toast.makeSuccessToast(text: "Note was Saved", duration: ToastDuration.short);
@@ -263,7 +263,7 @@ class _EditorState extends State<_Editor> {
   }
 
   Future<void> delete() async {
-    bool success = await NoteGateway.instance.delete(widget.courseId, widget.note.id);
+    bool success = await NoteGateway.instance.delete(widget.note.id);
     if (success) {
       Toast.makeSuccessToast(text: "Note was Deleted", duration: ToastDuration.short);
       if (mounted) {

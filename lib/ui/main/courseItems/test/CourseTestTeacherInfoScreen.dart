@@ -2,7 +2,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
@@ -47,7 +46,7 @@ class _CourseTestTeacherInfoScreenState extends State<CourseTestTeacherInfoScree
             return const Center(child: WidgetLoading(),);
           }
           return FutureBuilder(
-            future: TestGateway.instance.get(widget.courseId, widget.testId),
+            future: TestGateway.instance.get(widget.testId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 Toast.makeErrorToast(text: "Failed to get Test");

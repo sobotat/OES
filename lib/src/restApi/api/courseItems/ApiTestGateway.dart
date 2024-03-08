@@ -11,17 +11,11 @@ import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 
 class ApiTestGateway implements TestGateway {
 
-  String basePath = '${AppApi.instance.apiServerUrl}/api/test';
+  String basePath = '${AppApi.instance.apiServerUrl}/api/tests';
 
   @override
-  Future<Test?> get(int courseId, int id, {String? password}) async {
-    Map<String, dynamic> query = {
-      'courseId': courseId,
-    };
-
-    if (password != null) {
-      query.addAll({'password': password,});
-    }
+  Future<Test?> get(int id, {String? password}) async {
+    Map<String, dynamic> query = password != null? {'password': password,} : {};
 
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
@@ -80,7 +74,7 @@ class ApiTestGateway implements TestGateway {
   }
 
   @override
-  Future<Test?> update(int courseId, Test test, String password) async {
+  Future<Test?> update(Test test, String password) async {
 
     Map<String, dynamic> data = test.toMap();
     data.remove('id');
@@ -95,9 +89,6 @@ class ApiTestGateway implements TestGateway {
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${test.id}',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
       data: data,
     );
 
@@ -112,11 +103,11 @@ class ApiTestGateway implements TestGateway {
       return null;
     }
 
-    return get(courseId, test.id);
+    return get(test.id);
   }
 
   @override
-  Future<bool> submit(int courseId, int id, List<AnswerOption> answers) async {
+  Future<bool> submit(int id, List<AnswerOption> answers) async {
 
     Map<String, dynamic> query = {
       'testId': id,
@@ -125,9 +116,6 @@ class ApiTestGateway implements TestGateway {
 
     RequestResult result = await HttpRequest.instance.post('$basePath/submit',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId': courseId,
-      },
       data: query,
     );
 
@@ -146,12 +134,9 @@ class ApiTestGateway implements TestGateway {
   }
 
   @override
-  Future<bool> delete(int courseId, int id) async {
+  Future<bool> delete(int id) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
     );
 
     if (result.checkUnauthorized()) {
@@ -169,12 +154,9 @@ class ApiTestGateway implements TestGateway {
   }
 
   @override
-  Future<TestInfo?> getInfo(int courseId, int id) async {
+  Future<TestInfo?> getInfo(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/info',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
     );
 
     if (result.checkUnauthorized()) {
@@ -189,6 +171,29 @@ class ApiTestGateway implements TestGateway {
     }
 
     return TestInfo.fromJson(result.data);
+  }
+
+  @override
+  Future<bool> checkTestPassword(int id, String password) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/check-password',
+        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        queryParameters: {
+          'password': password,
+        }
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (result.statusCode != 200) {
+      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
   }
 
 }

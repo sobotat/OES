@@ -3,11 +3,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
@@ -20,7 +18,6 @@ import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/RefreshWidget.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
-import 'dart:io' show Platform;
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({

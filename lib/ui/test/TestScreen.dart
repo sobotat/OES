@@ -31,7 +31,7 @@ class _TestScreenState extends State<TestScreen> {
     initSignalIr();
 
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Achievement a = Achievement.fromJson({'id':'123', 'name': 'name', 'description': '12312', 'unlocked': false});
       AchievementDialog.show(context: context, achievement: a);
     },);

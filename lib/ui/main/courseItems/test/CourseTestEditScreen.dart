@@ -50,7 +50,7 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
           return FutureBuilder(
             future: Future(() async {
               if (!isNew()) {
-                return await TestGateway.instance.get(widget.courseId, widget.testId);
+                return await TestGateway.instance.get(widget.testId);
               }
               List<QuestionOption> options = [
                 QuestionOption(id: -1, text: "Option 1", points: 0),
@@ -450,7 +450,7 @@ class _EditorState extends State<_Editor> {
     }
 
     Test? response = widget.isNew ? await TestGateway.instance.create(widget.courseId, widget.test, passwordController.text) :
-                                    await TestGateway.instance.update(widget.courseId, widget.test, passwordController.text);
+                                    await TestGateway.instance.update(widget.test, passwordController.text);
 
     if (response != null) {
       Toast.makeSuccessToast(text: "Test was Saved", duration: ToastDuration.short);
@@ -463,7 +463,7 @@ class _EditorState extends State<_Editor> {
 
   Future<void> delete() async {
     if(widget.isNew) return;
-    bool success = await TestGateway.instance.delete(widget.courseId, widget.test.id);
+    bool success = await TestGateway.instance.delete(widget.test.id);
     if (success) {
       Toast.makeSuccessToast(text: "Test was Deleted", duration: ToastDuration.short);
       context.pop();

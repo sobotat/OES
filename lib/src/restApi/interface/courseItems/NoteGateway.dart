@@ -6,8 +6,8 @@ abstract class NoteGateway {
 
   static final NoteGateway instance = ApiNoteGateway();
 
-  Future<Note?> get(int courseId, int id);
+  Future<Note?> get(int id);
   Future<Note?> create(int courseId, Note note);
-  Future<Note?> update(int courseId, Note note);
-  Future<bool> delete(int courseId, int id);
+  Future<Note?> update(Note note);
+  Future<bool> delete(int id);
 }

@@ -10,13 +10,15 @@ abstract class HttpRequest {
   Future<RequestResult> get(String url, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-    HttpRequestOptions? options
+    HttpRequestOptions? options,
   });
 
   Future<RequestResult> post(String url, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-    HttpRequestOptions? options
+    HttpRequestOptions? options,
+    Function(double progress)? onReceiveProgress,
+    Function(double progress)? onSendProgress,
   });
 
   Future<RequestResult> put(String url, {

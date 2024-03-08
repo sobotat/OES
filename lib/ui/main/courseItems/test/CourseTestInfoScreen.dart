@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
-import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
@@ -75,7 +73,7 @@ class CourseTestInfoScreen extends StatelessWidget {
         builder: (context, child) {
           if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
           return FutureBuilder(
-            future: TestGateway.instance.getInfo(courseId, testId),
+            future: TestGateway.instance.getInfo(testId),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 Toast.makeErrorToast(text: "Failed to get Info about Test -> ${snapshot.error}", duration: ToastDuration.large);
@@ -186,7 +184,7 @@ class _TestDialogState extends State<_TestDialog> {
   Timer? timer;
 
   Future<bool> checkPassword() async {
-    return await CourseGateway.instance.checkTestPassword(widget.courseId, widget.testId, passwordController.text);
+    return await TestGateway.instance.checkTestPassword(widget.testId, passwordController.text);
   }
 
   Future<bool> startTest(BuildContext context) async {

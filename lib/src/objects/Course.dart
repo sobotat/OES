@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/SignedUser.dart';
-import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/objects/ApiObject.dart';

@@ -29,9 +29,9 @@ class UserDetailScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         color: Theme.of(context).colorScheme.secondary,
                       ),
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       alignment: Alignment.center,
-                      child: _ProfilePhoto(),
+                      child: const _ProfilePhoto(),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -39,8 +39,8 @@ class UserDetailScreen extends StatelessWidget {
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                       alignment: Alignment.center,
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.only(bottom: 10),
+                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.only(bottom: 10),
                       child: _UserInfo(),
                     ),
                     const SizedBox(
@@ -67,7 +67,7 @@ class UserDetailScreen extends StatelessWidget {
                                   color: Theme.of(context).colorScheme.secondary,
                                 ),
                                 alignment: Alignment.center,
-                                margin: EdgeInsets.all(10),
+                                margin: const EdgeInsets.all(10),
                                 child: _UserInfo(),
                               ),
                             ),
@@ -80,9 +80,9 @@ class UserDetailScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(10),
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
-                                    margin: EdgeInsets.all(10),
+                                    margin: const EdgeInsets.all(10),
                                     alignment: Alignment.center,
-                                    child: _ProfilePhoto(),
+                                    child: const _ProfilePhoto(),
                                   ),
                                   const Expanded(
                                     child: _Devices(),
@@ -116,8 +116,8 @@ class _Devices extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.secondary,
       ),
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(5),
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(5),
       child: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, widget) {
@@ -202,7 +202,7 @@ class _Password extends StatelessWidget {
       child: TextField(
         controller: passwordController,
         obscureText: true,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           label: Text('Password'),
         ),
       ),
@@ -325,7 +325,7 @@ class _ProfilePhotoState extends State<_ProfilePhoto> {
                       borderRadius: BorderRadius.circular(10),
                       color: Theme.of(context).colorScheme.secondary,
                     ),
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,

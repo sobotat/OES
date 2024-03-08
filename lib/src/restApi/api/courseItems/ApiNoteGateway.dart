@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Note.dart';
@@ -12,15 +10,12 @@ import 'package:oes/config/AppApi.dart';
 
 class ApiNoteGateway extends NoteGateway {
 
-  String basePath = '${AppApi.instance.apiServerUrl}/api/note';
+  String basePath = '${AppApi.instance.apiServerUrl}/api/notes';
 
   @override
-  Future<Note?> get(int courseId, int id) async {
+  Future<Note?> get(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
     );
 
     if (result.checkUnauthorized()) {
@@ -68,15 +63,12 @@ class ApiNoteGateway extends NoteGateway {
   }
 
   @override
-  Future<Note?> update(int courseId, Note note) async {
+  Future<Note?> update(Note note) async {
     Map<String, dynamic> data = note.toMap();
     data.remove('id');
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${note.id}',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
       data: data,
     );
 
@@ -91,16 +83,13 @@ class ApiNoteGateway extends NoteGateway {
       return null;
     }
 
-    return get(courseId, note.id);
+    return get(note.id);
   }
 
   @override
-  Future<bool> delete(int courseId, int id) async {
+  Future<bool> delete(int id) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-      queryParameters: {
-        'courseId':courseId,
-      },
     );
 
     if (result.checkUnauthorized()) {

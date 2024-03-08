@@ -6,20 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
-import 'package:oes/src/objects/questions/OpenQuestion.dart';
-import 'package:oes/src/objects/questions/PickManyQuestion.dart';
-import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
-import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
-import 'package:oes/ui/assets/widgets/questions/OpenQuestionBuilder.dart';
-import 'package:oes/ui/assets/widgets/questions/PickManyQuestionBuilder.dart';
-import 'package:oes/ui/assets/widgets/questions/PickOneQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/QuestionBuilderFactory.dart';
 
 class CourseTestScreen extends StatefulWidget {
@@ -51,7 +44,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
       answers.addAll(question.getAnswerOptions());
     }
 
-    bool success = await TestGateway.instance.submit( widget.courseId, widget.testId, answers);
+    bool success = await TestGateway.instance.submit( widget.testId, answers);
     if (!success) {
       Toast.makeToast(text: "Failed to Finish Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
       return false;
@@ -78,7 +71,7 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
           builder: (context, child) {
             if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
             return FutureBuilder(
-              future: TestGateway.instance.get(widget.courseId, widget.testId, password: widget.password),
+              future: TestGateway.instance.get(widget.testId, password: widget.password),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print("Load Test Error: ${snapshot.error}");

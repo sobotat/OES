@@ -224,7 +224,6 @@ class AppRouter {
               GoRoute(
                 path: 'homework/:homework_id',
                 name: 'course-homework',
-                redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
                   int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
