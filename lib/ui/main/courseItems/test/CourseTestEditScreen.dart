@@ -17,6 +17,7 @@ import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/DateTimeItem.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -1091,58 +1092,27 @@ class _Dates extends StatefulWidget {
 
 class _DatesState extends State<_Dates> {
 
-  Future<DateTime?> pickDateTime(DateTime dateTime) async {
-    DateTime? date = await showDialog(context: context, builder: (context) => DatePickerDialog(
-      firstDate: DateTime.utc(2000),
-      lastDate: DateTime.utc(3000),
-      initialDate: dateTime,));
-    if (date == null) return null;
-
-    TimeOfDay? time = await showDialog(context: context, builder: (context) => TimePickerDialog(
-      initialTime: TimeOfDay.fromDateTime(dateTime),));
-    if (time == null) return null;
-    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
-  }
-
-  String formatDateTime(DateTime dateTime) {
-    return "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute < 10 ? "0" : ""}${dateTime.minute}";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconItem(
-          icon: const Icon(Icons.arrow_forward),
-          body: Row(
-            children: [
-              Text("Scheduled: ".padRight(15), style: const TextStyle(fontWeight: FontWeight.bold),),
-              Text(formatDateTime(widget.test.scheduled)),
-            ],
-          ),
-          onClick: (context) {
-            pickDateTime(widget.test.end).then((value) {
-              if (value == null) return;
-              widget.test.scheduled = value;
-              setState(() {});
-            });
+        DateTimeItem(
+          icon: Icons.arrow_forward,
+          text: "Scheduled",
+          datetime: widget.test.scheduled,
+          onDateTimeChanged: (datetime) {
+            widget.test.scheduled = datetime;
+            setState(() {});
           },
         ),
-        IconItem(
-          icon: const Icon(Icons.arrow_back),
-          body: Row(
-            children: [
-              Text("End: ".padRight(22), style: const TextStyle(fontWeight: FontWeight.bold),),
-              Text(formatDateTime(widget.test.end)),
-            ],
-          ),
-          onClick: (context) {
-            pickDateTime(widget.test.end).then((value) {
-              if (value == null) return;
-              widget.test.end = value;
-              setState(() {});
-            });
+        DateTimeItem(
+          icon: Icons.arrow_back,
+          text: "End",
+          datetime: widget.test.end,
+          onDateTimeChanged: (datetime) {
+            widget.test.end = datetime;
+            setState(() {});
           },
         ),
       ],
