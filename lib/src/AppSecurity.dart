@@ -21,7 +21,11 @@ class AppSecurity extends ChangeNotifier {
 
     String? token = await SecureStorage.instance.get('token');
     if (token != null) {
-      user = await UserGateway.instance.loginWithToken(token);
+      user = await UserGateway.instance.loginWithToken(token)
+        .onError((error, stackTrace) {
+          debugPrint("Failed to Sign in User by Token");
+          return null;
+        });
     }
     _isInit = true;
     notifyListeners();
@@ -29,7 +33,11 @@ class AppSecurity extends ChangeNotifier {
 
   Future<bool> login(String username, String password, {bool? rememberMe}) async {
     Device device = await DeviceInfo.getDevice();
-    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true, device);
+    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true, device)
+      .onError((error, stackTrace) {
+        debugPrint("Failed to Sign in User with Username and Password");
+        return null;
+      });
 
     if(user != null) {
       notifyListeners();

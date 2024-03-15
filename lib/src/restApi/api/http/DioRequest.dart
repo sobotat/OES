@@ -59,21 +59,33 @@ class DioRequest extends HttpRequest {
     );
   }
 
+  Future<Response<dynamic>> _onError(error, stackTrace) {
+    if(error is DioException) {
+      if (error.response != null) {
+        RequestResult result = _getResultFromResponse(error.response!);
+        debugPrint("⭕ API Request Failed: ${result.statusCode} - ${result.message}");
+        return Future(() => error.response!,);
+      } else {
+        debugPrint("⭕ Failed to get RequestResult from API");
+        AppRouter.instance.router.goNamed('no-api');
+        throw error;
+      }
+    }
+    AppRouter.instance.router.goNamed('no-api');
+    throw error!;
+  }
+
   @override
   Future<RequestResult> get(String url, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     HttpRequestOptions? options
   }) async {
-
     Response response = await _getDio().get(url,
       data: data,
       queryParameters: queryParameters,
       options: _getOptionsFromHttpRequestOptions(options),
-    ).onError((error, stackTrace) {
-      AppRouter.instance.router.goNamed('no-api');
-      throw error!;
-    });
+    ).onError(_onError);
 
     return _getResultFromResponse(response);
   }
@@ -97,10 +109,7 @@ class DioRequest extends HttpRequest {
       onSendProgress: onSendProgress != null ? (count, total) {
         onSendProgress(count / total);
       } : null,
-    ).onError((error, stackTrace) {
-      AppRouter.instance.router.goNamed('no-api');
-      throw error!;
-    });
+    ).onError(_onError);
 
     return _getResultFromResponse(response);
   }
@@ -116,10 +125,7 @@ class DioRequest extends HttpRequest {
         data: data,
         queryParameters: queryParameters,
         options: _getOptionsFromHttpRequestOptions(options)
-    ).onError((error, stackTrace) {
-      AppRouter.instance.router.goNamed('no-api');
-      throw error!;
-    });
+    ).onError(_onError);
 
     return _getResultFromResponse(response);
   }
@@ -135,10 +141,7 @@ class DioRequest extends HttpRequest {
         data: data,
         queryParameters: queryParameters,
         options: _getOptionsFromHttpRequestOptions(options)
-    ).onError((error, stackTrace) {
-      AppRouter.instance.router.goNamed('no-api');
-      throw error!;
-    });
+    ).onError(_onError);
 
     return _getResultFromResponse(response);
   }
@@ -154,10 +157,7 @@ class DioRequest extends HttpRequest {
         data: data,
         queryParameters: queryParameters,
         options: _getOptionsFromHttpRequestOptions(options)
-    ).onError((error, stackTrace) {
-      AppRouter.instance.router.goNamed('no-api');
-      throw error!;
-    });
+    ).onError(_onError);
 
     return _getResultFromResponse(response);
   }
