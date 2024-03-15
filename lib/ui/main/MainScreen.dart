@@ -204,7 +204,7 @@ class _CoursesState extends State<_Courses> {
             future: CourseGateway.instance.getUserCourses(user),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                Toast.makeErrorToast(text: "Failed to load User Courses -> ${snapshot.error}");
+                Toast.makeErrorToast(text: "Failed to load User Courses");
               }
               if (!snapshot.hasData) {
                 return const SizedBox(

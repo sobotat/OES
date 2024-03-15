@@ -7,6 +7,7 @@ import 'package:oes/ui/main/course/CourseEditScreen.dart';
 import 'package:oes/ui/main/course/CourseScreen.dart';
 import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
+import 'package:oes/ui/main/courseItems/homework/CourseHomeworkEditScreen.dart';
 import 'package:oes/ui/main/courseItems/homework/CourseHomeworkScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteEditScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteScreen.dart';
@@ -222,6 +223,19 @@ class AppRouter {
                 },
               ),
               GoRoute(
+                path: 'create-homework',
+                name: 'create-course-homework',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  return CourseHomeworkEditScreen(
+                    courseId: courseId,
+                    homeworkId: -1,
+                  );
+                },
+              ),
+              GoRoute(
                 path: 'homework/:homework_id',
                 name: 'course-homework',
                 builder: (context, state) {
@@ -233,6 +247,22 @@ class AppRouter {
                     homeworkId: id,
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    name: 'edit-course-homework',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['homework_id'] ?? '-1');
+                      return CourseHomeworkEditScreen(
+                        courseId: courseId,
+                        homeworkId: id,
+                      );
+                    },
+                  )
+                ]
               ),
               GoRoute(
                 path: 'create-note',

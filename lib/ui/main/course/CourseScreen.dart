@@ -97,6 +97,9 @@ class _CourseScreenState extends State<CourseScreen> {
                         text: "Homework",
                         onClick: () {
                           print("Create Homework");
+                          context.goNamed("create-course-homework", pathParameters: {
+                            "course_id": course.id.toString(),
+                          });
                           context.pop();
                         },
                       ),

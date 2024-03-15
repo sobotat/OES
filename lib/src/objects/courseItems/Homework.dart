@@ -12,21 +12,15 @@ class Homework extends SchedulableItem {
     required super.scheduled,
     required super.end,
     required this.task,
-    required this.text,
-    required this.fileName,
   }) : super(type: 'homework');
 
   String task;
-  String text;
-  String? fileName;
 
   @override
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
         'task': task,
-        'text': text,
-        'fileName': fileName,
       });
   }
 
@@ -40,8 +34,6 @@ class Homework extends SchedulableItem {
       scheduled: DateTime.tryParse(json['scheduled'])!,
       end: DateTime.tryParse(json['end'])!,
       task: json['task'],
-      text: json['text'] ?? "",
-      fileName: json['fileName'],
     );
   }
 }

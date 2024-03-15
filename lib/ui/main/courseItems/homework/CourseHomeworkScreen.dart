@@ -1,9 +1,14 @@
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
@@ -30,8 +35,7 @@ class CourseHomeworkScreen extends StatefulWidget {
 class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
 
   TextEditingController editorController = TextEditingController();
-  PlatformFile? file;
-  String status = "No File";
+  GlobalKey<_FilesState> key = GlobalKey();
   int progress = 0;
 
   @override
@@ -41,63 +45,28 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
   }
 
   Future<void> submit() async {
-    setState(() {
-      status = "Sending";
-    });
-    bool success = await HomeworkGateway.instance.submit(editorController.text, file != null ? MultipartFile.fromBytes(file!.bytes as List<int>, filename: file!.name) : null,
+    List<MultipartFile> files = key.currentState?.getFiles() ?? [];
+    bool success = await HomeworkGateway.instance.submit(widget.homeworkId, "", files,
       onProgress: (progress) {
         setState(() {
           this.progress = (progress * 100).round();
         });
       },)
-      .onError((error, stackTrace) {
-        if (error is RangeError) Toast.makeErrorToast(text: "File is too large");
-        throw error!;
-      }
+        .onError((error, stackTrace) {
+      if (error is RangeError) Toast.makeErrorToast(text: "File is too large");
+      progress = 0;
+      print("Submit Error: $error");
+      return false;
+    }
     );
     if (success) {
       Toast.makeSuccessToast(text: "File was Uploaded");
-      setState(() {
-        status = "Uploaded";
-      });
+      progress = 100;
     } else {
       Toast.makeErrorToast(text: "Failed to Upload File");
-      setState(() {
-        status = "Failed";
-      });
+      progress = 0;
     }
-  }
-
-  String getFileProgressText() {
-    if (status == "Sending") return "$progress %";
-    return status;
-  }
-
-  Color getFileProgressColor() {
-    switch(status) {
-      case "Uploaded": return Colors.green.shade700;
-      case "Sending": return Colors.greenAccent.shade700;
-      case "Ready": return Colors.orange.shade700;
-    }
-    return Colors.red.shade700;
-  }
-
-  Future<void> _sendFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      PlatformFile file = result.files.first;
-
-      debugPrint("Filename: ${file.name}, Size: ${file.size}");
-      if (file.size >= 1000000000) {
-        Toast.makeErrorToast(text: "File is too large");
-      }
-
-      setState(() {
-        status = "Ready";
-        this.file = file;
-      });
-    }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -108,28 +77,16 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
         listenable: AppSecurity.instance,
         builder: (context, child) {
           return FutureBuilder(
-            future: Future(() {
-              return Homework(
-                id: -1,
-                created: DateTime.now().subtract(const Duration(days: 30)),
-                createdById: 1,
-                text: "AAAAAAAaaaaaaaaaaaaaaaaaaa",
-                task: """Write how to make this 
-```bash
-  ./run_hack
-```
-                """,
-                fileName: null,
-                isVisible: true,
-                end: DateTime.now().add(const Duration(days: 10)),
-                name: "HW 1",
-                scheduled: DateTime.now().subtract(const Duration(days: 1))
-              );
-            }),
+            future: HomeworkGateway.instance.get(widget.homeworkId),
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Toast.makeErrorToast(text: "Failed to load Homework");
+                context.goNamed("course", pathParameters: {
+                  'course_id': widget.courseId.toString()
+                });
+              }
               if (!snapshot.hasData) return const Center(child: WidgetLoading());
               Homework homework = snapshot.data!;
-              editorController.text = homework.text;
 
               return ListView(
                 children: [
@@ -139,14 +96,41 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
                       Padding(
                         padding: const EdgeInsets.all(5),
                         child: Button(
-                          icon: Icons.done_all,
+                          icon: progress == 0 ? Icons.done_all : null,
+                          text: progress == 0 ? "" : progress == 100 ? "Uploaded" : "${progress.round()}%",
                           toolTip: "Submit",
-                          maxWidth: 40,
+                          maxWidth: progress == 0 ? 40 : 100,
                           backgroundColor: Colors.green.shade700,
                           onClick: (context) {
-                            submit();
+                            if (progress == 0 || progress == 100) submit();
                           },
                         ),
+                      ),
+                      FutureBuilder<bool>(
+                          future: Future(() async {
+                            Course? course = await CourseGateway.instance.getCourse(widget.courseId);
+                            return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
+                          }),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) return Container();
+                            bool isTeacher = snapshot.data!;
+                            if (!isTeacher) return Container();
+                            return Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Button(
+                                icon: Icons.edit,
+                                toolTip: "Edit",
+                                maxWidth: 40,
+                                backgroundColor: Theme.of(context).colorScheme.secondary,
+                                onClick: (context) {
+                                  context.goNamed('edit-course-homework', pathParameters: {
+                                    'course_id': widget.courseId.toString(),
+                                    'homework_id': widget.homeworkId.toString(),
+                                  });
+                                },
+                              ),
+                            );
+                          }
                       ),
                     ],
                   ),
@@ -195,27 +179,155 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
                   const Heading(headingText: "File"),
                   BackgroundBody(
                     maxHeight: double.infinity,
-                    child: file == null ? Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Button(
-                        text: "Upload",
-                        onClick: (context) async {
-                          await _sendFile();
-                        },
-                      ),
-                    ) : IconItem(
-                      icon: Text(getFileProgressText()),
-                      width: 100,
-                      color: getFileProgressColor(),
-                      body: Text(file?.name ?? "No File")
-                    ),
-                  )
-                ],
+                    child: _Files(
+                      homeworkId: widget.homeworkId,
+                      key: key,
+                    )
+                  ),
+                ]
               );
             },
           );
         },
       ),
+    );
+  }
+}
+
+class _Files extends StatefulWidget {
+  const _Files({
+    required this.homeworkId,
+    super.key
+  });
+
+  final int homeworkId;
+
+  @override
+  State<_Files> createState() => _FilesState();
+}
+
+class _FilesState extends State<_Files> {
+
+  List<PlatformFile> files = [];
+
+  List<MultipartFile> getFiles() {
+    List<MultipartFile> multiFiles = [];
+    for (PlatformFile file in files) {
+      List<int> bytes = [];
+      if (file.bytes != null) {
+        bytes = file.bytes as List<int>;
+      } else {
+        File f = File(file.path.toString());
+        bytes = f.readAsBytesSync();
+      }
+      multiFiles.add(MultipartFile.fromBytes(bytes, filename: file.name));
+    }
+    return multiFiles;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: files.length,
+          itemBuilder: (context, index) {
+            return _FileItem(
+              file: files[index],
+              onRemove: (file) {
+                setState(() {
+                  files.remove(file);
+                });
+              },
+            );
+          },
+        ),
+        _SelectFile(onSelected: (file) {
+          setState(() {
+            files.add(file);
+          });
+        },)
+      ],
+    );
+  }
+}
+
+class _SelectFile extends StatelessWidget {
+  const _SelectFile({
+    required this.onSelected,
+    super.key
+  });
+
+  final Function(PlatformFile file) onSelected;
+
+  Future<void> selectFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      debugPrint("Filename: ${file.name}, Size: ${file.size}");
+      if (file.size >= 1000000000) {
+        Toast.makeErrorToast(text: "File is too large");
+      }
+
+      onSelected(file);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Button(
+        text: "Upload",
+        maxWidth: double.infinity,
+        onClick: (context) async {
+          await selectFile();
+        },
+      ),
+    );
+  }
+}
+
+
+
+class _FileItem extends StatelessWidget {
+  const _FileItem({
+    required this.file,
+    required this.onRemove,
+    super.key
+  });
+
+  final PlatformFile file;
+  final Function(PlatformFile file) onRemove;
+
+  void remove() {
+    onRemove(file);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconItem(
+      icon: const Icon(Icons.file_copy_outlined),
+      body: Text(file.name),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Button(
+            icon: Icons.close,
+            toolTip: "Remove",
+            maxWidth: 40,
+            backgroundColor: Colors.red.shade700,
+            onClick: (context) {
+              remove();
+            },
+          ),
+        )
+      ],
     );
   }
 }
