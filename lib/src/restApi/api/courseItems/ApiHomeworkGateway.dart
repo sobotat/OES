@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppApi.dart';
@@ -31,6 +33,53 @@ class ApiHomeworkGateway implements HomeworkGateway {
     }
 
     return Homework.fromJson(result.data);
+  }
+
+  @override
+  Future<List<HomeworkSubmission>> getSubmission(int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Homework-getSubmission] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (!result.checkOk() || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Homework-getSubmission] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<HomeworkSubmission> out = [];
+    for (Map<String, dynamic> json in result.data) {
+      out.add(HomeworkSubmission.fromJson(json));
+    }
+    return out;
+  }
+
+  @override
+  Future<List<int>?> getAttachment(int attachmentId) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/attachments/$attachmentId',
+      options: AuthHttpRequestOptions(
+        token: AppSecurity.instance.user!.token,
+        responseType: HttpResponseType.bytes
+      ),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Homework-getAttachment] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Homework-getAttachment] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return result.data as List<int>;
   }
 
   @override

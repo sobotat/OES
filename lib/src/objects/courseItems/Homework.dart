@@ -37,3 +37,58 @@ class Homework extends SchedulableItem {
     );
   }
 }
+
+class HomeworkSubmission {
+
+  HomeworkSubmission({
+    required this.id,
+    required this.text,
+    required this.attachments
+  });
+
+  int id;
+  String? text;
+  List<HomeworkSubmissionAttachment> attachments;
+
+
+  @override
+  String toString() {
+    return '{id: $id, text: $text, fileNames: $attachments}';
+  }
+
+  factory HomeworkSubmission.fromJson(Map<String, dynamic> json) {
+    List<HomeworkSubmissionAttachment> files = [];
+    for(Map<String, dynamic> fileJson in json['attachments']) {
+      files.add(HomeworkSubmissionAttachment.fromJson(fileJson));
+    }
+    return HomeworkSubmission(
+      id: json['id'],
+      text: json['text'],
+      attachments: files,
+    );
+  }
+}
+
+class HomeworkSubmissionAttachment {
+
+  HomeworkSubmissionAttachment({
+    required this.id,
+    required this.fileName,
+  });
+
+  int id;
+  String fileName;
+
+
+  @override
+  String toString() {
+    return '{id: $id, fileName: $fileName}';
+  }
+
+  factory HomeworkSubmissionAttachment.fromJson(Map<String, dynamic> json) {
+    return HomeworkSubmissionAttachment(
+      id: json['id'],
+      fileName: json['fileName'],
+    );
+  }
+}
