@@ -36,7 +36,8 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
 
   TextEditingController editorController = TextEditingController();
   GlobalKey<_FilesState> key = GlobalKey();
-  int progress = 0;
+  int progress = -1;
+  bool failedUpload = false;
 
   @override
   void dispose() {
@@ -45,6 +46,10 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
   }
 
   Future<void> submit() async {
+    setState(() {
+      progress = 0;
+      failedUpload = false;
+    });
     List<MultipartFile> files = key.currentState?.getFiles() ?? [];
     bool success = await HomeworkGateway.instance.submit(widget.homeworkId, "", files,
       onProgress: (progress) {
@@ -61,10 +66,11 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
     );
     if (success) {
       Toast.makeSuccessToast(text: "File was Uploaded");
-      progress = 100;
+      progress = 101;
     } else {
       Toast.makeErrorToast(text: "Failed to Upload File");
-      progress = 0;
+      progress = -1;
+      failedUpload = true;
     }
     if (mounted) setState(() {});
   }
@@ -76,6 +82,7 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
       body: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, child) {
+          if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
           return FutureBuilder(
             future: HomeworkGateway.instance.get(widget.homeworkId),
             builder: (context, snapshot) {
@@ -96,13 +103,13 @@ class _CourseHomeworkScreenState extends State<CourseHomeworkScreen> {
                       Padding(
                         padding: const EdgeInsets.all(5),
                         child: Button(
-                          icon: progress == 0 ? Icons.done_all : null,
-                          text: progress == 0 ? "" : progress == 100 ? "Uploaded" : "${progress.round()}%",
+                          icon: progress == -1 && !failedUpload ? Icons.done_all : null,
+                          text: progress == -1 ? !failedUpload ? "" : "Failed" : progress == 101 ? "Uploaded" : "${progress.round()}%",
                           toolTip: "Submit",
-                          maxWidth: progress == 0 ? 40 : 100,
-                          backgroundColor: Colors.green.shade700,
+                          maxWidth: progress == -1 && !failedUpload ? 40 : 100,
+                          backgroundColor: !failedUpload ? Colors.green.shade700 : Colors.red.shade700,
                           onClick: (context) {
-                            if (progress == 0 || progress == 100) submit();
+                            if (progress == -1 || progress == 101) submit();
                           },
                         ),
                       ),
@@ -264,17 +271,20 @@ class _SelectFile extends StatelessWidget {
   final Function(PlatformFile file) onSelected;
 
   Future<void> selectFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+    );
 
     if (result != null) {
-      PlatformFile file = result.files.first;
+      for(PlatformFile file in result.files) {
+        debugPrint("Filename: ${file.name}, Size: ${file.size}");
+        if (file.size >= 1000000000) {
+          Toast.makeErrorToast(text: "File is too large");
+          continue;
+        }
 
-      debugPrint("Filename: ${file.name}, Size: ${file.size}");
-      if (file.size >= 1000000000) {
-        Toast.makeErrorToast(text: "File is too large");
+        onSelected(file);
       }
-
-      onSelected(file);
     }
   }
 
