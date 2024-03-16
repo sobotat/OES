@@ -115,10 +115,11 @@ class ApiHomeworkGateway implements HomeworkGateway {
     });
 
     RequestResult result = await HttpRequest.instance.post("$basePath/submit",
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
+      options: AuthHttpRequestOptions(
+        token: AppSecurity.instance.user!.token,
+        contentType: "multipart/form-data",
+        sendTimeout: const Duration(minutes: 5),
+        receiveTimeout: const Duration(minutes: 5)
       ),
       onSendProgress: onProgress,
       data: formData,
