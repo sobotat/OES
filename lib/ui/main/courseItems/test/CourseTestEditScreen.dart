@@ -67,6 +67,7 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 Toast.makeErrorToast(text: "Failed to load Test");
+                print(snapshot.error);
                 context.pop();
               }
               if (!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),));
