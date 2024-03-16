@@ -1,3 +1,4 @@
+
 class HttpRequestOptions {
 
   HttpRequestOptions({
@@ -10,7 +11,8 @@ class HttpRequestOptions {
     this.validateStatus,
     this.followRedirects,
     this.maxRedirects,
-    this.persistentConnection
+    this.persistentConnection,
+    this.responseType
   });
 
   String? method;
@@ -23,6 +25,7 @@ class HttpRequestOptions {
   bool? followRedirects;
   int? maxRedirects;
   bool? persistentConnection;
+  HttpResponseType? responseType;
 }
 
 class AuthHttpRequestOptions extends HttpRequestOptions {
@@ -38,7 +41,8 @@ class AuthHttpRequestOptions extends HttpRequestOptions {
     super.validateStatus,
     super.followRedirects,
     super.maxRedirects,
-    super.persistentConnection
+    super.persistentConnection,
+    super.responseType
   }) {
     super.headers = {
       'Authorization': 'Bearer $token'
@@ -51,4 +55,11 @@ class AuthHttpRequestOptions extends HttpRequestOptions {
 
   String token;
 
+}
+
+enum HttpResponseType {
+  json,
+  stream,
+  plain,
+  bytes,
 }

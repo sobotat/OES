@@ -46,6 +46,7 @@ class DioRequest extends HttpRequest {
       validateStatus: (status) => true,
     ) : Options(
       contentType: options.contentType,
+      responseType: options.responseType != null ? ResponseType.values[options.responseType!.index] : null,
       extra: options.extra,
       followRedirects: options.followRedirects,
       headers: options.headers,
@@ -67,8 +68,9 @@ class DioRequest extends HttpRequest {
         return Future(() => error.response!,);
       } else {
         debugPrint("⭕ Failed to get RequestResult from API");
-        AppRouter.instance.router.goNamed('no-api');
-        throw error;
+        // AppRouter.instance.router.goNamed('no-api');
+        //throw error;
+        return Future(() => Response(requestOptions: RequestOptions(), statusCode: 500, statusMessage: error.message));
       }
     }
     AppRouter.instance.router.goNamed('no-api');
