@@ -9,6 +9,7 @@ import 'package:oes/ui/main/MainScreen.dart';
 import 'package:oes/ui/main/UserDetailScreen.dart';
 import 'package:oes/ui/main/courseItems/homework/CourseHomeworkEditScreen.dart';
 import 'package:oes/ui/main/courseItems/homework/CourseHomeworkScreen.dart';
+import 'package:oes/ui/main/courseItems/homework/CourseHomeworkSubmitScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteEditScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteScreen.dart';
 import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
@@ -257,6 +258,20 @@ class AppRouter {
                       int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                       int id = int.parse(state.pathParameters['homework_id'] ?? '-1');
                       return CourseHomeworkEditScreen(
+                        courseId: courseId,
+                        homeworkId: id,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'submit',
+                    name: 'submit-course-homework',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['homework_id'] ?? '-1');
+                      return CourseHomeworkSubmitScreen(
                         courseId: courseId,
                         homeworkId: id,
                       );
