@@ -313,7 +313,6 @@ class _EditorState extends State<_Editor> {
           ]
         ),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -362,7 +361,6 @@ class _EditorState extends State<_Editor> {
         ),
         const Heading(headingText: 'Editor'),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
@@ -400,7 +398,6 @@ class _Preview extends StatelessWidget {
       children: [
         Heading(headingText: note.name),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: AppMarkdown(
             data: note.data,
             flipBlocksColors: true,

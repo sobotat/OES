@@ -61,7 +61,6 @@ class _CourseTestTeacherInfoScreenState extends State<CourseTestTeacherInfoScree
                   const SizedBox(height: 10,),
                   const Heading(headingText: "Score"),
                   BackgroundBody(
-                    maxHeight: double.infinity,
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -100,7 +99,6 @@ class _Info extends StatelessWidget {
             headingText: "Test Info"
         ),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

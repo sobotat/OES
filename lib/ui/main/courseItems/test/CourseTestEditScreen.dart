@@ -545,7 +545,6 @@ class _QuestionsBodyState extends State<_QuestionsBody> {
   @override
   Widget build(BuildContext context) {
     return BackgroundBody(
-      maxHeight: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -989,7 +988,6 @@ class _InfoState extends State<_Info> {
   @override
   Widget build(BuildContext context) {
     return BackgroundBody(
-      maxHeight: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

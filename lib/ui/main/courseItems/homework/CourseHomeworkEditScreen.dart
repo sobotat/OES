@@ -155,7 +155,6 @@ class _BodyState extends State<_Body> {
             ]
         ),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -204,7 +203,6 @@ class _BodyState extends State<_Body> {
         ),
         const Heading(headingText: "Preview"),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: _Preview(
             homework: widget.homework,
             key: key,

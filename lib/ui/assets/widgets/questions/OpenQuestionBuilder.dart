@@ -26,7 +26,6 @@ class OpenQuestionBuilder extends QuestionBuilder<OpenQuestion> {
           ],
         ),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

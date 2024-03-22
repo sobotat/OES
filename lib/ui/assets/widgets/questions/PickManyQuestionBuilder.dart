@@ -28,7 +28,6 @@ class PickManyQuestionBuilder extends QuestionBuilder<PickManyQuestion> {
           ],
         ),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

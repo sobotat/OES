@@ -159,14 +159,12 @@ class _BodyState extends State<_Body> {
             ],
           ),
           BackgroundBody(
-            maxHeight: double.infinity,
             child: AppMarkdown(
               data: widget.homework.task,
             ),
           ),
           const Heading(headingText: "Text"),
           BackgroundBody(
-            maxHeight: double.infinity,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -202,7 +200,6 @@ class _BodyState extends State<_Body> {
           ),
           const Heading(headingText: "File"),
           BackgroundBody(
-              maxHeight: double.infinity,
               child: _Files(
                 homeworkId: widget.homework.id,
                 key: key,

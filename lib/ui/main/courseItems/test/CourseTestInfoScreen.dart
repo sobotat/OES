@@ -87,7 +87,6 @@ class CourseTestInfoScreen extends StatelessWidget {
                 children: [
                   const Heading(headingText: "Info"),
                   BackgroundBody(
-                    maxHeight: double.infinity,
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Column(
@@ -103,7 +102,6 @@ class CourseTestInfoScreen extends StatelessWidget {
                   ),
                   const Heading(headingText: "Answers"),
                   BackgroundBody(
-                    maxHeight: double.infinity,
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

@@ -76,7 +76,6 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
                 ],
               ),
               BackgroundBody(
-                maxHeight: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _CourseEditWidget(

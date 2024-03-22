@@ -77,7 +77,6 @@ class CourseNoteScreen extends StatelessWidget {
                     ],
                   ),
                   BackgroundBody(
-                    maxHeight: double.infinity,
                     child: AppMarkdown(
                       data: note.data,
                       flipBlocksColors: true,
