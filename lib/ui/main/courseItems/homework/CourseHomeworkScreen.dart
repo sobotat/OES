@@ -5,8 +5,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
+import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
@@ -15,7 +17,6 @@ import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CourseHomeworkScreen extends StatelessWidget {
   const CourseHomeworkScreen({
@@ -165,7 +166,7 @@ class _FilesSubmitted extends StatelessWidget {
   }
 }
 
-class _Attachment extends StatelessWidget {
+class _Attachment extends StatefulWidget {
   const _Attachment({
     required this.attachment,
     super.key
@@ -174,33 +175,58 @@ class _Attachment extends StatelessWidget {
   final HomeworkSubmissionAttachment attachment;
 
   @override
+  State<_Attachment> createState() => _AttachmentState();
+}
+
+class _AttachmentState extends State<_Attachment> {
+
+  int progress = -1;
+
+  @override
   Widget build(BuildContext context) {
     return IconItem(
       icon: const Icon(Icons.file_copy_outlined),
-      body: Text(attachment.fileName),
+      body: Text(widget.attachment.fileName),
       actions: [
         Padding(
           padding: const EdgeInsets.all(5),
           child: Button(
-            icon: Icons.download,
+            icon: progress == -1 ? Icons.download : null,
+            text: progress == -1 ? "" : " $progress%",
             toolTip: "Download",
             maxWidth: 40,
             backgroundColor: Theme.of(context).colorScheme.secondary,
             onClick: (context) async {
+              if (progress != -1) return;
+              setState(() {
+                progress = 0;
+              },);
+
+              Device device = await DeviceInfo.getDevice();
               String? path;
-              if (kIsWeb) {
-                path = attachment.fileName;
+              if (device.isWeb) {
+                path = widget.attachment.fileName;
               } else {
                 path = await FilePicker.platform.getDirectoryPath(dialogTitle: "Download Location");
                 if (path == null) return;
-                path += "\\${attachment.fileName}";
+                path += "/${widget.attachment.fileName}";
               }
               debugPrint("Downloading File to $path");
 
-              List<int>? data = await HomeworkGateway.instance.getAttachment(attachment.id);
+              List<int>? data = await HomeworkGateway.instance.getAttachment(widget.attachment.id,
+                  onProgress: (progress) {
+                    setState(() {
+                      this.progress = (progress * 100).round();
+                    });
+                  },);
               if (data == null) return;
+
               await download(Stream.fromIterable(data), path);
               Toast.makeSuccessToast(text: "File Downloaded", duration: ToastDuration.large);
+
+              setState(() {
+                progress = -1;
+              });
             },
           ),
         )

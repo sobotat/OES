@@ -60,12 +60,13 @@ class ApiHomeworkGateway implements HomeworkGateway {
   }
 
   @override
-  Future<List<int>?> getAttachment(int attachmentId) async {
+  Future<List<int>?> getAttachment(int attachmentId, { Function(double progress)? onProgress }) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/attachments/$attachmentId',
       options: AuthHttpRequestOptions(
         token: AppSecurity.instance.user!.token,
         responseType: HttpResponseType.bytes
       ),
+      onReceiveProgress: onProgress
     );
 
     if (result.checkUnauthorized()) {
