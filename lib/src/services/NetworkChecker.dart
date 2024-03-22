@@ -17,21 +17,28 @@ class NetworkChecker extends ChangeNotifier {
   }
 
   Future<bool> checkConnection() async {
-    ConnectivityResult result = await _connectivity.checkConnectivity();
+    List<ConnectivityResult> results = await _connectivity.checkConnectivity();
 
-    debugPrint('Network [$result]');
-    switch (result) {
-      case ConnectivityResult.mobile:
-        haveInternet = true;
-      case ConnectivityResult.wifi:
-        haveInternet = true;
-      case ConnectivityResult.ethernet:
-        haveInternet = true;
-      default:
-        haveInternet = false;
+    bool haveInternet = false;
+    for (ConnectivityResult result in results) {
+      debugPrint('Network [$result]');
+      switch (result) {
+        case ConnectivityResult.mobile:
+          haveInternet = true;
+        case ConnectivityResult.wifi:
+          haveInternet = true;
+        case ConnectivityResult.ethernet:
+          haveInternet = true;
+        default:
+          haveInternet = false;
+      }
+
+      if (haveInternet) break;
     }
 
+    this.haveInternet = haveInternet;
     notifyListeners();
+
     return haveInternet;
   }
 }
