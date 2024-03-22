@@ -60,6 +60,30 @@ class ApiHomeworkGateway implements HomeworkGateway {
   }
 
   @override
+  Future<List<TeacherHomeworkSubmission>> getTeacherSubmission(int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Homework-getSubmission] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (!result.checkOk() || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Homework-getSubmission] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<TeacherHomeworkSubmission> out = [];
+    for (Map<String, dynamic> json in result.data) {
+      out.add(TeacherHomeworkSubmission.fromJson(json));
+    }
+    return out;
+  }
+
+  @override
   Future<List<int>?> getAttachment(int attachmentId, { Function(double progress)? onProgress }) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/attachments/$attachmentId',
       options: AuthHttpRequestOptions(
@@ -190,5 +214,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
 
     return true;
   }
+
+
 
 }

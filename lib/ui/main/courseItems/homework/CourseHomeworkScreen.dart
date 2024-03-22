@@ -1,12 +1,16 @@
 
 
+import 'dart:math';
+
 import 'package:download/download.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
@@ -34,7 +38,7 @@ class CourseHomeworkScreen extends StatelessWidget {
       body: ListenableBuilder(
         listenable: AppSecurity.instance,
         builder: (context, child) {
-          if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
+          if (!AppSecurity.instance.isLoggedIn()) return const Center(child: WidgetLoading(),);
           return FutureBuilder(
             future: HomeworkGateway.instance.get(homeworkId),
             builder: (context, snapshot) {
@@ -48,21 +52,39 @@ class CourseHomeworkScreen extends StatelessWidget {
               Homework homework = snapshot.data!;
 
               return FutureBuilder(
-                future: HomeworkGateway.instance.getSubmission(homeworkId),
+                future: Future(() async {
+                  Course? course = await CourseGateway.instance.getCourse(courseId);
+                  if (course == null) return false;
+                  return course.isTeacherInCourse(AppSecurity.instance.user!);
+                }),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
-                  List<HomeworkSubmission> submissions = snapshot.data!;
-                  print(submissions);
-
-                  return _Body(
-                    homework: homework,
-                    submissions: submissions,
-                    onAddAssigment: () {
-                      context.goNamed("submit-course-homework", pathParameters: {
-                        "course_id": courseId.toString(),
-                        "homework_id": homeworkId.toString()
-                      });
-                    },
+                  bool isTeacher = snapshot.data!;
+                  if (isTeacher) {
+                    return FutureBuilder(
+                      future: HomeworkGateway.instance.getTeacherSubmission(homeworkId),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+                        List<TeacherHomeworkSubmission> submissions = snapshot.data!;
+                        return _TeacherBody(
+                          homework: homework,
+                          submissions: submissions,
+                        );
+                      },
+                    );
+                  }
+                  return FutureBuilder(
+                    future: HomeworkGateway.instance.getSubmission(homeworkId),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+                      List<HomeworkSubmission> submissions = snapshot.data!;
+                      return _StudentBody(
+                        homework: homework,
+                        courseId: courseId,
+                        homeworkId: homeworkId,
+                        submissions: submissions
+                      );
+                    }
                   );
                 }
               );
@@ -74,21 +96,141 @@ class CourseHomeworkScreen extends StatelessWidget {
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({
+class _TeacherBody extends StatefulWidget {
+  const _TeacherBody({
     required this.homework,
     required this.submissions,
-    required this.onAddAssigment,
-    super.key
+    super.key,
   });
 
   final Homework homework;
-  final List<HomeworkSubmission> submissions;
-  final Function() onAddAssigment;
+  final List<TeacherHomeworkSubmission> submissions;
+
+  @override
+  State<_TeacherBody> createState() => _TeacherBodyState();
+}
+
+class _TeacherBodyState extends State<_TeacherBody> {
+
+  int selectedIndex = -1;
+  List<HomeworkSubmission>? selected;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Heading(
+          headingText: widget.homework.name,
+        ),
+        BackgroundBody(
+          child: AppMarkdown(
+            data: widget.homework.task,
+          ),
+        ),
+        const Heading(
+          headingText: "Assignments"
+        ),
+        BackgroundBody(
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: widget.submissions.length,
+            itemBuilder: (context, index) {
+              TeacherHomeworkSubmission submission = widget.submissions[index];
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconItem(
+                    icon: const Icon(Icons.person),
+                    color: Colors.green.shade700,
+                    body: Text("${submission.firstName} ${submission.lastName} (${submission.username})"),
+                    onClick: (context) {
+                      setState(() {
+                        if (selectedIndex == -1 || selectedIndex != index) {
+                          selectedIndex = index;
+                          selected = submission.submissions;
+                        } else {
+                          selectedIndex = -1;
+                          selected = null;
+                        }
+                      });
+                    },
+                  ),
+                  selectedIndex == index ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _Body(
+                          submissions: selected!,
+                          padding: EdgeInsets.zero,
+                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: TextField(
+                                keyboardType: TextInputType.number,
+                                maxLines: 1,
+                                decoration: InputDecoration(
+                                  labelText: "Points",
+                                  labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
+                                ),
+                                onChanged: (value) {
+                                  // try {
+                                  //   widget.question.points = int.parse(value);
+                                  // } on FormatException catch (_) {
+                                  //   widget.question.points = 0;
+                                  //   pointsController.text = '0';
+                                  // }
+                                  // widget.onUpdated();
+                                },
+                              ),
+                            ),
+                            Button(
+                              text: "Assign Points",
+                              maxWidth: 125,
+                              backgroundColor: Colors.green.shade700,
+                              onClick: (context) {
+
+                              },
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ) : Container(),
+                ],
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _StudentBody extends StatelessWidget {
+  const _StudentBody({
+    required this.homework,
+    required this.courseId,
+    required this.homeworkId,
+    required this.submissions,
+    super.key,
+  });
+
+  final Homework homework;
+  final int courseId;
+  final int homeworkId;
+  final List<HomeworkSubmission> submissions;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Heading(
           headingText: homework.name,
@@ -101,40 +243,73 @@ class _Body extends StatelessWidget {
                 maxWidth: 40,
                 backgroundColor: Colors.green.shade700,
                 onClick: (context) {
-                  onAddAssigment();
+                  context.goNamed("submit-course-homework", pathParameters: {
+                    "course_id": courseId.toString(),
+                    "homework_id": homeworkId.toString()
+                  });
                 },
               ),
             )
           ],
         ),
         BackgroundBody(
-          maxHeight: double.infinity,
           child: AppMarkdown(
             data: homework.task,
           ),
         ),
-        submissions.isNotEmpty ? ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: submissions.length,
-          itemBuilder: (context, index) {
-            HomeworkSubmission submission = submissions[index];
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Heading(headingText: "Submission ${index + 1}",),
-                BackgroundBody(
-                  maxHeight: double.infinity,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      submission.text != null ? AppMarkdown(data: submission.text!) : Container(),
-                      _FilesSubmitted(files: submission.attachments)
-                    ],
-                  ),
-                )
-              ],
-            );
+        _Body( submissions: submissions, ),
+      ],
+    );
+  }
+}
+
+class _Body extends StatefulWidget {
+  const _Body({
+    required this.submissions,
+    this.padding,
+    super.key
+  });
+
+  final List<HomeworkSubmission> submissions;
+  final EdgeInsets? padding;
+
+  @override
+  State<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
+
+  int index = 0;
+  
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        index = widget.submissions.length - 1;
+      });
+    },);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        widget.submissions.isNotEmpty ? _Submission(
+          index: index + 1,
+          maxIndex: widget.submissions.length,
+          submission: widget.submissions[index],
+          padding: widget.padding,
+          onPrev: () {
+            setState(() {
+              index = max(index - 1, 0);
+            });
+          },
+          onNext: () {
+            setState(() {
+              index = min(index + 1, widget.submissions.length - 1);
+            });
           },
         ) : Container(
           height: 50,
@@ -145,6 +320,78 @@ class _Body extends StatelessWidget {
     );
   }
 }
+
+class _Submission extends StatelessWidget {
+  const _Submission({
+    required this.index,
+    required this.maxIndex,
+    required this.submission,
+    required this.onPrev,
+    required this.onNext,
+    this.padding,
+    super.key
+  });
+
+  final int index;
+  final int maxIndex;
+  final HomeworkSubmission submission;
+  final Function() onPrev;
+  final Function() onNext;
+  final EdgeInsets? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Heading(headingText: "Submission",
+          padding: padding,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.chevron_left,
+                toolTip: "Prev",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) {
+                  onPrev();
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text("$index/$maxIndex", style: const TextStyle(fontSize: 16),),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.chevron_right,
+                toolTip: "Next",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) {
+                  onNext();
+                },
+              ),
+            )
+          ],
+        ),
+        BackgroundBody(
+          padding: padding,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              submission.text != null ? AppMarkdown(data: submission.text!) : Container(),
+              _FilesSubmitted(files: submission.attachments)
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}
+
 
 class _FilesSubmitted extends StatelessWidget {
   const _FilesSubmitted({
@@ -194,7 +441,7 @@ class _AttachmentState extends State<_Attachment> {
             icon: progress == -1 ? Icons.download : null,
             text: progress == -1 ? "" : " $progress%",
             toolTip: "Download",
-            maxWidth: 40,
+            maxWidth: progress == -1 ? 40 : 100,
             backgroundColor: Theme.of(context).colorScheme.secondary,
             onClick: (context) async {
               if (progress != -1) return;
@@ -218,8 +465,17 @@ class _AttachmentState extends State<_Attachment> {
                     setState(() {
                       this.progress = (progress * 100).round();
                     });
-                  },);
-              if (data == null) return;
+                  },).onError((error, stackTrace) {
+                debugPrintStack(stackTrace: stackTrace);
+                return null;
+              });
+              if (data == null) {
+                setState(() {
+                  progress = -1;
+                });
+                Toast.makeErrorToast(text: "File failed to Download", duration: ToastDuration.large);
+                return;
+              }
 
               await download(Stream.fromIterable(data), path);
               Toast.makeSuccessToast(text: "File Downloaded", duration: ToastDuration.large);
