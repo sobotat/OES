@@ -11,6 +11,7 @@ abstract class HttpRequest {
     Object? data,
     Map<String, dynamic>? queryParameters,
     HttpRequestOptions? options,
+    Function(double progress)? onReceiveProgress,
   });
 
   Future<RequestResult> post(String url, {

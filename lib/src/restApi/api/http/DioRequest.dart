@@ -81,12 +81,16 @@ class DioRequest extends HttpRequest {
   Future<RequestResult> get(String url, {
     Object? data,
     Map<String, dynamic>? queryParameters,
-    HttpRequestOptions? options
+    HttpRequestOptions? options,
+    Function(double progress)? onReceiveProgress,
   }) async {
     Response response = await _getDio().get(url,
       data: data,
       queryParameters: queryParameters,
       options: _getOptionsFromHttpRequestOptions(options),
+      onReceiveProgress: onReceiveProgress != null ? (count, total) {
+        onReceiveProgress(count / total);
+      } : null,
     ).onError(_onError);
 
     return _getResultFromResponse(response);
