@@ -9,7 +9,7 @@ abstract class HomeworkGateway {
 
   Future<Homework?> get(int id);
   Future<List<HomeworkSubmission>> getSubmission(int id);
-  Future<List<TeacherHomeworkSubmission>> getTeacherSubmission(int id);
+  Future<List<HomeworkSubmission>> getUserSubmission(int id, int userId);
   Future<List<int>?> getAttachment(int attachmentId, { Function(double progress)? onProgress });
 
   Future<Homework?> create(int courseId, Homework homework);

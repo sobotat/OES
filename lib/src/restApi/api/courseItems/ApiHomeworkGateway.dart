@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/AppSecurity.dart';
@@ -60,9 +61,12 @@ class ApiHomeworkGateway implements HomeworkGateway {
   }
 
   @override
-  Future<List<TeacherHomeworkSubmission>> getTeacherSubmission(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions',
+  Future<List<HomeworkSubmission>> getUserSubmission(int id, int userId) async {
+    RequestResult result = await HttpRequest.instance.get('${AppApi.instance.apiServerUrl}/api/users/$userId/homework-submissions',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        "homeworkId": id,
+      }
     );
 
     if (result.checkUnauthorized()) {
@@ -76,9 +80,9 @@ class ApiHomeworkGateway implements HomeworkGateway {
       return [];
     }
 
-    List<TeacherHomeworkSubmission> out = [];
+    List<HomeworkSubmission> out = [];
     for (Map<String, dynamic> json in result.data) {
-      out.add(TeacherHomeworkSubmission.fromJson(json));
+      out.add(HomeworkSubmission.fromJson(json));
     }
     return out;
   }
@@ -214,6 +218,8 @@ class ApiHomeworkGateway implements HomeworkGateway {
 
     return true;
   }
+
+
 
 
 

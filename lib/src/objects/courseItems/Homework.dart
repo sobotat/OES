@@ -38,37 +38,6 @@ class Homework extends SchedulableItem {
   }
 }
 
-class TeacherHomeworkSubmission {
-
-  TeacherHomeworkSubmission({
-    required this.userId,
-    required this.firstName,
-    required this.lastName,
-    required this.username,
-    required this.submissions,
-  });
-
-  int userId;
-  String firstName;
-  String lastName;
-  String username;
-  List<HomeworkSubmission> submissions;
-
-  factory TeacherHomeworkSubmission.fromJson(Map<String, dynamic> json) {
-    List<HomeworkSubmission> submissions = [];
-    for(Map<String, dynamic> submissionJson in json['homeworkSubmissions']) {
-      submissions.add(HomeworkSubmission.fromJson(submissionJson));
-    }
-    return TeacherHomeworkSubmission(
-      userId: json["userId"],
-      firstName: json["firstName"],
-      lastName: json["lastName"],
-      username: json["username"],
-      submissions: submissions
-    );
-  }
-}
-
 class HomeworkSubmission {
 
   HomeworkSubmission({

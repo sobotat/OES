@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
@@ -62,13 +63,13 @@ class CourseHomeworkScreen extends StatelessWidget {
                   bool isTeacher = snapshot.data!;
                   if (isTeacher) {
                     return FutureBuilder(
-                      future: HomeworkGateway.instance.getTeacherSubmission(homeworkId),
+                      future: CourseGateway.instance.getCourseStudents(courseId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
-                        List<TeacherHomeworkSubmission> submissions = snapshot.data!;
+                        List<User> users = snapshot.data!;
                         return _TeacherBody(
                           homework: homework,
-                          submissions: submissions,
+                          users: users,
                         );
                       },
                     );
@@ -99,12 +100,12 @@ class CourseHomeworkScreen extends StatelessWidget {
 class _TeacherBody extends StatefulWidget {
   const _TeacherBody({
     required this.homework,
-    required this.submissions,
+    required this.users,
     super.key,
   });
 
   final Homework homework;
-  final List<TeacherHomeworkSubmission> submissions;
+  final List<User> users;
 
   @override
   State<_TeacherBody> createState() => _TeacherBodyState();
@@ -113,7 +114,6 @@ class _TeacherBody extends StatefulWidget {
 class _TeacherBodyState extends State<_TeacherBody> {
 
   int selectedIndex = -1;
-  List<HomeworkSubmission>? selected;
 
   @override
   Widget build(BuildContext context) {
@@ -135,73 +135,83 @@ class _TeacherBodyState extends State<_TeacherBody> {
           child: ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.submissions.length,
+            itemCount: widget.users.length,
             itemBuilder: (context, index) {
-              TeacherHomeworkSubmission submission = widget.submissions[index];
+              User user = widget.users[index];
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconItem(
                     icon: const Icon(Icons.person),
                     color: Colors.green.shade700,
-                    body: Text("${submission.firstName} ${submission.lastName} (${submission.username})"),
-                    onClick: (context) {
-                      setState(() {
-                        if (selectedIndex == -1 || selectedIndex != index) {
-                          selectedIndex = index;
-                          selected = submission.submissions;
-                        } else {
-                          selectedIndex = -1;
-                          selected = null;
-                        }
-                      });
+                    body: Text("${user.firstName} ${user.lastName} (${user.username})"),
+                    onClick: (context) async {
+                      if (selectedIndex == -1 || selectedIndex != index) {
+                        selectedIndex = index;
+                      } else {
+                        selectedIndex = -1;
+                      }
+
+                      setState(() {});
                     },
                   ),
-                  selectedIndex == index ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _Body(
-                          submissions: selected!,
-                          padding: EdgeInsets.zero,
-                        ),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  labelText: "Points",
-                                  labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
-                                ),
-                                onChanged: (value) {
-                                  // try {
-                                  //   widget.question.points = int.parse(value);
-                                  // } on FormatException catch (_) {
-                                  //   widget.question.points = 0;
-                                  //   pointsController.text = '0';
-                                  // }
-                                  // widget.onUpdated();
-                                },
-                              ),
-                            ),
-                            Button(
-                              text: "Assign Points",
-                              maxWidth: 125,
-                              backgroundColor: Colors.green.shade700,
-                              onClick: (context) {
+                  selectedIndex == index ? FutureBuilder(
+                    future: HomeworkGateway.instance.getUserSubmission(widget.homework.id, user.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        Toast.makeErrorToast(text: "Failed to load User Submissions");
+                        print(snapshot.error);
+                      }
+                      if (!snapshot.hasData) return const SizedBox(height: 100, child: Center(child: WidgetLoading(),));
+                      List<HomeworkSubmission> submission = snapshot.data!;
 
-                              },
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _Body(
+                              submissions: submission,
+                              padding: EdgeInsets.zero,
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: TextField(
+                                    keyboardType: TextInputType.number,
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                      labelText: "Points",
+                                      labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
+                                    ),
+                                    onChanged: (value) {
+                                      // try {
+                                      //   widget.question.points = int.parse(value);
+                                      // } on FormatException catch (_) {
+                                      //   widget.question.points = 0;
+                                      //   pointsController.text = '0';
+                                      // }
+                                      // widget.onUpdated();
+                                    },
+                                  ),
+                                ),
+                                Button(
+                                  text: "Assign Points",
+                                  maxWidth: 125,
+                                  backgroundColor: Colors.green.shade700,
+                                  onClick: (context) {
+
+                                  },
+                                )
+                              ],
                             )
                           ],
-                        )
-                      ],
-                    ),
+                        ),
+                      );
+                    }
                   ) : Container(),
                 ],
               );
@@ -455,7 +465,12 @@ class _AttachmentState extends State<_Attachment> {
                 path = widget.attachment.fileName;
               } else {
                 path = await FilePicker.platform.getDirectoryPath(dialogTitle: "Download Location");
-                if (path == null) return;
+                if (path == null) {
+                  setState(() {
+                    progress = -1;
+                  });
+                  return;
+                }
                 path += "/${widget.attachment.fileName}";
               }
               debugPrint("Downloading File to $path");
