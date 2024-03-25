@@ -201,12 +201,13 @@ class _InfoBarState extends State<_InfoBar> {
   late Timer updateTimer;
   String time = "Loading ...";
   bool shortTime = false;
+  double scale = 1;
 
   @override
   void initState() {
     super.initState();
     updateTime();
-    updateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    updateTimer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
       updateTime();
     },);
   }
@@ -225,17 +226,19 @@ class _InfoBarState extends State<_InfoBar> {
       int remainsMinutes = (totalSeconds ~/ 60) % 60;
       int remainsSeconds = totalSeconds % 60;
 
-      shortTime = remainsHours == 0 && remainsMinutes <= 5;
+      shortTime = remainsHours == 0 && remainsMinutes < 5;
       //print("$remainsHours $remainsMinutes $remainsSeconds");
       if (remainsHours == 0 && remainsMinutes < 1) {
-        if (remainsSeconds <= 1) {
+        if (remainsSeconds <= 0) {
           widget.onTimeRunOut();
           return;
         }
 
-        time = "Remains ${remainsSeconds}s";
+        scale = scale == 1.0 ? 1.2 : 1.0;
+
+        time = "${remainsSeconds}s";
       } else {
-        time = "Remains ${remainsHours > 0 ? "${remainsHours}h" : ""} ${remainsHours > 0 && remainsMinutes < 10 ? "0" : ""}${remainsMinutes}m ${remainsSeconds < 10 ? "0" : ""}${remainsSeconds}s";
+        time = "${remainsHours > 0 ? "${remainsHours}h\n" : ""} ${remainsHours > 0 && remainsMinutes < 10 ? "0" : ""}${remainsMinutes}m\n${remainsSeconds < 10 ? "0" : ""}${remainsSeconds}s";
       }
 
       setState(() {});
@@ -244,6 +247,8 @@ class _InfoBarState extends State<_InfoBar> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+
     return Align(
       alignment: Alignment.topRight,
       child: Container(
@@ -252,29 +257,31 @@ class _InfoBarState extends State<_InfoBar> {
           color: Theme.of(context).colorScheme.secondary,
         ),
         width: 45,
-        margin: const EdgeInsets.only(top: 150),
+        margin: EdgeInsets.only(top: height / 9),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 5),
-              child: RotatedBox(quarterTurns: 1,
-                child: Text(
-                  time,
-                  style: TextStyle(color: shortTime ? Colors.red.shade700 : Theme.of(context).textTheme.bodyMedium!.color),
-                ),
+              child: Text(
+                time,
+                style: TextStyle(color: shortTime ? Colors.red.shade700 : Theme.of(context).textTheme.bodyMedium!.color),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(5),
-              child: Button(
-                icon: Icons.done_all,
-                toolTip: "Finish",
-                maxWidth: 40,
-                backgroundColor: Colors.red.shade700,
-                onClick: (context) async {
-                  widget.onFinishTest();
-                },
+              child: AnimatedScale(
+                scale: scale,
+                duration: const Duration(milliseconds: 200),
+                child: Button(
+                  icon: Icons.done_all,
+                  toolTip: "Finish",
+                  maxWidth: 40,
+                  backgroundColor: Colors.red.shade700,
+                  onClick: (context) async {
+                    widget.onFinishTest();
+                  },
+                ),
               ),
             )
           ],
