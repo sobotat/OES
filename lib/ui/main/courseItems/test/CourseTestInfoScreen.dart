@@ -100,6 +100,21 @@ class CourseTestInfoScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: width > overflow ? 50 : 15,
+                      vertical: 20,
+                    ),
+                    child: Button(
+                      maxWidth: double.infinity,
+                      maxHeight: 100,
+                      backgroundColor: Colors.green.shade700,
+                      text: "Start Test",
+                      onClick: (context) {
+                        openPasswordDialog(context, info.hasPassword);
+                      },
+                    ),
+                  ),
                   const Heading(headingText: "Answers"),
                   BackgroundBody(
                     child: ListView.builder(
@@ -128,21 +143,6 @@ class CourseTestInfoScreen extends StatelessWidget {
                             ),
                           ],
                         );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width > overflow ? 50 : 15,
-                      vertical: 20,
-                    ),
-                    child: Button(
-                      maxWidth: double.infinity,
-                      maxHeight: 100,
-                      backgroundColor: Colors.green.shade700,
-                      text: "Start Test",
-                      onClick: (context) {
-                        openPasswordDialog(context, info.hasPassword);
                       },
                     ),
                   ),
