@@ -238,8 +238,8 @@ class _InfoBarState extends State<_InfoBar> {
       }
 
       String hours = remainsHours > 0 ? "${remainsHours}h\n" : "";
-      String minutes = remainsMinutes > 0 ? "${remainsMinutes}m\n" : "";
-      String seconds = remainsSeconds > 0 ? "${remainsSeconds}s\n" : "";
+      String minutes = remainsHours > 0 || remainsMinutes > 0 ? "${remainsMinutes}m\n" : "";
+      String seconds = remainsHours > 0 || remainsMinutes > 0 || remainsSeconds > 0 ? "${remainsSeconds}s" : "";
       time = "$hours$minutes$seconds";
 
       setState(() {});
