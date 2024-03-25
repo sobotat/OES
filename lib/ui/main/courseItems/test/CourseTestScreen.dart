@@ -235,11 +235,12 @@ class _InfoBarState extends State<_InfoBar> {
         }
 
         scale = scale == 1.0 ? 1.2 : 1.0;
-
-        time = "${remainsSeconds}s";
-      } else {
-        time = "${remainsHours > 0 ? "${remainsHours}h\n" : ""} ${remainsHours > 0 && remainsMinutes < 10 ? "0" : ""}${remainsMinutes}m\n${remainsSeconds < 10 ? "0" : ""}${remainsSeconds}s";
       }
+
+      String hours = remainsHours > 0 ? "${remainsHours}h\n" : "";
+      String minutes = remainsMinutes > 0 ? "${remainsMinutes}m\n" : "";
+      String seconds = remainsSeconds > 0 ? "${remainsSeconds}s\n" : "";
+      time = "$hours$minutes$seconds";
 
       setState(() {});
     }
