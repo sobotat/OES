@@ -4,7 +4,9 @@ import 'dart:math';
 
 import 'package:download/download.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
@@ -67,9 +69,13 @@ class CourseHomeworkScreen extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
                         List<User> users = snapshot.data!;
-                        return _TeacherBody(
-                          homework: homework,
-                          users: users,
+                        return ListView(
+                          children: [
+                            _TeacherBody(
+                              homework: homework,
+                              users: users,
+                            ),
+                          ],
                         );
                       },
                     );
@@ -79,11 +85,15 @@ class CourseHomeworkScreen extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
                       List<HomeworkSubmission> submissions = snapshot.data!;
-                      return _StudentBody(
-                        homework: homework,
-                        courseId: courseId,
-                        homeworkId: homeworkId,
-                        submissions: submissions
+                      return ListView(
+                        children: [
+                          _StudentBody(
+                            homework: homework,
+                            courseId: courseId,
+                            homeworkId: homeworkId,
+                            submissions: submissions
+                          ),
+                        ],
                       );
                     }
                   );
@@ -113,6 +123,8 @@ class _TeacherBody extends StatefulWidget {
 
 class _TeacherBodyState extends State<_TeacherBody> {
 
+  TextEditingController pointsController = TextEditingController(text: "0");
+  TextEditingController textController = TextEditingController();
   int selectedIndex = -1;
 
   @override
@@ -177,34 +189,69 @@ class _TeacherBodyState extends State<_TeacherBody> {
                               submissions: submission,
                               padding: EdgeInsets.zero,
                             ),
-                            Row(
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Flexible(
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: TextField(
+                                          controller: textController,
+                                          autocorrect: true,
+                                          keyboardType: TextInputType.multiline,
+                                          maxLines: null,
+                                          style: const TextStyle(
+                                              fontSize: 14
+                                          ),
+                                          onChanged: (value) {
+                                            setState(() {});
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: AppMarkdown(
+                                          data: textController.text,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
                                   child: TextField(
+                                    controller: pointsController,
                                     keyboardType: TextInputType.number,
                                     maxLines: 1,
                                     decoration: InputDecoration(
                                       labelText: "Points",
                                       labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
                                     ),
-                                    onChanged: (value) {
-                                      // try {
-                                      //   widget.question.points = int.parse(value);
-                                      // } on FormatException catch (_) {
-                                      //   widget.question.points = 0;
-                                      //   pointsController.text = '0';
-                                      // }
-                                      // widget.onUpdated();
-                                    },
                                   ),
                                 ),
-                                Button(
-                                  text: "Assign Points",
-                                  maxWidth: 125,
-                                  backgroundColor: Colors.green.shade700,
-                                  onClick: (context) {
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                    top: 10,
+                                    bottom: 30
+                                  ),
+                                  child: Button(
+                                    text: "Assign Points",
+                                    maxWidth: double.infinity,
+                                    backgroundColor: Colors.green.shade700,
+                                    onClick: (context) {
 
-                                  },
+                                    },
+                                  ),
                                 )
                               ],
                             )
