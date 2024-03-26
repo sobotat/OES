@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
@@ -238,8 +239,8 @@ class _InfoBarState extends State<_InfoBar> {
       }
 
       String hours = remainsHours > 0 ? "${remainsHours}h\n" : "";
-      String minutes = remainsHours > 0 || remainsMinutes > 0 ? "${remainsMinutes}m\n" : "";
-      String seconds = remainsHours > 0 || remainsMinutes > 0 || remainsSeconds > 0 ? "${remainsSeconds}s" : "";
+      String minutes = remainsHours > 0 || remainsMinutes > 0 ? remainsMinutes < 10 ? "0${remainsMinutes}m\n" : "${remainsMinutes}m\n" : "";
+      String seconds = remainsHours > 0 || remainsMinutes > 0 || remainsSeconds > 0 ? remainsSeconds < 10 ? "0${remainsSeconds}s" : "${remainsSeconds}s" : "";
       time = "$hours$minutes$seconds";
 
       setState(() {});
@@ -266,7 +267,10 @@ class _InfoBarState extends State<_InfoBar> {
               padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Text(
                 time,
-                style: TextStyle(color: shortTime ? Colors.red.shade700 : Theme.of(context).textTheme.bodyMedium!.color),
+                style: GoogleFonts.azeretMono().copyWith(
+                  color: shortTime ? Colors.red.shade700 : Theme.of(context).textTheme.bodyMedium!.color,
+                ),
+                textAlign: TextAlign.end,
               ),
             ),
             Padding(

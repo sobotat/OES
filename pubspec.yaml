@@ -66,6 +66,7 @@ flutter:
     - google_fonts/
     - google_fonts/FlowCircular/
     - google_fonts/Outfit/
+    - google_fonts/Azeret_Mono/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
