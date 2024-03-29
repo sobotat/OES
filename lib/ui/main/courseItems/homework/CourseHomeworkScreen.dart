@@ -193,6 +193,13 @@ class _TeacherBodyState extends State<_TeacherBody> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                const Heading(
+                                  headingText: "Evaluation",
+                                  padding: EdgeInsets.only(
+                                    top: 15,
+                                    bottom: 5
+                                  ),
+                                ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -216,10 +223,15 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                     ),
                                     Flexible(
                                       flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        margin: const EdgeInsets.all(10),
                                         child: AppMarkdown(
                                           data: textController.text,
+                                          flipBlocksColors: false,
                                         ),
                                       ),
                                     )
