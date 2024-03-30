@@ -46,7 +46,7 @@ class CourseHomeworkEditScreen extends StatelessWidget {
                   isVisible: true,
                   scheduled: DateTime.now(),
                   end: DateTime.now().add(const Duration(days: 1)),
-                  task: "1.How to write code\n2.How to draw clouds"
+                  task: "1.How to write code\n2.How to draw clouds",
               );
             }),
             builder: (context, snapshot) {

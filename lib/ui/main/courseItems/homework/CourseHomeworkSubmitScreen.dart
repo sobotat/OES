@@ -50,8 +50,10 @@ class CourseHomeworkSubmitScreen extends StatelessWidget {
               return _Body(
                 courseId: courseId,
                 homework: homework,
-                onSubmitted: () {
-                  context.pop();
+                onSubmitted: () async {
+                  await Future.delayed(const Duration(seconds: 1), () {
+                    context.pop();
+                  },);
                 },
               );
             },

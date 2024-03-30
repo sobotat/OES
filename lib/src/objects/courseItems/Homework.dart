@@ -43,18 +43,14 @@ class HomeworkSubmission {
   HomeworkSubmission({
     required this.id,
     required this.text,
+    required this.comment,
     required this.attachments
   });
 
   int id;
   String? text;
+  String? comment;
   List<HomeworkSubmissionAttachment> attachments;
-
-
-  @override
-  String toString() {
-    return '{id: $id, text: $text, fileNames: $attachments}';
-  }
 
   factory HomeworkSubmission.fromJson(Map<String, dynamic> json) {
     List<HomeworkSubmissionAttachment> files = [];
@@ -64,6 +60,7 @@ class HomeworkSubmission {
     return HomeworkSubmission(
       id: json['id'],
       text: json['text'],
+      comment: json['comment'],
       attachments: files,
     );
   }

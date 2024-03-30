@@ -126,6 +126,7 @@ class _TeacherBodyState extends State<_TeacherBody> {
   TextEditingController pointsController = TextEditingController(text: "0");
   TextEditingController textController = TextEditingController();
   int selectedIndex = -1;
+  int submissionIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +165,8 @@ class _TeacherBodyState extends State<_TeacherBody> {
                         selectedIndex = -1;
                       }
 
+                      int? score = await HomeworkGateway.instance.getScore(widget.homework.id, user.id);
+                      pointsController.text = score != null ? score.toString() : "";
                       setState(() {});
                     },
                   ),
@@ -188,6 +191,12 @@ class _TeacherBodyState extends State<_TeacherBody> {
                             _Body(
                               submissions: submission,
                               padding: EdgeInsets.zero,
+                              onIndexChanged: (index) {
+                                submissionIndex = index;
+                                setState(() {
+                                  textController.text = submissionIndex != -1 ? submission[submissionIndex].comment ?? "" : "";
+                                });
+                              },
                             ),
                             Column(
                               mainAxisSize: MainAxisSize.min,
@@ -200,7 +209,7 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                     bottom: 5
                                   ),
                                 ),
-                                Row(
+                                submission.isNotEmpty ? Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Flexible(
@@ -236,7 +245,7 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                       ),
                                     )
                                   ],
-                                ),
+                                ) : Container(),
                                 Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: TextField(
@@ -257,11 +266,15 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                     bottom: 30
                                   ),
                                   child: Button(
-                                    text: "Assign Points",
+                                    text: "Assign Points and Review Text",
                                     maxWidth: double.infinity,
                                     backgroundColor: Colors.green.shade700,
                                     onClick: (context) {
-
+                                      Future(() async {
+                                        int points = int.parse(pointsController.text.trim().isNotEmpty ? pointsController.text.trim() : "0");
+                                        await HomeworkGateway.instance.submitScore(widget.homework.id, user.id, points);
+                                        await HomeworkGateway.instance.submitReviewText(widget.homework.id, submission[submissionIndex].id, textController.text.trim());
+                                      },);
                                     },
                                   ),
                                 )
@@ -304,6 +317,28 @@ class _StudentBody extends StatelessWidget {
         Heading(
           headingText: homework.name,
           actions: [
+            FutureBuilder(
+              future: Future(() async {
+                int? score = await HomeworkGateway.instance.getScore(homeworkId, AppSecurity.instance.user!.id);
+                return score ?? -1;
+              }),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Container();
+                bool hasScore = snapshot.data! != -1;
+                return Padding(
+                  padding: const EdgeInsets.only(
+                      right: 15
+                  ),
+                  child: Text(hasScore ? "${snapshot.data}b" : "No Points",
+                    style: TextStyle(
+                      color: hasScore  ? Colors.green.shade700 : null,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15
+                    ),
+                  ),
+                );
+              }
+            ),
             Padding(
               padding: const EdgeInsets.all(5),
               child: Button(
@@ -326,7 +361,10 @@ class _StudentBody extends StatelessWidget {
             data: homework.task,
           ),
         ),
-        _Body( submissions: submissions, ),
+        _Body(
+          submissions: submissions,
+          showComment: true,
+        ),
       ],
     );
   }
@@ -336,11 +374,15 @@ class _Body extends StatefulWidget {
   const _Body({
     required this.submissions,
     this.padding,
+    this.onIndexChanged,
+    this.showComment = false,
     super.key
   });
 
   final List<HomeworkSubmission> submissions;
   final EdgeInsets? padding;
+  final Function(int index)? onIndexChanged;
+  final bool showComment;
 
   @override
   State<_Body> createState() => _BodyState();
@@ -348,8 +390,15 @@ class _Body extends StatefulWidget {
 
 class _BodyState extends State<_Body> {
 
-  int index = 0;
-  
+  int _index = 0;
+
+  set index(int value) {
+    if (widget.onIndexChanged != null && _index != value) {
+      widget.onIndexChanged!(value);
+    }
+    _index = value;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -362,24 +411,41 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    String? comment = widget.submissions.isEmpty || _index == -1 ? null : widget.submissions[_index].comment;
     return ListView(
       shrinkWrap: true,
       children: [
-        widget.submissions.isNotEmpty ? _Submission(
-          index: index + 1,
-          maxIndex: widget.submissions.length,
-          submission: widget.submissions[index],
-          padding: widget.padding,
-          onPrev: () {
-            setState(() {
-              index = max(index - 1, 0);
-            });
-          },
-          onNext: () {
-            setState(() {
-              index = min(index + 1, widget.submissions.length - 1);
-            });
-          },
+        widget.submissions.isNotEmpty ? Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Submission(
+              index: _index + 1,
+              maxIndex: widget.submissions.length,
+              submission: widget.submissions[_index],
+              padding: widget.padding,
+              onPrev: () {
+                setState(() {
+                  index = max(_index - 1, 0);
+                });
+              },
+              onNext: () {
+                setState(() {
+                  index = min(_index + 1, widget.submissions.length - 1);
+                });
+              },
+            ),
+            widget.showComment && comment != null && comment.isNotEmpty ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Heading(headingText: "Review"),
+                BackgroundBody(
+                  child: AppMarkdown(
+                    data: comment
+                  ),
+                )
+              ],
+            ) : Container()
+          ],
         ) : Container(
           height: 50,
           alignment: Alignment.center,

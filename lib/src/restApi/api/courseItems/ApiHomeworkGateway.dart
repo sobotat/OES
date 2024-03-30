@@ -15,6 +15,7 @@ import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
 class ApiHomeworkGateway implements HomeworkGateway {
 
   String basePath = '${AppApi.instance.apiServerUrl}/api/homeworks';
+  String userBasePath = '${AppApi.instance.apiServerUrl}/api/users';
 
   @override
   Future<Homework?> get(int id) async {
@@ -38,31 +39,13 @@ class ApiHomeworkGateway implements HomeworkGateway {
 
   @override
   Future<List<HomeworkSubmission>> getSubmission(int id) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
-    );
-
-    if (result.checkUnauthorized()) {
-      AppSecurity.instance.logout();
-      debugPrint('Api Error: [Homework-getSubmission] ${result.statusCode} -> ${result.message}');
-      return [];
-    }
-
-    if (!result.checkOk() || result.data is! List<dynamic>) {
-      debugPrint('Api Error: [Homework-getSubmission] ${result.statusCode} -> ${result.message}');
-      return [];
-    }
-
-    List<HomeworkSubmission> out = [];
-    for (Map<String, dynamic> json in result.data) {
-      out.add(HomeworkSubmission.fromJson(json));
-    }
-    return out;
+    if (AppSecurity.instance.user == null) return [];
+    return await getUserSubmission(id, AppSecurity.instance.user!.id);
   }
 
   @override
   Future<List<HomeworkSubmission>> getUserSubmission(int id, int userId) async {
-    RequestResult result = await HttpRequest.instance.get('${AppApi.instance.apiServerUrl}/api/users/$userId/homework-submissions',
+    RequestResult result = await HttpRequest.instance.get('$userBasePath/$userId/homework-submissions',
       options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
       queryParameters: {
         "homeworkId": id,
@@ -187,17 +170,16 @@ class ApiHomeworkGateway implements HomeworkGateway {
   Future<bool> submit(int id, String text, List<MultipartFile> files, { Function(double progress)? onProgress }) async {
 
     FormData formData = FormData.fromMap({
-      "HomeworkId": id,
       "Text": text,
       "FormFiles": files,
     });
 
-    RequestResult result = await HttpRequest.instance.post("$basePath/submit",
+    RequestResult result = await HttpRequest.instance.post("$basePath/$id/submissions",
       options: AuthHttpRequestOptions(
         token: AppSecurity.instance.user!.token,
         contentType: "multipart/form-data",
-        sendTimeout: const Duration(minutes: 5),
-        receiveTimeout: const Duration(minutes: 5)
+        sendTimeout: const Duration(minutes: 1),
+        receiveTimeout: const Duration(minutes: 1)
       ),
       onSendProgress: onProgress,
       data: formData,
@@ -219,8 +201,78 @@ class ApiHomeworkGateway implements HomeworkGateway {
     return true;
   }
 
+  @override
+  Future<bool> submitReviewText(int id, int submitId, String text) async {
+    RequestResult result = await HttpRequest.instance.patch("$basePath/$id/submissions/$submitId",
+      options: AuthHttpRequestOptions(
+          token: AppSecurity.instance.user!.token,
+      ),
+      data: "\"$text\""
+    ).onError((error, stackTrace) {
+      throw error!;
+    });
 
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Homework-submitReviewText] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
 
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Homework-submitReviewText] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
 
+    return true;
+  }
+
+  @override
+  Future<int?> getScore(int id, int userId) async {
+    RequestResult result = await HttpRequest.instance.get("$userBasePath/$userId/homework-scores/$id",
+        options: AuthHttpRequestOptions(
+          token: AppSecurity.instance.user!.token,
+        ),
+    ).onError((error, stackTrace) {
+      throw error!;
+    });
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Homework-getScore] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Homework-getScore] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    return result.data;
+  }
+
+  @override
+  Future<bool> submitScore(int id, int userId, int points) async {
+    RequestResult result = await HttpRequest.instance.put("$userBasePath/$userId/homework-scores/$id",
+        options: AuthHttpRequestOptions(
+          token: AppSecurity.instance.user!.token,
+        ),
+        data: points.toString()
+    ).onError((error, stackTrace) {
+      throw error!;
+    });
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Homework-submitScore] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Homework-submitScore] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
+  }
 
 }
