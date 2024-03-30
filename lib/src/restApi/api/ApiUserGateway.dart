@@ -112,9 +112,23 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<User?> getUser(int userId) {
-    // TODO: implement getUser
-    throw UnimplementedError();
+  Future<User?> getUser(int userId) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/users/$userId',
+        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token)
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [User-getUser] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+
+    if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
+      debugPrint('Api Error: [User-getUser] ${result.statusCode} -> ${result.message}');
+      return null;
+    }
+    
+    return User.fromJson(result.data);
   }
 
   @override
