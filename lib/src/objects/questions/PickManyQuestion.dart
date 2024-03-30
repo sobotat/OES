@@ -31,4 +31,17 @@ class PickManyQuestion extends MultipleChoiceQuestion {
   List<AnswerOption> getAnswerOptions() {
     return answers.map((e) => AnswerOption(questionId: id, id: options[e].id, text: options[e].text)).toList();
   }
+
+  @override
+  void setWithAnswerOptions(List<AnswerOption> answers) {
+    this.answers.clear();
+    for (AnswerOption answer in answers) {
+      for (int i = 0; i < options.length; i++) {
+        if (options[i].id == answer.id) {
+          this.answers.add(i);
+          break;
+        }
+      }
+    }
+  }
 }

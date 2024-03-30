@@ -29,5 +29,12 @@ class OpenQuestion extends Question {
     ];
   }
 
+  @override
+  void setWithAnswerOptions(List<AnswerOption> answers) {
+    if (answers.isEmpty) return;
+    AnswerOption answer = answers.first;
+    this.answer = answer.text;
+  }
+
 
 }

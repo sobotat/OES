@@ -18,4 +18,10 @@ class DragInQuestion extends Question {
     throw UnimplementedError();
   }
 
+  @override
+  void setWithAnswerOptions(List<AnswerOption> answers) {
+    // TODO: implement setWithAnswerOptions
+    throw UnimplementedError();
+  }
+
 }

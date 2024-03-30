@@ -34,4 +34,16 @@ class PickOneQuestion extends MultipleChoiceQuestion {
       AnswerOption(questionId: id, id: options[answer!].id, text: options[answer!].text),
     ];
   }
+
+  @override
+  void setWithAnswerOptions(List<AnswerOption> answers) {
+    if (answers.isEmpty) return;
+    AnswerOption answer = answers.first;
+    for(int i = 0; i < options.length; i++) {
+      if (options[i].id == answer.id) {
+        this.answer = i;
+        break;
+      }
+    }
+  }
 }

@@ -22,6 +22,7 @@ abstract class Question extends ApiObject {
   int points;
 
   List<AnswerOption> getAnswerOptions();
+  void setWithAnswerOptions(List<AnswerOption> answers);
 
   @override
   Map<String, dynamic> toMap() {
