@@ -8,6 +8,8 @@ abstract class TestGateway {
   static final TestGateway instance = ApiTestGateway();
 
   Future<Test?> get(int id, {String? password});
+  Future<List<TestSubmission>> getUserSubmission(int id, int userId);
+  Future<List<AnswerOption>> getAnswers(int id, int submissionId);
   Future<Test?> create(int courseId, Test test, String password);
   Future<Test?> update(Test test, String password);
   Future<bool> delete(int id);

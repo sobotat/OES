@@ -12,6 +12,7 @@ import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 class ApiTestGateway implements TestGateway {
 
   String basePath = '${AppApi.instance.apiServerUrl}/api/tests';
+  String userBasePath = '${AppApi.instance.apiServerUrl}/api/users';
 
   @override
   Future<Test?> get(int id, {String? password}) async {
@@ -35,6 +36,58 @@ class ApiTestGateway implements TestGateway {
     }
 
     return Test.fromJson(result.data);
+  }
+
+  @override
+  Future<List<TestSubmission>> getUserSubmission(int id, int userId) async {
+
+    RequestResult result = await HttpRequest.instance.get('$userBasePath/$userId/test-submissions',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      queryParameters: {
+        "testId": id
+      },
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-getUserSubmission] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (!result.checkOk() || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Test-getUserSubmission] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<TestSubmission> out = [];
+    for(Map<String, dynamic> json in result.data) {
+      out.add(TestSubmission.fromJson(json));
+    }
+    return out;
+  }
+
+  @override
+  Future<List<AnswerOption>> getAnswers(int id, int submissionId) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions/$submissionId',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-getAnswers] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (!result.checkOk() || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Test-getAnswers] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<AnswerOption> out = [];
+    for(Map<String, dynamic> json in result.data) {
+      out.add(AnswerOption.fromJson(json));
+    }
+    return out;
   }
 
   @override
