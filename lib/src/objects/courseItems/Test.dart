@@ -106,3 +106,33 @@ class TestAttempt{
     );
   }
 }
+
+class TestSubmission {
+
+  TestSubmission({
+    required this.id,
+    required this.testId,
+    required this.status,
+    required this.submittedAt,
+    required this.gradedAt,
+    required this.totalPoints
+  });
+
+  int id;
+  int testId;
+  String status;
+  DateTime submittedAt;
+  DateTime? gradedAt;
+  int totalPoints;
+
+  factory TestSubmission.fromJson(Map<String, dynamic> json) {
+    return TestSubmission(
+      id: json['id'],
+      testId: json['testId'],
+      status: json['status'],
+      submittedAt: DateTime.tryParse(json['submittedAt'])!,
+      gradedAt: json['gradedAt'] != null ? DateTime.tryParse(json['gradedAt'])! : null,
+      totalPoints: json['totalPoints']
+    );
+  }
+}
