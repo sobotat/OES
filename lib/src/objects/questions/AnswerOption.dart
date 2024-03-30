@@ -19,4 +19,16 @@ class AnswerOption {
     };
   }
 
+  factory AnswerOption.fromJson(Map<String, dynamic> json) {
+    return AnswerOption(
+      questionId: json['questionId'],
+      id: json['id'],
+      text: json['text']
+    );
+  }
+
+  @override
+  String toString() {
+    return '{questionId: $questionId, id: $id, text: $text}';
+  }
 }
