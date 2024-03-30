@@ -30,6 +30,7 @@ class ApiTestGateway implements TestGateway {
 
     if (!result.checkOk() || result.data is! Map<String, dynamic>) {
       debugPrint('Api Error: [Test-get] ${result.statusCode} -> ${result.message}');
+      if (result.statusCode == 423) throw Exception("Test is Locked");
       return null;
     }
 

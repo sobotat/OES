@@ -63,7 +63,17 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
         onPopInvoked: (didPop) async {
           if (!allowPop) {
             startReallyFinishTest(context).then((value) {
-              if (value) context.pop();
+              if (value) {
+                context.goNamed("course-test", pathParameters: {
+                "course_id": widget.courseId.toString(),
+                "test_id": widget.testId.toString(),
+              });
+              }
+            });
+          } else {
+            context.goNamed("course-test", pathParameters: {
+              "course_id": widget.courseId.toString(),
+              "test_id": widget.testId.toString(),
             });
           }
         },
@@ -75,9 +85,51 @@ class _CourseTestScreenState extends State<CourseTestScreen> {
               future: TestGateway.instance.get(widget.testId, password: widget.password),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
+                  allowPop = true;
                   print("Load Test Error: ${snapshot.error}");
                   Toast.makeToast(text: "Failed to load Test", icon: Icons.error, iconColor: Colors.red.shade700, duration: ToastDuration.large);
-                  context.pop();
+                  bool isLocked = snapshot.error.toString().toLowerCase().contains("locked");
+                  if (isLocked) {
+                    return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Test is Locked",
+                          style: TextStyle(
+                            color: Colors.red.shade700,
+                            fontSize: 20
+                          ),
+                        ),
+                        Text(
+"""
+Possible causes:
+1. You've entered the wrong password
+2. One of your attempts is awaiting review
+3. You've reached the maximum amount of attempts for this test
+""",
+                          style: TextStyle(
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                        Button(
+                          text: "Ok",
+                          onClick: (context) {
+                            context.goNamed("course-test", pathParameters: {
+                              "course_id": widget.courseId.toString(),
+                              "test_id": widget.testId.toString(),
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  );
+                  } else {
+                    context.goNamed("course-test", pathParameters: {
+                      "course_id": widget.courseId.toString(),
+                      "test_id": widget.testId.toString(),
+                    });
+                  }
                 }
                 if (!snapshot.hasData) return const Center(child: WidgetLoading());
                 test = snapshot.data!;

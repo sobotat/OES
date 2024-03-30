@@ -28,44 +28,8 @@ class CourseTestInfoScreen extends StatelessWidget {
   final int courseId;
   final int testId;
 
-  Future<void> openPasswordDialog(BuildContext context, bool hasPassword) async {
-    if (!hasPassword) {
-      context.goNamed('start-course-test', pathParameters: {
-        'course_id': courseId.toString(),
-        'test_id': testId.toString(),
-      });
-      return;
-    }
-
-    await showDialog(
-      context: context,
-      builder: (context) => PopupDialog(
-          alignment: Alignment.center,
-          child: _TestDialog(
-            courseId: courseId,
-            testId: testId
-          )
-      ),
-    );
-  }
-
-  String formatDateTime(DateTime dateTime) {
-    return "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute < 10 ? "0" : ""}${dateTime.minute}";
-  }
-  
-  Color getStatusColor(TestAttempt attempt) {
-    switch(attempt.status) {
-      case 'Graded': return Colors.green.shade700;
-      case 'Checked': return Colors.orange.shade700;
-      default: return Colors.blue;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
     return Scaffold(
       appBar: const AppAppBar(),
       body: ListenableBuilder(
@@ -83,70 +47,11 @@ class CourseTestInfoScreen extends StatelessWidget {
               TestInfo info = snapshot.data!;
               int remainsAttempts = info.maxAttempts - info.attempts.length;
 
-              return ListView(
-                children: [
-                  const Heading(headingText: "Info"),
-                  BackgroundBody(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SelectableText("Name: ${info.name}"),
-                          const SizedBox(height: 5,),
-                          SelectableText("Duration: ${info.duration} minutes"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width > overflow ? 50 : 15,
-                      vertical: 20,
-                    ),
-                    child: Button(
-                      maxWidth: double.infinity,
-                      maxHeight: 100,
-                      backgroundColor: Colors.green.shade700,
-                      text: "Start Test",
-                      onClick: (context) {
-                        openPasswordDialog(context, info.hasPassword);
-                      },
-                    ),
-                  ),
-                  const Heading(headingText: "Answers"),
-                  BackgroundBody(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: info.attempts.length,
-                      itemBuilder: (context, index) {
-                        TestAttempt attempt = info.attempts[index];
-                        Color background = getStatusColor(attempt);
-                        return IconItem(
-                          color: background,
-                          icon: Text(
-                            " ${index + 1}.",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.getActiveTheme().calculateTextColor(background, context),
-                            ),
-                          ),
-                          body: Text(
-                            formatDateTime(attempt.submitted)
-                          ),
-                          actions: [
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Text("${attempt.points} b"),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ],
+              return _StudentBody(
+                courseId: courseId,
+                testId: testId,
+                remainsAttempts: remainsAttempts,
+                info: info,
               );
             }
           );
@@ -156,7 +61,144 @@ class CourseTestInfoScreen extends StatelessWidget {
   }
 }
 
+class _StudentBody extends StatelessWidget {
+  const _StudentBody({
+    required this.courseId,
+    required this.testId,
+    required this.remainsAttempts,
+    required this.info,
+    super.key
+  });
 
+  final int courseId;
+  final int testId;
+  final int remainsAttempts;
+  final TestInfo info;
+
+  Future<void> openPasswordDialog(BuildContext context, bool hasPassword) async {
+    if (!hasPassword) {
+      context.goNamed('start-course-test', pathParameters: {
+        'course_id': courseId.toString(),
+        'test_id': testId.toString(),
+      });
+      return;
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) => PopupDialog(
+          alignment: Alignment.center,
+          child: _TestDialog(
+              courseId: courseId,
+              testId: testId
+          )
+      ),
+    );
+  }
+
+  String formatDateTime(DateTime dateTime) {
+    return "${dateTime.day}.${dateTime.month}.${dateTime.year} ${dateTime.hour}:${dateTime.minute < 10 ? "0" : ""}${dateTime.minute}";
+  }
+
+  Color getStatusColor(TestAttempt attempt) {
+    switch(attempt.status) {
+      case 'Graded': return Colors.green.shade700;
+      case 'Checked': return Colors.orange.shade700;
+      default: return Colors.blue;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return ListView(
+      children: [
+        const Heading(headingText: "Info"),
+        BackgroundBody(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SelectableText("Name: ${info.name}"),
+                const SizedBox(height: 5,),
+                SelectableText("Duration: ${info.duration} minutes"),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: width > overflow ? 50 : 15,
+            vertical: 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              remainsAttempts > 0 ? Builder(
+                builder: (context) {
+                  bool isLocked = info.attempts.isNotEmpty && info.attempts.last.status == "Checked";
+                  if (isLocked) {
+                    return const Text(
+                      "Waiting for Last Test Review",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold
+                      ),
+                    );
+                  }
+                  return Button(
+                    maxWidth: double.infinity,
+                    maxHeight: 100,
+                    backgroundColor: Colors.green.shade700,
+                    text: "Start Test",
+                    onClick: (context) {
+                      openPasswordDialog(context, info.hasPassword);
+                    },
+                  );
+                }
+              ) : Container(),
+              Text("Remains $remainsAttempts Attempts")
+            ],
+          ),
+        ),
+        const Heading(headingText: "Answers"),
+        BackgroundBody(
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: info.attempts.length,
+            itemBuilder: (context, index) {
+              TestAttempt attempt = info.attempts[index];
+              Color background = getStatusColor(attempt);
+              return IconItem(
+                color: background,
+                icon: Text(
+                  " ${index + 1}.",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.getActiveTheme().calculateTextColor(background, context),
+                  ),
+                ),
+                body: Text(
+                    formatDateTime(attempt.submitted)
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text("${attempt.points} b"),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 
 class _TestDialog extends StatefulWidget {

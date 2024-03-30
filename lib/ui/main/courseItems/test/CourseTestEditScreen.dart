@@ -1059,7 +1059,7 @@ class _InfoState extends State<_Info> {
                     ],
                     maxLines: 1,
                     onChanged: (value) {
-                      if(value.isEmpty) maxAttemptsController.text = "0";
+                      widget.test.maxAttempts = int.parse(maxAttemptsController.text.trim().isNotEmpty ? maxAttemptsController.text.trim() : "0");
                     },
                   ),
                 ),
