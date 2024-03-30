@@ -16,6 +16,7 @@ import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestEditScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestScreen.dart';
+import 'package:oes/ui/main/courseItems/test/CourseTestTeacherInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/userQuiz/CourseUserQuizScreen.dart';
 import 'package:oes/ui/network/NoApiScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
@@ -190,6 +191,22 @@ class AppRouter {
                         courseId: courseId,
                         testId: id,
                         password: password,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'review/:user_id',
+                    name: 'review-course-test',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                      int userId = int.parse(state.pathParameters['user_id'] ?? '-1');
+                      return CourseTestTeacherInfoScreen(
+                        courseId: courseId,
+                        testId: id,
+                        userId: userId,
                       );
                     },
                   ),

@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Course.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
@@ -47,16 +50,111 @@ class CourseTestInfoScreen extends StatelessWidget {
               TestInfo info = snapshot.data!;
               int remainsAttempts = info.maxAttempts - info.attempts.length;
 
-              return _StudentBody(
-                courseId: courseId,
-                testId: testId,
-                remainsAttempts: remainsAttempts,
-                info: info,
+              return FutureBuilder(
+                future: Future(() async {
+                  Course? course = await CourseGateway.instance.getCourse(courseId);
+                  if (course == null) return false;
+                  return await course.isTeacherInCourse(AppSecurity.instance.user as User);
+                }),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+                  bool isTeacher = snapshot.data!;
+
+                  if (isTeacher) {
+                    return FutureBuilder(
+                      future: CourseGateway.instance.getCourseStudents(courseId),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+                        List<User> users = snapshot.data!;
+                        return _TeacherBody(
+                          courseId: courseId,
+                          testId: testId,
+                          info: info,
+                          users: users,
+                        );
+                      }
+                    );
+                  }
+                  return _StudentBody(
+                    courseId: courseId,
+                    testId: testId,
+                    remainsAttempts: remainsAttempts,
+                    info: info,
+                  );
+                }
               );
             }
           );
         },
       ),
+    );
+  }
+}
+
+class _TeacherBody extends StatelessWidget {
+  const _TeacherBody({
+    required this.courseId,
+    required this.testId,
+    required this.info,
+    required this.users,
+    super.key
+  });
+
+  final int courseId;
+  final int testId;
+  final TestInfo info;
+  final List<User> users;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        const Heading(headingText: "Info"),
+        BackgroundBody(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SelectableText("Name: ${info.name}"),
+                const SizedBox(height: 5,),
+                SelectableText("Duration: ${info.duration} minutes"),
+              ],
+            ),
+          ),
+        ),
+        const Heading(
+            headingText: "Students"
+        ),
+        BackgroundBody(
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              User user = users[index];
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconItem(
+                    icon: const Icon(Icons.person),
+                    color: Colors.green.shade700,
+                    body: Text("${user.firstName} ${user.lastName} (${user.username})"),
+                    onClick: (context) async {
+                      context.goNamed("review-course-test", pathParameters: {
+                        "course_id": courseId.toString(),
+                        "test_id": testId.toString(),
+                        "user_id": user.id.toString(),
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        )
+      ],
     );
   }
 }
