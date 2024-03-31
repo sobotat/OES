@@ -11,6 +11,8 @@ class IconItem extends StatelessWidget {
     this.height = 50,
     this.color = Colors.blueAccent,
     this.backgroundColor,
+    this.borderColor,
+    this.borderWidth = 2,
     this.onClick,
     this.onHold,
     this.mainSize = MainAxisSize.max,
@@ -27,6 +29,8 @@ class IconItem extends StatelessWidget {
   final double? height;
   final Color color;
   final Color? backgroundColor;
+  final Color? borderColor;
+  final double borderWidth;
   final Function(BuildContext context)? onClick, onHold;
   final MainAxisSize mainSize;
   final Alignment alignment;
@@ -52,8 +56,12 @@ class IconItem extends StatelessWidget {
             child: Ink(
               height: height,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: backgroundColor ?? Theme.of(context).colorScheme.primary
+                border: borderColor != null ? Border.all(
+                  width: borderWidth,
+                  color: borderColor!,
+                ) : null,
+                borderRadius: BorderRadius.circular(10),
+                color: backgroundColor ?? Theme.of(context).colorScheme.primary
               ),
               child: Row(
                 mainAxisAlignment: mainSize == MainAxisSize.max ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,

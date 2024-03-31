@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/FillInQuestion.dart';
 import 'package:oes/ui/assets/widgets/questions/QuestionBuilder.dart';
 
@@ -7,6 +8,7 @@ class FillInQuestionBuilder extends QuestionBuilder<FillInQuestion> {
 
   const FillInQuestionBuilder({
     required super.question,
+    required super.review,
     super.key,
   });
 
@@ -20,4 +22,5 @@ class FillInQuestionBuilder extends QuestionBuilder<FillInQuestion> {
       child: Text(super.question.name),
     );
   }
+
 }

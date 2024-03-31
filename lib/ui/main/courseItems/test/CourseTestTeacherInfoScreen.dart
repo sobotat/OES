@@ -18,6 +18,7 @@ import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
+import 'package:oes/ui/assets/widgets/questions/QuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/QuestionBuilderFactory.dart';
 
 class CourseTestTeacherInfoScreen extends StatefulWidget {
@@ -123,6 +124,7 @@ class _BodyState extends State<_Body> {
   set selected(TestSubmission? value) {
     _selected = value;
   }
+  List<Review> reviews = [];
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +151,7 @@ class _BodyState extends State<_Body> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading(),);
                   List<AnswerOption> answers = snapshot.data!;
+                  reviews.clear();
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -162,8 +165,11 @@ class _BodyState extends State<_Body> {
                         }
                       }
                       question.setWithAnswerOptions(questionAnswers);
+                      Review review = Review();
+                      reviews.add(review);
                       return QuestionBuilderFactory(
-                        question: question
+                        question: question,
+                        review: review,
                       );
                     },
                   );
