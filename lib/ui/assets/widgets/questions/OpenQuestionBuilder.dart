@@ -101,43 +101,51 @@ class _QuestionBodyState extends State<_QuestionBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 5),
-      child: Material(
-        elevation: 10,
-        borderRadius: BorderRadius.circular(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: TextField(
-                enabled: widget.review == null,
-                controller: controller,
-                autocorrect: true,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                onChanged: (value) {
-                  widget.question.answer = value;
-                },
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 5),
+          child: Material(
+            elevation: 10,
+            borderRadius: BorderRadius.circular(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: TextField(
+                    enabled: widget.review == null,
+                    controller: controller,
+                    autocorrect: true,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (value) {
+                      widget.question.answer = value;
+                    },
+                  ),
+                ),
+                widget.review != null ? Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: TextField(
+                    controller: reviewController,
+                    autocorrect: true,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (value) {
+                      Review review = widget.review!;
+                      review.options.first.text = value;
+                    },
+                  ),
+                ) : Container(),
+              ],
             ),
-            widget.review != null ? Padding(
-              padding: const EdgeInsets.all(5),
-              child: TextField(
-                controller: reviewController,
-                autocorrect: true,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                onChanged: (value) {
-                  Review review = widget.review!;
-                  review.options.first.text = value;
-                },
-              ),
-            ) : Container(),
-          ],
+          ),
         ),
-      ),
+        widget.review != null ? ReviewBar(
+          review: widget.review!,
+        ) : Container()
+      ],
     );
   }
 }

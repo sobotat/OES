@@ -87,38 +87,46 @@ class _QuestionBodyState extends State<_QuestionBody> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: widget.question.options.length,
-      itemBuilder: (context, index) {
-        return _Option(
-          question: widget.question,
-          index: index,
-          isSelected: widget.question.answers.contains(index),
-          isSelectedReview: widget.review == null ? false : widget.review!.options.where((element) => element.id == widget.question.options[index].id).isNotEmpty,
-          onSelected: (index, isSelected) {
-            if (widget.review != null) {
-              Review review = widget.review!;
-              if (review.options.where((element) => element.id == widget.question.options[index].id).isNotEmpty) {
-                review.options.removeWhere((element) => element.id == widget.question.options[index].id);
-              } else {
-                QuestionOption option = widget.question.options[index];
-                review.options.add(AnswerOption(questionId: widget.question.id,id: option.id,text: option.text));
-              }
-              setState(() {});
-              return;
-            }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: widget.question.options.length,
+          itemBuilder: (context, index) {
+            return _Option(
+              question: widget.question,
+              index: index,
+              isSelected: widget.question.answers.contains(index),
+              isSelectedReview: widget.review == null ? false : widget.review!.options.where((element) => element.id == widget.question.options[index].id).isNotEmpty,
+              onSelected: (index, isSelected) {
+                if (widget.review != null) {
+                  Review review = widget.review!;
+                  if (review.options.where((element) => element.id == widget.question.options[index].id).isNotEmpty) {
+                    review.options.removeWhere((element) => element.id == widget.question.options[index].id);
+                  } else {
+                    QuestionOption option = widget.question.options[index];
+                    review.options.add(AnswerOption(questionId: widget.question.id,id: option.id,text: option.text));
+                  }
+                  setState(() {});
+                  return;
+                }
 
-            if (isSelected && !widget.question.answers.contains(index)) {
-              widget.question.answers.add(index);
-            } else if (!isSelected) {
-              widget.question.answers.remove(index);
-            }
-            setState(() {});
+                if (isSelected && !widget.question.answers.contains(index)) {
+                  widget.question.answers.add(index);
+                } else if (!isSelected) {
+                  widget.question.answers.remove(index);
+                }
+                setState(() {});
+              },
+            );
           },
-        );
-      },
+        ),
+        widget.review != null ? ReviewBar(
+          review: widget.review!,
+        ) : Container()
+      ],
     );
   }
 }
