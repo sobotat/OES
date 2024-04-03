@@ -205,18 +205,14 @@ class _CourseScreenState extends State<CourseScreen> {
                                   future: CourseGateway.instance.getCourseItems(course.id),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) return const WidgetLoading();
+                                    List<CourseItem> items = snapshot.data!;
+                                    items.sort((a, b) => b.created.compareTo(a.created),);
+
                                     return ListView.builder(
                                       shrinkWrap: true,
-                                      itemCount: snapshot.data!.length,
+                                      itemCount: items.length,
                                       itemBuilder: (context, index) {
-                                        CourseItem item = snapshot.data![index];
-                                        if (item.type == 'test') {
-                                          return _TestWidget(
-                                            course: course,
-                                            item: item,
-                                            isTeacher: isTeacher,
-                                          );
-                                        }
+                                        CourseItem item = items[index];
                                         return _CourseItemWidget(
                                             isTeacher: isTeacher,
                                             course: course,
@@ -382,74 +378,6 @@ class _TeachersBuilder extends StatelessWidget {
   }
 }
 
-
-class _TestWidget extends StatelessWidget {
-  const _TestWidget({
-    required this.course,
-    required this.item,
-    required this.isTeacher,
-  });
-
-  final Course course;
-  final CourseItem item;
-  final bool isTeacher;
-
-  void edit(BuildContext context) {
-    if (!isTeacher) return;
-    context.goNamed("edit-course-test", pathParameters: {
-      "course_id": course.id.toString(),
-      "test_id": item.id.toString(),
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconItem(
-      onClick: (context) {
-        // if(isTeacher) {
-        //   context.goNamed("info-course-test", pathParameters: {
-        //     'course_id': course.id.toString(),
-        //     'test_id': item.id.toString()
-        //   });
-        //   return;
-        // }
-        // openPasswordDialog(context);
-        context.goNamed("course-test", pathParameters: {
-          'course_id': course.id.toString(),
-          'test_id': item.id.toString(),
-        });
-      },
-      icon: const _IconText(
-          text: 'Test',
-          backgroundColor: Colors.red
-      ),
-      body: _ItemBody(
-        bodyText: item.name,
-      ),
-      onHold: isTeacher ? (context) {
-        edit(context);
-      } : null,
-      color: Colors.red,
-      actions: [
-         isTeacher ? Padding(
-          padding: const EdgeInsets.all(5),
-          child: Button(
-            text: "",
-            toolTip: "Edit",
-            iconSize: 18,
-            maxWidth: 40,
-            icon: Icons.edit,
-            onClick: (context) {
-              edit(context);
-            },
-          ),
-        ) : Container(),
-      ],
-    );
-  }
-}
-
-
 class _CourseItemWidget extends StatelessWidget {
   const _CourseItemWidget({
     required this.isTeacher,
@@ -481,6 +409,7 @@ class _CourseItemWidget extends StatelessWidget {
 
   String getIconText() {
     switch(item.type.toLowerCase()) {
+      case 'test': return 'Test';
       case 'note': return 'Note';
       case 'homework': return 'Hw';
       case 'quiz': return 'Qz';
@@ -491,6 +420,7 @@ class _CourseItemWidget extends StatelessWidget {
 
   Color getColor() {
     switch(item.type.toLowerCase()) {
+      case 'test': return Colors.red.shade700;
       case 'note': return Colors.deepPurple.shade400;
       case 'homework': return Colors.teal;
       case 'quiz': return Colors.greenAccent;
