@@ -1,7 +1,6 @@
-
-import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
@@ -19,7 +18,6 @@ import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
-import 'package:oes/ui/assets/widgets/questions/QuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/QuestionBuilderFactory.dart';
 
 class CourseTestTeacherInfoScreen extends StatefulWidget {
@@ -154,6 +152,40 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 900;
+
+    if (width > overflow) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Heading(headingText: "Attempts"),
+                BackgroundBody(
+                    child: _Attempts(
+                      submissions: widget.submissions,
+                      onClicked: (submission) {
+                        _selected = submission == _selected ? null : submission;
+                        setState(() {});
+                      },
+                    )
+                ),   
+              ],
+            ),
+          ),
+          Flexible(
+            child: _TestEditor(
+              test: widget.test,
+              submission: _selected,
+              onSubmit: saveReview,
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -167,65 +199,92 @@ class _BodyState extends State<_Body> {
             },
           )
         ),
-        _selected != null ? Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Heading(headingText: "Test"),
-            BackgroundBody(
-              child: FutureBuilder(
-                future: TestGateway.instance.getAnswers(widget.test.id, _selected!.id),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading(),);
-                  List<AnswerOption> answers = snapshot.data!;
-                  List<Review> reviews = [];
-
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: widget.test.questions.length,
-                        itemBuilder: (context, index) {
-                          Question question = widget.test.questions[index];
-                          List<AnswerOption> questionAnswers = [];
-                          for(AnswerOption option in answers) {
-                            if (question.id == option.questionId) {
-                              questionAnswers.add(option);
-                            }
-                          }
-                          question.setWithAnswerOptions(questionAnswers);
-                          Review review = Review(
-                            questionId: question.id,
-                            points: question.getPointsFromAnswers()
-                          );
-                          reviews.add(review);
-                          return QuestionBuilderFactory(
-                            question: question,
-                            review: review,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 25,),
-                      Button(
-                        text: "Save Review",
-                        backgroundColor: Colors.green.shade700,
-                        maxWidth: double.infinity,
-                        onClick: (context) {
-                          saveReview(reviews);
-                        },
-                      )
-                    ],
-                  );
-                }
-              ),
-            ),
-          ],
-        ) : Container(),
+        _TestEditor(
+          test: widget.test,
+          submission: _selected,
+          onSubmit: saveReview,
+        ),
       ],
     );
   }
 }
+
+class _TestEditor extends StatelessWidget {
+  const _TestEditor({
+    required this.test,
+    required this.submission,
+    required this.onSubmit,
+    super.key
+  });
+
+  final Test test;
+  final TestSubmission? submission;
+  final Function(List<Review> reviews) onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Heading(headingText: "Test"),
+        BackgroundBody(
+          child: submission != null ? FutureBuilder(
+              future: TestGateway.instance.getAnswers(test.id, submission!.id),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading(),);
+                List<AnswerOption> answers = snapshot.data!;
+                List<Review> reviews = [];
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: test.questions.length,
+                      itemBuilder: (context, index) {
+                        Question question = test.questions[index];
+                        List<AnswerOption> questionAnswers = [];
+                        for(AnswerOption option in answers) {
+                          if (question.id == option.questionId) {
+                            questionAnswers.add(option);
+                          }
+                        }
+                        question.setWithAnswerOptions(questionAnswers);
+                        Review review = Review(
+                            questionId: question.id,
+                            points: question.getPointsFromAnswers()
+                        );
+                        reviews.add(review);
+                        return QuestionBuilderFactory(
+                          question: question,
+                          review: review,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 25,),
+                    Button(
+                      text: "Save Review",
+                      backgroundColor: Colors.green.shade700,
+                      maxWidth: double.infinity,
+                      onClick: (context) {
+                        onSubmit(reviews);
+                      },
+                    )
+                  ],
+                );
+              }
+          ) : Container(
+            alignment: Alignment.center,
+            height: 100,
+            child: const Text("Nothing Selected"),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 
 class _Attempts extends StatelessWidget {
   const _Attempts({
@@ -330,8 +389,15 @@ class _Item extends StatelessWidget {
       color: iconBackground,
       actions: [
         Text("${submission.totalPoints}b", style: const TextStyle(fontWeight: FontWeight.bold)),
-        width > overflow ? SizedBox(width: 200,child: Text(isGraded ? "Checked" : "Waiting for Check", textAlign: TextAlign.center,)) : Container(),
-        width <= overflow ? const SizedBox(width: 20,) : Container(),
+        const SizedBox(width: 20,),
+        width > overflow ? Flexible(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Text(isGraded ? "Checked" : "Waiting for Check",
+              textAlign: TextAlign.center,
+            ),
+          )
+        ) : Container(),
       ],
       onClick: (context) => onClicked(),
     );
