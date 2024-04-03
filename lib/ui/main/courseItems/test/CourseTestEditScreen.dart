@@ -62,7 +62,7 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
               return Test(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, scheduled: DateTime.now(), end: DateTime.now(), duration: 0, isVisible: true, maxAttempts: 1, questions: [
                 PickOneQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options),
                 PickManyQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options)
-              ]);
+              ], password: null);
             },),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -435,7 +435,7 @@ class _EditorState extends State<_Editor> {
   @override
   void initState() {
     super.initState();
-    passwordController.text = "";
+    passwordController.text = widget.test.password ?? "";
   }
 
   @override
@@ -968,6 +968,7 @@ class _InfoState extends State<_Info> {
   TextEditingController nameController = TextEditingController();
   TextEditingController durationController = TextEditingController();
   TextEditingController maxAttemptsController = TextEditingController();
+  bool hidden = true;
 
   @override
   void initState() {
@@ -1008,16 +1009,31 @@ class _InfoState extends State<_Info> {
                 },
               ),
             ),
-            Flexible(
-              child: TextField(
-                controller: widget.passwordController,
-                autocorrect: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
+            Row(
+              children: [
+                Flexible(
+                  child: TextField(
+                    controller: widget.passwordController,
+                    autocorrect: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                    ),
+                    obscureText: hidden,
+                    maxLines: 1,
+                    textInputAction: TextInputAction.done,
+                  ),
                 ),
-                maxLines: 1,
-                textInputAction: TextInputAction.done,
-              ),
+                Button(
+                  icon: hidden ? Icons.remove_red_eye_outlined : Icons.remove_red_eye_rounded,
+                  toolTip: hidden ? "Show" : "Hide",
+                  maxWidth: 40,
+                  onClick: (context) {
+                    setState(() {
+                      hidden = !hidden;
+                    });
+                  },
+                ),
+              ],
             ),
             Row(
               children: [

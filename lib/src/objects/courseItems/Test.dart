@@ -16,9 +16,11 @@ class Test extends ExamItem {
     required super.isVisible,
     required super.questions,
     required this.maxAttempts,
+    required this.password,
   }) : super(type: 'test');
 
   int maxAttempts;
+  String? password;
 
   @override
   Map<String, dynamic> toMap() {
@@ -47,6 +49,7 @@ class Test extends ExamItem {
       duration: json['duration'],
       questions: questionsList,
       maxAttempts: json['maxAttempts'],
+      password: json['password']
     );
   }
 }
