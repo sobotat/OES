@@ -4,6 +4,7 @@ import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
+import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/ui/assets/widgets/questions/OpenQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/PickManyQuestionBuilder.dart';
 import 'package:oes/ui/assets/widgets/questions/PickOneQuestionBuilder.dart';

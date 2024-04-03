@@ -9,6 +9,7 @@ import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/Question.dart';
+import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
@@ -85,10 +86,17 @@ class _CourseTestTeacherInfoScreenState extends State<CourseTestTeacherInfoScree
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading());
                           List<TestSubmission> submissions = snapshot.data!;
+                          submissions.sort((a, b) => a.submittedAt.compareTo(b.submittedAt),);
 
-                          return _Body(
-                            submissions: submissions,
-                            test: test,
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: _Body(
+                              submissions: submissions,
+                              test: test,
+                              onUpdated: () {
+                                setState(() {});
+                              },
+                            ),
                           );
                         }
                       )
@@ -108,11 +116,13 @@ class _Body extends StatefulWidget {
   const _Body({
     required this.test,
     required this.submissions,
+    required this.onUpdated,
     super.key,
   });
 
   final Test test;
   final List<TestSubmission> submissions;
+  final Function() onUpdated;
 
   @override
   State<_Body> createState() => _BodyState();
@@ -121,10 +131,26 @@ class _Body extends StatefulWidget {
 class _BodyState extends State<_Body> {
 
   TestSubmission? _selected;
-  set selected(TestSubmission? value) {
-    _selected = value;
+
+  Future<void> saveReview(List<Review> reviews) async {
+    if(_selected == null) return;
+
+    if (reviews.where((element) => element.points == null).isNotEmpty) {
+      Toast.makeErrorToast(text: "Please Fill All Points");
+      return;
+    }
+
+    bool success = await TestGateway.instance.submitReview(widget.test.id, _selected!.id, reviews);
+    if (success) {
+      Toast.makeSuccessToast(text: "Review Uploaded", duration: ToastDuration.large);
+      setState(() {
+        _selected = null;
+      });
+      widget.onUpdated();
+      return;
+    }
+    Toast.makeErrorToast(text: "Review Failed Upload");
   }
-  List<Review> reviews = [];
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +162,7 @@ class _BodyState extends State<_Body> {
           child: _Attempts(
             submissions: widget.submissions,
             onClicked: (submission) {
-              selected = submission == _selected ? null : submission;
+              _selected = submission == _selected ? null : submission;
               setState(() {});
             },
           )
@@ -151,27 +177,45 @@ class _BodyState extends State<_Body> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading(),);
                   List<AnswerOption> answers = snapshot.data!;
-                  reviews.clear();
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: widget.test.questions.length,
-                    itemBuilder: (context, index) {
-                      Question question = widget.test.questions[index];
-                      List<AnswerOption> questionAnswers = [];
-                      for(AnswerOption option in answers) {
-                        if (question.id == option.questionId) {
-                          questionAnswers.add(option);
-                        }
-                      }
-                      question.setWithAnswerOptions(questionAnswers);
-                      Review review = Review();
-                      reviews.add(review);
-                      return QuestionBuilderFactory(
-                        question: question,
-                        review: review,
-                      );
-                    },
+                  List<Review> reviews = [];
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: widget.test.questions.length,
+                        itemBuilder: (context, index) {
+                          Question question = widget.test.questions[index];
+                          List<AnswerOption> questionAnswers = [];
+                          for(AnswerOption option in answers) {
+                            if (question.id == option.questionId) {
+                              questionAnswers.add(option);
+                            }
+                          }
+                          question.setWithAnswerOptions(questionAnswers);
+                          Review review = Review(
+                            questionId: question.id,
+                            points: question.getPointsFromAnswers()
+                          );
+                          reviews.add(review);
+                          return QuestionBuilderFactory(
+                            question: question,
+                            review: review,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25,),
+                      Button(
+                        text: "Save Review",
+                        backgroundColor: Colors.green.shade700,
+                        maxWidth: double.infinity,
+                        onClick: (context) {
+                          saveReview(reviews);
+                        },
+                      )
+                    ],
                   );
                 }
               ),

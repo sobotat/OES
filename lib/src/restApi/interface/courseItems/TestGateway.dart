@@ -1,6 +1,7 @@
 
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
+import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/src/restApi/api/courseItems/ApiTestGateway.dart';
 
 abstract class TestGateway {
@@ -16,5 +17,7 @@ abstract class TestGateway {
 
   Future<bool> checkTestPassword(int id, String password);
   Future<bool> submit(int id, List<AnswerOption> answers);
+  Future<bool> submitReview(int id, int submissionId, List<Review> reviews);
   Future<TestInfo?> getInfo(int id);
+
 }

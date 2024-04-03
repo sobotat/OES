@@ -4,6 +4,7 @@ import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
+import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
 import 'package:oes/src/restApi/api/http/RequestResult.dart';
@@ -181,6 +182,28 @@ class ApiTestGateway implements TestGateway {
 
     if (!result.checkOk()) {
       debugPrint('Api Error: [Test-submit] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    return true;
+  }
+
+  @override
+  Future<bool> submitReview(int id, int submissionId, List<Review> reviews) async {
+
+    RequestResult result = await HttpRequest.instance.put('$basePath/$id/submissions/$submissionId/reviews',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      data: reviews.map((e) => e.toMap()).toList(),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-submitReview] ${result.statusCode} -> ${result.message}');
+      return false;
+    }
+
+    if (!result.checkOk()) {
+      debugPrint('Api Error: [Test-submitReview] ${result.statusCode} -> ${result.message}');
       return false;
     }
 

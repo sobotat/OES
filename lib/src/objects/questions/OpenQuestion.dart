@@ -36,5 +36,9 @@ class OpenQuestion extends Question {
     this.answer = answer.text;
   }
 
+  @override
+  int getPointsFromAnswers() {
+    return 0;
+  }
 
 }

@@ -4,6 +4,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
+import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
@@ -70,22 +71,6 @@ class _QuestionBody extends StatefulWidget {
 class _QuestionBodyState extends State<_QuestionBody> {
 
   @override
-  void initState() {
-    super.initState();
-    Future(() {
-      if (widget.review != null) {
-        Review review = widget.review!;
-        if(widget.question.answer != null) {
-          int index = widget.question.answer!;
-          QuestionOption option = widget.question.options[index];
-          review.options.add(AnswerOption(questionId: widget.question.id, id: option.id, text: option.text));
-        }
-      }
-      setState(() {});
-    },);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -99,33 +84,21 @@ class _QuestionBodyState extends State<_QuestionBody> {
               question: widget.question,
               index: index,
               isSelected: widget.question.answer == null ? false : index == widget.question.answer!,
-              isSelectedReview: widget.review == null ? false : widget.review!.options.where((element) => element.id == widget.question.options[index].id).isNotEmpty,
-              onSelected: (index, isSelected) {
-                if (widget.review != null) {
-                  Review review = widget.review!;
-                  if (review.options.isEmpty || review.options.where((element) => element.id == index).isEmpty) {
-                    review.options.clear();
-                    QuestionOption option = widget.question.options[index];
-                    review.options.add(AnswerOption(questionId: widget.question.id, id: option.id, text: option.text));
-                  } else {
-                    review.options.clear();
-                  }
-                  setState(() {});
-                  return;
-                }
-
+              points: widget.review == null ? null : widget.question.options[index].points,
+              onSelected: widget.review == null ? (index, isSelected) {
                 if (isSelected) {
                   widget.question.answer = index;
                 } else {
                   widget.question.answer = null;
                 }
                 setState(() {});
-              },
+              } : null,
             );
           },
         ),
         widget.review != null ? ReviewBar(
           review: widget.review!,
+          question: widget.question,
         ) : Container()
       ],
     );
@@ -137,21 +110,20 @@ class _Option extends StatelessWidget {
     required this.question,
     required this.index,
     required this.isSelected,
-    this.isSelectedReview,
     required this.onSelected,
+    this.points,
     super.key
   });
 
   final PickOneQuestion question;
   final int index;
   final bool isSelected;
-  final bool? isSelectedReview;
-  final Function(int index, bool isSelected) onSelected;
+  final int? points;
+  final Function(int index, bool isSelected)? onSelected;
 
   @override
   Widget build(BuildContext context) {
     Color color = isSelected ? Colors.green.shade700 : Theme.of(context).colorScheme.background;
-    Color? colorReview = isSelectedReview == null ? null : isSelectedReview! ? Colors.green.shade700 : Theme.of(context).colorScheme.background;
 
     return IconItem(
       icon: Text(
@@ -168,10 +140,15 @@ class _Option extends StatelessWidget {
         ),
       ),
       color: color,
-      borderColor: colorReview,
-      onClick: (context) {
-        onSelected(index, isSelectedReview != null ? !isSelectedReview! : !isSelected);
-      },
+      onClick: onSelected != null ? (context) {
+        onSelected!(index, !isSelected);
+      } : null,
+      actions: points != null ? [
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Text("${points}b"),
+        )
+      ] : [],
     );
   }
 }

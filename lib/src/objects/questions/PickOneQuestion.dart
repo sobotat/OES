@@ -46,4 +46,10 @@ class PickOneQuestion extends MultipleChoiceQuestion {
       }
     }
   }
+
+  @override
+  int getPointsFromAnswers() {
+    if (answer == null) return 0;
+    return options[answer!].points;
+  }
 }

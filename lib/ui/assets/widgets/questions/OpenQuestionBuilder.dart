@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/OpenQuestion.dart';
+import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
@@ -73,21 +74,13 @@ class _QuestionBody extends StatefulWidget {
 class _QuestionBodyState extends State<_QuestionBody> {
 
   TextEditingController controller = TextEditingController();
-  TextEditingController reviewController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     Future(() {
-      if (widget.review != null) {
-        Review review = widget.review!;
-        if (review.options.isEmpty) {
-          review.options.add(AnswerOption(questionId: widget.question.id, id: 1, text: widget.question.answer));
-        }
-      }
       setState(() {
         controller.text = widget.question.answer;
-        reviewController.text = widget.question.answer;
       });
     },);
   }
@@ -95,7 +88,6 @@ class _QuestionBodyState extends State<_QuestionBody> {
   @override
   void dispose() {
     controller.dispose();
-    reviewController.dispose();
     super.dispose();
   }
 
@@ -125,25 +117,13 @@ class _QuestionBodyState extends State<_QuestionBody> {
                     },
                   ),
                 ),
-                widget.review != null ? Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: TextField(
-                    controller: reviewController,
-                    autocorrect: true,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    onChanged: (value) {
-                      Review review = widget.review!;
-                      review.options.first.text = value;
-                    },
-                  ),
-                ) : Container(),
               ],
             ),
           ),
         ),
         widget.review != null ? ReviewBar(
           review: widget.review!,
+          question: widget.question,
         ) : Container()
       ],
     );

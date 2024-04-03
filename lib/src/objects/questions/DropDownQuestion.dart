@@ -24,4 +24,10 @@ class DropDownQuestion extends Question {
     throw UnimplementedError();
   }
 
+  @override
+  int getPointsFromAnswers() {
+    // TODO: implement getPointsFromAnswers
+    throw UnimplementedError();
+  }
+
 }

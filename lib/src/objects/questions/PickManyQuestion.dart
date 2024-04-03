@@ -44,4 +44,14 @@ class PickManyQuestion extends MultipleChoiceQuestion {
       }
     }
   }
+
+  @override
+  int getPointsFromAnswers() {
+    int sum = 0;
+    for(int index in answers) {
+      sum += options[index].points;
+    }
+    return sum;
+  }
+
 }
