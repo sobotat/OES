@@ -91,6 +91,31 @@ class ApiTestGateway implements TestGateway {
     return out;
   }
 
+
+  @override
+  Future<List<Review>> getReviews(int id, int submissionId) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions/$submissionId/reviews',
+      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    );
+
+    if (result.checkUnauthorized()) {
+      AppSecurity.instance.logout();
+      debugPrint('Api Error: [Test-submitReview] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    if (!result.checkOk() && result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Test-submitReview] ${result.statusCode} -> ${result.message}');
+      return [];
+    }
+
+    List<Review> out = [];
+    for(Map<String, dynamic> json in result.data) {
+      out.add(Review.fromJson(json));
+    }
+    return out;
+  }
+
   @override
   Future<Test?> create(int courseId, Test test, String password) async {
 
@@ -252,8 +277,10 @@ class ApiTestGateway implements TestGateway {
 
   @override
   Future<bool> checkTestPassword(int id, String password) async {
-    RequestResult result = await HttpRequest.instance.get('$basePath/$id/check-password',
-        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+    RequestResult result = await HttpRequest.instance.get(
+        '$basePath/$id/check-password',
+        options: AuthHttpRequestOptions(
+            token: AppSecurity.instance.user!.token),
         queryParameters: {
           'password': password,
         }
@@ -261,12 +288,14 @@ class ApiTestGateway implements TestGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-checkTestPassword] ${result
+          .statusCode} -> ${result.message}');
       return false;
     }
 
     if (result.statusCode != 200) {
-      debugPrint('Api Error: [Course-checkTestPassword] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-checkTestPassword] ${result
+          .statusCode} -> ${result.message}');
       return false;
     }
 

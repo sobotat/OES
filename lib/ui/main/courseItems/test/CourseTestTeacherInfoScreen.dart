@@ -233,45 +233,54 @@ class _TestEditor extends StatelessWidget {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading(),);
                 List<AnswerOption> answers = snapshot.data!;
-                List<Review> reviews = [];
 
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: test.questions.length,
-                      itemBuilder: (context, index) {
-                        Question question = test.questions[index];
-                        List<AnswerOption> questionAnswers = [];
-                        for(AnswerOption option in answers) {
-                          if (question.id == option.questionId) {
-                            questionAnswers.add(option);
-                          }
-                        }
-                        question.setWithAnswerOptions(questionAnswers);
-                        Review review = Review(
-                            questionId: question.id,
-                            points: question.getPointsFromAnswers()
-                        );
-                        reviews.add(review);
-                        return QuestionBuilderFactory(
-                          question: question,
-                          review: review,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 25,),
-                    Button(
-                      text: "Save Review",
-                      backgroundColor: Colors.green.shade700,
-                      maxWidth: double.infinity,
-                      onClick: (context) {
-                        onSubmit(reviews);
-                      },
-                    )
-                  ],
+                return FutureBuilder(
+                  future: TestGateway.instance.getReviews(test.id, submission!.id),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox(height: 100, child: WidgetLoading(),);
+                    List<Review> reviews = snapshot.data!;
+
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: test.questions.length,
+                          itemBuilder: (context, index) {
+                            Question question = test.questions[index];
+                            List<AnswerOption> questionAnswers = [];
+                            for(AnswerOption option in answers) {
+                              if (question.id == option.questionId) {
+                                questionAnswers.add(option);
+                              }
+                            }
+                            question.setWithAnswerOptions(questionAnswers);
+                            if(reviews.where((element) => element.questionId == question.id).isEmpty) {
+                              Review review = Review(
+                                  questionId: question.id,
+                                  points: question.getPointsFromAnswers()
+                              );
+                              reviews.add(review);
+                            }
+                            return QuestionBuilderFactory(
+                              question: question,
+                              review: reviews.where((element) => element.questionId == question.id).single,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 25,),
+                        Button(
+                          text: "Save Review",
+                          backgroundColor: Colors.green.shade700,
+                          maxWidth: double.infinity,
+                          onClick: (context) {
+                            onSubmit(reviews);
+                          },
+                        )
+                      ],
+                    );
+                  }
                 );
               }
           ) : Container(

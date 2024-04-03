@@ -15,4 +15,11 @@ class Review {
       'points': points,
     };
   }
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    return Review(
+      questionId: json['questionId'],
+      points: json['points']
+    );
+  }
 }

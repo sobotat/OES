@@ -11,6 +11,7 @@ abstract class TestGateway {
   Future<Test?> get(int id, {String? password});
   Future<List<TestSubmission>> getUserSubmission(int id, int userId);
   Future<List<AnswerOption>> getAnswers(int id, int submissionId);
+  Future<List<Review>> getReviews(int id, int submissionId);
   Future<Test?> create(int courseId, Test test, String password);
   Future<Test?> update(Test test, String password);
   Future<bool> delete(int id);
