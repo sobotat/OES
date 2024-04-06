@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:oes/config/DarkTheme.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'LightTheme.dart';
@@ -49,21 +50,14 @@ class ActiveAppTheme extends ChangeNotifier {
   }
 
   Future<ThemeMode> loadSavedTheme() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? themeStr = await LocalStorage.instance.get("theme");
 
-    String themeStr = prefs.getString('theme') ?? '';
-
-    if (themeStr == '') {
-      return themeMode;
-    }
-
+    if (themeStr == null) return themeMode;
     return themeStr == 'system' ? ThemeMode.system : (themeStr == 'dark' ? ThemeMode.dark : ThemeMode.light);
   }
 
   Future<void> saveTheme(ThemeMode themeMode) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setString('theme', (themeMode == ThemeMode.system ? 'system' : (themeMode == ThemeMode.dark ? 'dark' : 'light')));
+    LocalStorage.instance.set('theme', (themeMode == ThemeMode.system ? 'system' : (themeMode == ThemeMode.dark ? 'dark' : 'light')));
   }
 
   ThemeMode _themeMode;
