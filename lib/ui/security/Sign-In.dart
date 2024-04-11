@@ -1,12 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppApi.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Organization.dart';
+import 'package:oes/src/restApi/interface/OrganizationGateway.dart';
 import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({this.path = '/', super.key});
@@ -26,201 +32,60 @@ class _SignInState extends State<SignIn> {
   }
 
   String path;
+  Organization? organization;
 
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool rememberMe = true;
-  bool signing = false;
-
-  Future<void> login() async {
-    setState(() {
-      signing = true;
-    });
-
-    bool success = await AppSecurity.instance.login(
-        usernameController.text,
-        passwordController.text,
-        rememberMe: rememberMe,
-    );
-
-    if (!success) {
-      debugPrint('Invalid Username or Password');
-
-      if (context.mounted) {
-        _showSignFailedDialog();
-      }
-
-      setState(() {
-        signing = false;
-      });
-      return;
-    }
-
-    if (context.mounted) {
-      setState(() {
-        signing = false;
-      });
-      context.go(path);
-    }
-  }
-
-  Future<dynamic> _showSignFailedDialog() {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return PopupDialog(
-          alignment: Alignment.center,
-          child: Material(
-            elevation: 10,
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              width: 300,
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Wrong Password or Username'),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Button(
-                      maxWidth: double.infinity,
-                      onClick: (context) { context.pop(); },
-                      text: 'Close',
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
+  @override
+  void initState() {
+    super.initState();
+    Future(() {
+        organization = AppApi.instance.organization;
       },
     );
   }
 
   @override
-  void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var shortest = MediaQuery.of(context).size.shortestSide;
+    Orientation orientation = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height ? Orientation.landscape : Orientation.portrait;
 
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 25,
-                horizontal: 25,
-              ),
-              child: Align(
-                alignment: Alignment.center,
-                child: OrientationBuilder(
-                  builder: (context, orientation) {
-                    return Material(
-                      elevation: 5,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        padding: EdgeInsets.all(shortest > 500 ? 50 : 25),
-                        width: orientation == Orientation.landscape ? 800 : 400,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Theme.of(context).colorScheme.secondary,
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                padding: const EdgeInsets.all(50),
+                margin: const EdgeInsets.all(20),
+                child: Builder(
+                  builder: (context) {
+                    if (organization == null) {
+                      return _OrganizationSelector(
+                        organization: organization,
+                        orientation: orientation,
+                        onSelected: (organization) {
+                          setState(() {
+                            this.organization = organization;
+                            AppApi.instance.setOrganization(organization);
+                          });
+                        },
+                      );
+                    }
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _Login(
+                          path: path,
+                          orientation: orientation,
+                          onSelectOrganization: () {
+                            setState(() {
+                              organization = null;
+                            });
+                          },
                         ),
-                        child: Builder(builder: (context) {
-                          // Portrait
-                          if (orientation == Orientation.portrait) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const _Heading(),
-                                _Input(
-                                  usernameController: usernameController,
-                                  passwordController: passwordController,
-                                  loginFunction: () {
-
-                                  },
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      _RememberAndReset(
-                                        orientation: orientation,
-                                        value: rememberMe,
-                                        onRememberChanged: (rememberMe) {
-                                          this.rememberMe = rememberMe;
-                                        },
-                                      ),
-                                      const SizedBox(height: 5,),
-                                      _LoginButton(
-                                        loginFunction: login,
-                                        signing: signing,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          }
-                          // Landscape
-                          else {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Expanded(child: _Heading()),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _Input(
-                                        usernameController: usernameController,
-                                        passwordController: passwordController,
-                                        loginFunction: login,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 10,
-                                    right: 10,
-                                    top: 40,
-                                    bottom: 10,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      _RememberAndReset(
-                                        orientation: orientation,
-                                        value: rememberMe,
-                                        onRememberChanged: (rememberMe) {
-                                          this.rememberMe = rememberMe;
-                                        },
-                                      ),
-                                      const SizedBox(height: 5,),
-                                      _LoginButton(
-                                        loginFunction: login,
-                                        signing: signing,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            );
-                          }
-                        }),
-                      ),
+                      ],
                     );
                   },
                 ),
@@ -243,29 +108,293 @@ class _SignInState extends State<SignIn> {
   }
 }
 
-class _LoginButton extends StatefulWidget {
+class _OrganizationSelector extends StatefulWidget {
+  const _OrganizationSelector({
+    required this.organization,
+    required this.onSelected,
+    required this.orientation,
+    super.key
+  });
+
+  final Organization? organization;
+  final Function(Organization organization) onSelected;
+  final Orientation orientation;
+
+  @override
+  State<_OrganizationSelector> createState() => _OrganizationSelectorState();
+}
+
+class _OrganizationSelectorState extends State<_OrganizationSelector> {
+
+  TextEditingController filterController = TextEditingController();
+
+  @override
+  void dispose() {
+    filterController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: widget.orientation == Orientation.landscape ? 800 : 400,
+        maxHeight: 500,
+      ),
+      child: Column(
+        children: [
+          const Text('Organizations', style: TextStyle(fontSize: 40)),
+          Flexible(
+            child: FutureBuilder(
+              future: OrganizationGateway.instance.getAll(filterController.text),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const WidgetLoading();
+                List<Organization> organizations = snapshot.data!;
+                return ListView.builder(
+                  itemCount: organizations.length,
+                  itemBuilder: (context, index) {
+                    Organization organization = organizations[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Button(
+                        text: organization.name,
+                        toolTip: organization.url,
+                        maxHeight: 30,
+                        onClick: (context) {
+                          widget.onSelected(organization);
+                        },
+                      ),
+                    );
+                  },
+                );
+              }
+            ),
+          ),
+          TextField(
+            controller: filterController,
+            decoration: const InputDecoration(
+              labelText: "Search"
+            ),
+            onChanged: (value) {
+              setState(() {});
+            },
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _Login extends StatefulWidget {
+  const _Login({
+    required this.path,
+    required this.onSelectOrganization,
+    required this.orientation,
+    super.key
+  });
+
+  final String path;
+  final Function() onSelectOrganization;
+  final Orientation orientation;
+
+  @override
+  State<_Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<_Login> {
+
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool rememberMe = true;
+  bool signing = false;
+  bool wrongPassword = false;
+
+  Future<void> login(String username, String password, bool rememberMe) async {
+    setState(() {
+      signing = true;
+    });
+
+    bool success = await AppSecurity.instance.login(
+      username,
+      password,
+      rememberMe: rememberMe,
+    );
+
+    if (!success) {
+      debugPrint('Invalid Username or Password');
+
+      if (context.mounted) {
+        setState(() {
+          wrongPassword = true;
+        });
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {
+            wrongPassword = false;
+          });
+        },);
+      }
+
+      setState(() {
+        signing = false;
+      });
+      return;
+    }
+
+    if (context.mounted) {
+      setState(() {
+        signing = false;
+      });
+      context.go(widget.path);
+    }
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: widget.orientation == Orientation.landscape ? 800 : 400,
+      ),
+      child: Builder(builder: (context) {
+        // Portrait
+        if (widget.orientation == Orientation.portrait) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const _Heading(),
+              _Input(
+                usernameController: usernameController,
+                passwordController: passwordController,
+                loginFunction: () {
+
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    _RememberAndReset(
+                      orientation: widget.orientation,
+                      value: rememberMe,
+                      onRememberChanged: (rememberMe) {
+                        this.rememberMe = rememberMe;
+                      },
+                    ),
+                    const SizedBox(height: 5,),
+                    _LoginButton(
+                      wrongPassword: wrongPassword,
+                      loginFunction: () {
+                        login(usernameController.text, passwordController.text, rememberMe);
+                      },
+                      signing: signing,
+                    ),
+                    const SizedBox(height: 10,),
+                    Button(
+                      text: "Select Organization",
+                      maxWidth: double.infinity,
+                      onClick: (context) {
+                        widget.onSelectOrganization();
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+        // Landscape
+        else {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Expanded(child: _Heading()),
+                  Expanded(
+                    flex: 2,
+                    child: _Input(
+                      usernameController: usernameController,
+                      passwordController: passwordController,
+                      loginFunction: () {
+                        login(usernameController.text, passwordController.text, rememberMe);
+                      },
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                  top: 40,
+                  bottom: 10,
+                ),
+                child: Column(
+                  children: [
+                    _RememberAndReset(
+                      orientation: widget.orientation,
+                      value: rememberMe,
+                      onRememberChanged: (rememberMe) {
+                        this.rememberMe = rememberMe;
+                      },
+                    ),
+                    const SizedBox(height: 5,),
+                    _LoginButton(
+                      wrongPassword: wrongPassword,
+                      loginFunction: () {
+                        login(usernameController.text, passwordController.text, rememberMe);
+                      },
+                      signing: signing,
+                    ),
+                    const SizedBox(height: 10,),
+                    Button(
+                      text: "Select Organization",
+                      maxWidth: double.infinity,
+                      onClick: (context) {
+                        widget.onSelectOrganization();
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+      }),
+    );
+  }
+}
+
+
+
+class _LoginButton extends StatelessWidget {
   const _LoginButton({
     required this.loginFunction,
     required this.signing,
+    required this.wrongPassword,
     super.key,
   });
 
   final Function() loginFunction;
   final bool signing;
-
-  @override
-  State<_LoginButton> createState() => _LoginButtonState();
-}
-
-class _LoginButtonState extends State<_LoginButton> {
+  final bool wrongPassword;
 
   @override
   Widget build(BuildContext context) {
     return Button(
       maxWidth: double.infinity,
       text: 'Sign-In',
-      onClick: (context) => widget.loginFunction(),
-      child: !widget.signing ? null : SizedBox(
+      backgroundColor: wrongPassword ? Colors.red.shade700 : null,
+      onClick: (context) => loginFunction(),
+      child: !signing ? null : SizedBox(
         width: 25,
         height: 25,
         child: CircularProgressIndicator(

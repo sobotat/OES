@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: AppTheme.activeThemeMode,
       builder: (BuildContext context, Widget? child) {
-
         return MaterialApp.router(
           title: 'OES',
           debugShowCheckedModeBanner: false,

@@ -19,7 +19,7 @@ class ApiUserGateway implements UserGateway {
 
   @override
   Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
-
+    print(basePath);
     RequestResult result = await HttpRequest.instance.post('$basePath/auth/login',
       data: {
         'username': username,

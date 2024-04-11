@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/ui/main/course/CourseEditScreen.dart';
@@ -54,6 +55,7 @@ class AppRouter {
   String get activeUri => _activeUri;
   bool disableNetworkCheck = false;
   Function()? _authListener;
+
   late GoRouterRedirect authCheckRedirect;
   late GoRouterRedirect removeAuthRedirect;
   final PopNotifier popNotifier = PopNotifier();

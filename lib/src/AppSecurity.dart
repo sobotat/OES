@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:oes/config/AppApi.dart';
+import 'package:oes/config/AppRouter.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
@@ -21,17 +23,39 @@ class AppSecurity extends ChangeNotifier {
 
     String? token = await SecureStorage.instance.get('token');
     if (token != null) {
-      user = await UserGateway.instance.loginWithToken(token)
-        .onError((error, stackTrace) {
-          debugPrint("Failed to Sign in User by Token");
-          return null;
+      if (!AppApi.instance.haveApiUrl()) {
+        debugPrint("Did not get Organization Url -> Redirecting to Sign-In");
+        AppRouter.instance.router.goNamed("sign-in", queryParameters: {
+          'path': AppRouter.instance.activeUri,
         });
+
+        _isInit = true;
+        notifyListeners();
+        return;
+      }
+
+      user = await UserGateway.instance.loginWithToken(token)
+          .onError((error, stackTrace) {
+        debugPrint("Failed to Sign in User by Token");
+        return null;
+      });
     }
+
     _isInit = true;
     notifyListeners();
   }
 
   Future<bool> login(String username, String password, {bool? rememberMe}) async {
+    if (!AppApi.instance.haveApiUrl()) {
+      debugPrint("Did not get Organization Url -> Redirecting to Sign-In");
+      AppRouter.instance.router.goNamed("sign-in", queryParameters: {
+        'path': AppRouter.instance.activeUri,
+      });
+
+      notifyListeners();
+      return false;
+    }
+
     Device device = await DeviceInfo.getDevice();
     user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true, device)
       .onError((error, stackTrace) {
