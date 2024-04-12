@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:oes/config/AppApi.dart';
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Achievement.dart';
+import 'package:oes/src/services/SignalR.dart';
 import 'package:oes/ui/assets/dialogs/AchievementDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
@@ -22,14 +24,23 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> {
 
   List<String> messages = [];
-
-  HubConnection? connection;
+  late SignalR signalR;
 
   @override
   void initState() {
     super.initState();
-    initSignalIr();
-
+    signalR = SignalR("signalr/quiz",
+      onReconnected: () {
+        setState(() {},);
+      },
+      onReconnecting: () {
+        setState(() {},);
+      },
+      onClosed: () {
+        setState(() {},);
+      },
+    );
+    init();
 
     Future.delayed(const Duration(seconds: 2), () {
       Achievement a = Achievement.fromJson({'id':'123', 'name': 'name', 'description': '12312', 'unlocked': false});
@@ -37,46 +48,24 @@ class _TestScreenState extends State<TestScreen> {
     },);
   }
 
-  Future<void> initSignalIr() async {
-    connection = HubConnectionBuilder()
-        .withUrl('${AppApi.instance.apiServerUrl}/testing', transportType: HttpTransportType.LongPolling)
-        .withAutomaticReconnect()
-        .build();
-    connection!.onreconnecting(({error}) {
-      print('Reconnecting');
-    });
-
-    connection!.onreconnected(({connectionId}) {
-      print('Reconnected');
-    });
-
-    connection!.onclose(({error}) {
-      if (mounted) {
+  Future<void> init() async {
+    await signalR.start({
+      "JoinGroupCallback": (arguments) {
+        Toast.makeToast(text: 'JoinGroupCallback: $arguments');
         setState(() {});
-        Toast.makeToast(text: 'Connection Closed');
-      }
-      print('Connection Closed');
-    },);
-
-    await connection!.start();
-    connection!.on('test', (arguments) {
-      if (mounted) {
+      },
+      "RemoveFromGroupCallback": (arguments) {
+        Toast.makeToast(text: 'RemoveFromGroupCallback: $arguments');
         setState(() {});
-        Toast.makeToast(text: 'Message: $arguments');
       }
-      print('Message: $arguments');
     });
     setState(() {});
   }
 
+
+
   Future<void> clicked() async {
-    await connection!.invoke('SendMessage').onError((error, stackTrace) {
-      if (mounted) {
-        setState(() {});
-        Toast.makeToast(text: 'Error Invoke: $error');
-      }
-      print('Error Invoke: $error');
-    });
+    await signalR.send("JoinGroup");
     setState(() {});
   }
   
@@ -97,30 +86,18 @@ class _TestScreenState extends State<TestScreen> {
                 Toast.makeToast(text: Random().nextInt(1000).toString(), icon: Icons.adb);
               },
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: InkWell(
-                onTap: () => clicked(),
-                borderRadius: BorderRadius.circular(10),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: connection == null ? Colors.red[300] : connection!.state == HubConnectionState.Connected ? Colors.greenAccent : Colors.orange
-                  ),
-                  width: 300,
-                  height: 500,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: ListView.builder(
-                      itemCount: messages.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Center(child: Text(messages[index]));
-                      },
-                    ),
-                  ),
-                ),
-              ),
+            Button(
+              text: "Join",
+              onClick: (context) async {
+                await signalR.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, "ABC"]);
+              },
+              backgroundColor: signalR.getState() == HubConnectionState.Connected ? Colors.green : Colors.red,
+            ),
+            Button(
+              text: "Disconnect",
+              onClick: (context) async {
+                await signalR.send("RemoveFromGroup", arguments: [AppSecurity.instance.user!.id, "ABC"]);
+              },
             )
           ],
         ),
