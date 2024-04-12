@@ -161,7 +161,7 @@ class _CoursesState extends State<_Courses> {
   Widget build(BuildContext context) {
     if(!AppSecurity.instance.isLoggedIn()) return const Center(child: WidgetLoading(),);
     SignedUser user = AppSecurity.instance.user!;
-    UserRole role = user.role;
+    UserRole role = user.role ?? UserRole.student;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

@@ -21,7 +21,7 @@ class User extends ApiObject {
   String firstName;
   String lastName;
   String username;
-  UserRole role;
+  UserRole? role;
 
   @override
   String toString() {
@@ -44,7 +44,7 @@ class User extends ApiObject {
         'firstName': firstName,
         'lastName': lastName,
         'username': username,
-        'role': role.index,
+        'role': role?.index,
       });
   }
 
@@ -54,7 +54,7 @@ class User extends ApiObject {
       firstName: json['firstName'],
       lastName: json['lastName'],
       username: json['username'],
-      role: UserRole.values[json['role']],
+      role: json['role'] == null ? null : UserRole.values[json['role']],
     );
   }
 }
