@@ -15,18 +15,21 @@ class BackgroundBody extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
 
-    return Container(
-      margin: padding ?? EdgeInsets.symmetric(
-        horizontal: width > overflow ? 50 : 15,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(4),
-            bottom: Radius.circular(10)
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        margin: padding ?? EdgeInsets.symmetric(
+          horizontal: width > overflow ? 50 : 15,
         ),
-        color: Theme.of(context).colorScheme.secondary,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(4),
+              bottom: Radius.circular(10)
+          ),
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        child: child,
       ),
-      child: child,
     );
   }
 }
