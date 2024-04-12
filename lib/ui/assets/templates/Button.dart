@@ -20,6 +20,8 @@ class Button extends StatelessWidget {
     this.backgroundColor,
     this.fontFamily,
     this.borderRadius,
+    this.borderColor,
+    this.borderWidth = 2,
     super.key
   });
   
@@ -42,6 +44,8 @@ class Button extends StatelessWidget {
 
   final String? fontFamily;
   final BorderRadius? borderRadius;
+  final Color? borderColor;
+  final double borderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +77,10 @@ class Button extends StatelessWidget {
             child: Ink(
               decoration: BoxDecoration(
                 borderRadius: borderRadius ?? BorderRadius.circular(10),
+                border: borderColor != null ? Border.all(
+                  width: borderWidth,
+                  color: borderColor!,
+                ) : null,
                 color: activeBackgroundColor,
               ),
               child: OverflowBox(
