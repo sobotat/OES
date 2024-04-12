@@ -13,6 +13,7 @@ import 'package:oes/ui/main/courseItems/homework/CourseHomeworkScreen.dart';
 import 'package:oes/ui/main/courseItems/homework/CourseHomeworkSubmitScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteEditScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteScreen.dart';
+import 'package:oes/ui/main/courseItems/quiz/CourseQuizInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestEditScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestInfoScreen.dart';
@@ -222,11 +223,27 @@ class AppRouter {
                   _setActiveUri(context, state);
                   int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
                   int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
-                  return CourseQuizScreen(
+                  return CourseQuizInfoScreen(
                     courseId: courseId,
                     quizId: id,
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'start',
+                    name: 'start-course-quiz',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
+                      return CourseQuizScreen(
+                        courseId: courseId,
+                        quizId: id,
+                      );
+                    },
+                  ),
+                ]
               ),
               GoRoute(
                 path: 'user-quiz/:quiz_id',

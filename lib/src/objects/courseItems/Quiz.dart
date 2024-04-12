@@ -1,7 +1,7 @@
 
-import 'package:oes/src/objects/courseItems/ExamItem.dart';
+import 'package:oes/src/objects/courseItems/SchedulableItem.dart';
 
-class Quiz extends ExamItem {
+class Quiz extends SchedulableItem {
 
   Quiz({
     required super.id,
@@ -11,8 +11,17 @@ class Quiz extends ExamItem {
     required super.isVisible,
     required super.scheduled,
     required super.end,
-    required super.duration,
-    required super.questions,
   }) : super(type: 'quiz');
 
+  factory Quiz.fromJson(Map<String, dynamic> json) {
+    return Quiz(
+        id: json['id'],
+        name: json['name'],
+        created: DateTime.tryParse(json['created'])!,
+        createdById: json['createdById'],
+        isVisible: json['isVisible'],
+        scheduled: DateTime.tryParse(json['scheduled'])!,
+        end: DateTime.tryParse(json['end'])!,
+    );
+  }
 }
