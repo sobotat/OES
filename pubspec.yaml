@@ -51,13 +51,23 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^3.0.1
   msix: ^3.16.1
 
+flutter_launcher_icons:
+  image_path: "assets/logo.jpg"
+  android: true
+  ios: true
+  web:
+    generate: true
+  windows:
+    generate: true
+    icon_size: 256
+  macos:
+    generate: true
 
 flutter:
-
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
