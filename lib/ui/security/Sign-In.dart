@@ -20,27 +20,25 @@ class SignIn extends StatefulWidget {
   final String path;
 
   @override
-  State<SignIn> createState() => _SignInState(path: path);
+  State<SignIn> createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
 
-  _SignInState({this.path = '/'}) {
-    if (path.contains('sign-out')) {
-      path = '/';
-    }
-  }
-
-  String path;
+  String path = "/";
   Organization? organization;
 
   @override
   void initState() {
     super.initState();
     Future(() {
+      if (path.contains('sign-out')) {
+        path = '/';
+      }
+      setState(() {
         organization = AppApi.instance.organization;
-      },
-    );
+      });
+    },);
   }
 
   @override
