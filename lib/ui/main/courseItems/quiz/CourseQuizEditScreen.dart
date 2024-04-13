@@ -6,13 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
-import 'package:oes/src/objects/courseItems/Test.dart';
+import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
-import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/QuizGateway.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -24,23 +24,23 @@ import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 import 'package:oes/ui/assets/widgets/questions/QuestionBuilderFactory.dart';
 
-class CourseTestEditScreen extends StatefulWidget {
-  const CourseTestEditScreen({
+class CourseQuizEditScreen extends StatefulWidget {
+  const CourseQuizEditScreen({
     required this.courseId,
-    required this.testId,
+    required this.quizId,
     super.key
   });
 
   final int courseId;
-  final int testId;
+  final int quizId;
 
   @override
-  State<CourseTestEditScreen> createState() => _CourseTestEditScreenState();
+  State<CourseQuizEditScreen> createState() => _CourseQuizEditScreenState();
 }
 
-class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
+class _CourseQuizEditScreenState extends State<CourseQuizEditScreen> {
 
-  bool isNew() { return widget.testId == -1; }
+  bool isNew() { return widget.quizId == -1; }
 
   @override
   Widget build(BuildContext context) {
@@ -51,35 +51,35 @@ class _CourseTestEditScreenState extends State<CourseTestEditScreen> {
           return FutureBuilder(
             future: Future(() async {
               if (!isNew()) {
-                return await TestGateway.instance.get(widget.testId);
+                return await QuizGateway.instance.get(widget.quizId);
               }
 
-              return Test(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, scheduled: DateTime.now(), end: DateTime.now(), duration: 0, isVisible: true, maxAttempts: 1, questions: [
-                PickOneQuestion(id: -1, name: "Title", description: "Description", points: 0, options: [
+              return Quiz(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, scheduled: DateTime.now(), end: DateTime.now(), isVisible: true, questions: [
+                PickOneQuestion(id: -1, name: "Pick One", description: "Description", points: 0, options: [
                   QuestionOption(id: -1, text: "Option 1", points: 0),
                   QuestionOption(id: -1, text: "Option 2", points: 3),
                   QuestionOption(id: -1, text: "Option 3", points: 0)
                 ]),
-                PickManyQuestion(id: -1, name: "Title", description: "Description", points: 0, options: [
+                PickManyQuestion(id: -1, name: "Pick Many", description: "Description", points: 0, options: [
                   QuestionOption(id: -1, text: "Option 1", points: 3),
                   QuestionOption(id: -1, text: "Option 2", points: 0),
                   QuestionOption(id: -1, text: "Option 3", points: 3)
                 ])
-              ], password: null);
+              ],);
             },),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                Toast.makeErrorToast(text: "Failed to load Test");
+                Toast.makeErrorToast(text: "Failed to load Quiz");
                 print(snapshot.error);
                 context.pop();
               }
               if (!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),));
-              Test test = snapshot.data!;
+              Quiz quiz = snapshot.data!;
 
               return _Body(
                   isNew: isNew(),
                   courseId: widget.courseId,
-                  test: test
+                  quiz: quiz
               );
             },
           );
@@ -92,13 +92,13 @@ class _Body extends StatefulWidget {
   const _Body({
     required this.isNew,
     required this.courseId,
-    required this.test,
+    required this.quiz,
     super.key
   });
 
   final bool isNew;
   final int courseId;
-  final Test test;
+  final Quiz quiz;
 
   @override
   State<_Body> createState() => _BodyState();
@@ -132,13 +132,10 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
 
     switch(questionType) {
       case "pick-one":
-        widget.test.questions.add(PickOneQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options));
+        widget.quiz.questions.add(PickOneQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options));
         break;
       case "pick-many":
-        widget.test.questions.add(PickManyQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options));
-        break;
-      case "open":
-        widget.test.questions.add(OpenQuestion(id: -1, name: "Title", description: "Description", points: 0));
+        widget.quiz.questions.add(PickManyQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options));
         break;
       default:
         print("Add Question Failed -> Type [$questionType] is Not Supported");
@@ -175,7 +172,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                   child: _Editor(
                     isNew: widget.isNew,
                     courseId: widget.courseId,
-                    test: widget.test,
+                    quiz: widget.quiz,
                     onUpdated: () {
                       onUpdated();
                     },
@@ -184,7 +181,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                 Flexible(
                     flex: 1,
                     child: _Preview(
-                      test: widget.test,
+                      quiz: widget.quiz,
                       key: previewKey,
                     )
                 ),
@@ -225,7 +222,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                       _Editor(
                         isNew: widget.isNew,
                         courseId: widget.courseId,
-                        test: widget.test,
+                        quiz: widget.quiz,
                         onUpdated: () {
                           onUpdated();
                         },
@@ -236,7 +233,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                     shrinkWrap: true,
                     children: [
                       _Preview(
-                        test: widget.test,
+                        quiz: widget.quiz,
                         key: previewKey,
                       ),
                     ],
@@ -270,7 +267,7 @@ class _AddButton extends StatelessWidget {
         return PopupDialog(
           alignment: Alignment.center,
           child: Container(
-            width: 490,
+            width: 335,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Theme.of(context).colorScheme.background,
@@ -306,14 +303,6 @@ class _AddButton extends StatelessWidget {
                         text: "Pick Many",
                         onClick: () {
                           onSelectedType('pick-many');
-                          context.pop();
-                        },
-                      ),
-                      _BigIconButton(
-                        icon: Icons.open_in_full,
-                        text: "Open",
-                        onClick: () {
-                          onSelectedType('open');
                           context.pop();
                         },
                       ),
@@ -384,11 +373,11 @@ class _BigIconButton extends StatelessWidget {
 
 class _Preview extends StatefulWidget {
   const _Preview({
-    required this.test,
+    required this.quiz,
     super.key,
   });
 
-  final Test test;
+  final Quiz quiz;
 
   @override
   State<_Preview> createState() => _PreviewState();
@@ -403,9 +392,9 @@ class _PreviewState extends State<_Preview> {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: widget.test.questions.length,
+          itemCount: widget.quiz.questions.length,
           itemBuilder: (context, index) {
-            return QuestionBuilderFactory(question: widget.test.questions[index]);
+            return QuestionBuilderFactory(question: widget.quiz.questions[index]);
           },
         ),
       ],
@@ -417,14 +406,14 @@ class _Editor extends StatefulWidget {
   const _Editor({
     required this.isNew,
     required this.courseId,
-    required this.test,
+    required this.quiz,
     required this.onUpdated,
     super.key,
   });
 
   final bool isNew;
   final int courseId;
-  final Test test;
+  final Quiz quiz;
   final Function() onUpdated;
 
   @override
@@ -433,48 +422,34 @@ class _Editor extends StatefulWidget {
 
 class _EditorState extends State<_Editor> {
 
-  TextEditingController passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    passwordController.text = widget.test.password ?? "";
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    passwordController.dispose();
-  }
-
   Future<void> save() async {
 
-    if (widget.test.name.isEmpty) {
+    if (widget.quiz.name.isEmpty) {
       Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
       return;
     }
 
-    Test? response = widget.isNew ? await TestGateway.instance.create(widget.courseId, widget.test, passwordController.text) :
-                                    await TestGateway.instance.update(widget.test, passwordController.text);
+    Quiz? response = widget.isNew ? await QuizGateway.instance.create(widget.courseId, widget.quiz) :
+                                    await QuizGateway.instance.update(widget.quiz);
 
     if (response != null) {
-      Toast.makeSuccessToast(text: "Test was Saved", duration: ToastDuration.short);
+      Toast.makeSuccessToast(text: "Quiz was Saved", duration: ToastDuration.short);
       context.pop();
       return;
     }
 
-    Toast.makeErrorToast(text: "Failed to Save Test", duration: ToastDuration.large);
+    Toast.makeErrorToast(text: "Failed to Save Quiz", duration: ToastDuration.large);
   }
 
   Future<void> delete() async {
     if(widget.isNew) return;
-    bool success = await TestGateway.instance.delete(widget.test.id);
+    bool success = await QuizGateway.instance.delete(widget.quiz.id);
     if (success) {
-      Toast.makeSuccessToast(text: "Test was Deleted", duration: ToastDuration.short);
+      Toast.makeSuccessToast(text: "Quiz was Deleted", duration: ToastDuration.short);
       context.pop();
       return;
     }
-    Toast.makeErrorToast(text: "Failed to Delete Test", duration: ToastDuration.large);
+    Toast.makeErrorToast(text: "Failed to Delete Quiz", duration: ToastDuration.large);
   }
 
   @override
@@ -483,7 +458,7 @@ class _EditorState extends State<_Editor> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Heading(
-          headingText: widget.isNew ? "Create Test" : "Edit Test",
+          headingText: widget.isNew ? "Create Quiz" : "Edit Quiz",
           actions: [
             Padding(
               padding: const EdgeInsets.all(5),
@@ -512,15 +487,14 @@ class _EditorState extends State<_Editor> {
           ],
         ),
         _Info(
-          passwordController: passwordController,
-          test: widget.test,
+          quiz: widget.quiz,
         ),
         const SizedBox(height: 10,),
         const Heading(
           headingText: "Questions",
         ),
         _QuestionsBody(
-          test: widget.test,
+          quiz: widget.quiz,
           onUpdated: () {
             widget.onUpdated();
           },
@@ -532,12 +506,12 @@ class _EditorState extends State<_Editor> {
 
 class _QuestionsBody extends StatefulWidget {
   const _QuestionsBody({
-    required this.test,
+    required this.quiz,
     required this.onUpdated,
     super.key,
   });
 
-  final Test test;
+  final Quiz quiz;
   final Function() onUpdated;
 
   @override
@@ -554,16 +528,16 @@ class _QuestionsBodyState extends State<_QuestionsBody> {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.test.questions.length,
+            itemCount: widget.quiz.questions.length,
             itemBuilder: (context, index) {
               return _QuestionEditor(
                 index: index,
-                question: widget.test.questions[index],
+                question: widget.quiz.questions[index],
                 onUpdated: (index) {
                   widget.onUpdated();
                 },
                 onDeleted: (index) {
-                  widget.test.questions.removeAt(index);
+                  widget.quiz.questions.removeAt(index);
                   widget.onUpdated();
                   setState(() {});
                 },
@@ -596,12 +570,10 @@ class _QuestionEditor extends StatefulWidget {
 
 class _QuestionEditorState extends State<_QuestionEditor> {
 
-  TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
   @override
   void dispose() {
-    titleController.dispose();
     descriptionController.dispose();
     super.dispose();
   }
@@ -613,7 +585,6 @@ class _QuestionEditorState extends State<_QuestionEditor> {
   @override
   Widget build(BuildContext context) {
     String niceType = widget.question.type.replaceAll('-', ' ').split(' ').map((word) => capitalize(word)).join(' ');
-    titleController.text = widget.question.name;
     descriptionController.text = widget.question.description;
 
     return Padding(
@@ -663,21 +634,6 @@ class _QuestionEditorState extends State<_QuestionEditor> {
                   ),
                   const HeadingLine(),
                 ],
-              ),
-              Flexible(
-                child: TextField(
-                  controller: titleController,
-                  decoration: InputDecoration(
-                    labelText: "Title",
-                    labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
-                  ),
-                  maxLength: 60,
-                  maxLines: 1,
-                  onChanged:  (value) {
-                    widget.question.name = value;
-                    widget.onUpdated(widget.index);
-                  },
-                ),
               ),
               Flexible(
                 child: TextField(
@@ -955,12 +911,11 @@ class _PickOptionsState extends State<_PickOptions> {
 
 class _Info extends StatefulWidget {
   const _Info({
-    required this.passwordController,
-    required this.test,
+    required this.quiz,
     super.key
   });
-  final TextEditingController passwordController;
-  final Test test;
+
+  final Quiz quiz;
 
   @override
   State<_Info> createState() => _InfoState();
@@ -969,23 +924,16 @@ class _Info extends StatefulWidget {
 class _InfoState extends State<_Info> {
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController durationController = TextEditingController();
-  TextEditingController maxAttemptsController = TextEditingController();
-  bool hidden = true;
 
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.test.name;
-    durationController.text = widget.test.duration.toString();
-    maxAttemptsController.text = widget.test.maxAttempts.toString();
+    nameController.text = widget.quiz.name;
   }
 
   @override
   void dispose() {
     nameController.dispose();
-    durationController.dispose();
-    maxAttemptsController.dispose();
     super.dispose();
   }
 
@@ -1008,85 +956,13 @@ class _InfoState extends State<_Info> {
                 maxLines: 1,
                 textInputAction: TextInputAction.done,
                 onChanged: (value) {
-                  widget.test.name = value;
+                  widget.quiz.name = value;
                 },
               ),
             ),
-            Row(
-              children: [
-                Flexible(
-                  child: TextField(
-                    controller: widget.passwordController,
-                    autocorrect: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                    ),
-                    obscureText: hidden,
-                    maxLines: 1,
-                    textInputAction: TextInputAction.done,
-                  ),
-                ),
-                Button(
-                  icon: hidden ? Icons.remove_red_eye_outlined : Icons.remove_red_eye_rounded,
-                  toolTip: hidden ? "Show" : "Hide",
-                  maxWidth: 40,
-                  onClick: (context) {
-                    setState(() {
-                      hidden = !hidden;
-                    });
-                  },
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: TextField(
-                    controller: durationController,
-                    autocorrect: true,
-                    keyboardType: const TextInputType.numberWithOptions(),
-                    decoration: const InputDecoration(
-                      labelText: 'Max Duration (minutes)',
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    maxLines: 1,
-                    onChanged: (value) {
-                      try {
-                        widget.test.duration = int.parse(value);
-                      } on FormatException catch(_) {
-                        widget.test.duration = 0;
-                        durationController.text = "0";
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 20,),
-                Flexible(
-                  flex: 1,
-                  child: TextField(
-                    controller: maxAttemptsController,
-                    autocorrect: true,
-                    keyboardType: const TextInputType.numberWithOptions(),
-                    decoration: const InputDecoration(
-                      labelText: 'Max Attempts',
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    maxLines: 1,
-                    onChanged: (value) {
-                      widget.test.maxAttempts = int.parse(maxAttemptsController.text.trim().isNotEmpty ? maxAttemptsController.text.trim() : "0");
-                    },
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 20,),
             _Dates(
-              test: widget.test
+              quiz: widget.quiz
             ),
           ],
         ),
@@ -1099,10 +975,10 @@ class _InfoState extends State<_Info> {
 class _Dates extends StatefulWidget {
   const _Dates({
     super.key,
-    required this.test,
+    required this.quiz,
   });
 
-  final Test test;
+  final Quiz quiz;
 
   @override
   State<_Dates> createState() => _DatesState();
@@ -1118,18 +994,18 @@ class _DatesState extends State<_Dates> {
         DateTimeItem(
           icon: Icons.arrow_forward,
           text: "Scheduled",
-          datetime: widget.test.scheduled,
+          datetime: widget.quiz.scheduled,
           onDateTimeChanged: (datetime) {
-            widget.test.scheduled = datetime;
+            widget.quiz.scheduled = datetime;
             setState(() {});
           },
         ),
         DateTimeItem(
           icon: Icons.arrow_back,
           text: "End",
-          datetime: widget.test.end,
+          datetime: widget.quiz.end,
           onDateTimeChanged: (datetime) {
-            widget.test.end = datetime;
+            widget.quiz.end = datetime;
             setState(() {});
           },
         ),
