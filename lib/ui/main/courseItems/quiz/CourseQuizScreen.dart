@@ -54,17 +54,9 @@ class CourseQuizScreen extends StatelessWidget {
               if (!snapshot.hasData) return const Center(child: WidgetLoading());
               bool isTeacher = snapshot.data!;
 
-              return FutureBuilder(
-                future: Future(() => Quiz(id: quizId, name: "Testing quiz", created: DateTime.now(), createdById: 1, isVisible: true, scheduled: DateTime.now(), end: DateTime.now().add(const Duration(days: 3)))),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const Center(child: WidgetLoading());
-                  Quiz quiz = snapshot.data as Quiz;
-
-                  return _Body(
-                    quiz: quiz,
-                    isTeacher: isTeacher,
-                  );
-                },
+              return _Body(
+                quizId: quizId,
+                isTeacher: isTeacher,
               );
             }
           );
@@ -83,12 +75,12 @@ enum _ScreenState {
 
 class _Body extends StatefulWidget {
   const _Body({
-    required this.quiz,
+    required this.quizId,
     required this.isTeacher,
     super.key
   });
 
-  final Quiz quiz;
+  final int quizId;
   final bool isTeacher;
 
   @override
@@ -117,7 +109,7 @@ class _BodyState extends State<_Body> {
   void dispose() {
     if (signalR != null) {
       Future(() async {
-        await signalR!.send("RemoveFromGroup", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+        await signalR!.send("RemoveFromGroup", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
         await signalR!.stop();
         signalR = null;
       },);
@@ -128,7 +120,7 @@ class _BodyState extends State<_Body> {
   Future<void> initSignalR() async {
     signalR = SignalR("signalr/quiz",
       onReconnected: () async {
-        await signalR!.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+        await signalR!.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
         if(mounted) setState(() {});
       },
     );
@@ -221,7 +213,7 @@ class _BodyState extends State<_Body> {
       return false;
     });
     if (started) {
-      await signalR!.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+      await signalR!.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
       if(mounted) setState(() {});
     } else {
       signalR = null;
@@ -250,7 +242,7 @@ class _BodyState extends State<_Body> {
                     users: users,
                     isTeacher: widget.isTeacher,
                     onStart: () {
-                      signalR!.send("NextQuestion", arguments: [AppSecurity.instance.user!.id, widget.quiz.id, true]);
+                      signalR!.send("NextQuestion", arguments: [AppSecurity.instance.user!.id, widget.quizId, true]);
                     },
                   );
                 case _ScreenState.question:
@@ -272,13 +264,13 @@ class _BodyState extends State<_Body> {
                         });
                       }
                       setState(() {});
-                      signalR!.send("SubmitAnswer", arguments: [AppSecurity.instance.user!.id, widget.quiz.id, answers]);
+                      signalR!.send("SubmitAnswer", arguments: [AppSecurity.instance.user!.id, widget.quizId, answers]);
                     },
                     onShowResult: () {
-                      signalR!.send("ShowCurrentQuestionResults", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+                      signalR!.send("ShowCurrentQuestionResults", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
                       Future.delayed(const Duration(seconds: 5), () {
                         if (mounted) {
-                          signalR!.send("ShowResults", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+                          signalR!.send("ShowResults", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
                         }
                       },);
                       setState(() {
@@ -299,7 +291,7 @@ class _BodyState extends State<_Body> {
                     isTeacher: widget.isTeacher,
                     remainingQuestions: countRemainingQuestions,
                     onNextQuestion: () {
-                      signalR!.send("NextQuestion", arguments: [AppSecurity.instance.user!.id, widget.quiz.id, false]);
+                      signalR!.send("NextQuestion", arguments: [AppSecurity.instance.user!.id, widget.quizId, false]);
                     },
                   );
                 default:
