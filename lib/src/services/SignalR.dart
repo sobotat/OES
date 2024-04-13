@@ -18,7 +18,7 @@ class SignalR {
 
   String url;
   late HubConnection connection;
-  Map<String, Function(List<Object?>? arguments)> listeners = {};
+  Map<String, Function(List<dynamic> arguments)> listeners = {};
 
   Function()? onReconnecting;
   Function()? onReconnected;
@@ -53,12 +53,12 @@ class SignalR {
     return connection;
   }
 
-  Future<bool> start(Map<String, Function(List<Object?>? arguments)> listeners) async {
+  Future<bool> start(Map<String, Function(List<dynamic> arguments)> listeners) async {
     this.listeners = listeners;
     await connection.start();
     for (MapEntry<String, Function> entry in listeners.entries) {
       connection.on(entry.key, (arguments) {
-        entry.value(arguments);
+        entry.value(arguments ?? []);
       });
     }
     return true;
@@ -74,7 +74,11 @@ class SignalR {
   }
 
   Future<void> send(String message, {List<Object>? arguments}) async {
-    await connection.invoke(message, args: arguments);
+    await connection.invoke(message, args: arguments)
+      .onError((error, stackTrace) {
+        print("⭕ Send $message Failed: $error");
+        return null;
+    });
   }
 
   HubConnectionState getState() {
