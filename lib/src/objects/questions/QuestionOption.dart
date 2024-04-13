@@ -26,4 +26,9 @@ class QuestionOption {
       points: json['points'] ?? 0
     );
   }
+
+  @override
+  String toString() {
+    return '{id: $id, text: $text, points: $points}';
+  }
 }
