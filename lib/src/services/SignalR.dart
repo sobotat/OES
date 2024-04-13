@@ -38,12 +38,10 @@ class SignalR {
 
     connection.onreconnecting(({error}) {
       if (onReconnecting != null) onReconnecting!();
-      Toast.makeToast(text: "Reconnecting", duration: ToastDuration.short, icon: Icons.connect_without_contact_rounded);
     });
 
     connection.onreconnected(({connectionId}) {
       if (onReconnected != null) onReconnected!();
-      Toast.makeSuccessToast(text: "Reconnected");
     });
 
     connection.onclose(({error}) {
