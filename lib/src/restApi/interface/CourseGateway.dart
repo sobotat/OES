@@ -23,8 +23,6 @@ abstract class CourseGateway {
   Future<List<CourseItem>> getCourseItems(int id);
   Future<List<User>> getCourseTeachers(int id);
   Future<List<User>> getCourseStudents(int id);
-  Future<List<UserQuiz>> getUserQuizzes(SignedUser user);
-  Future<UserQuiz> getUserQuiz(SignedUser user, int courseId, int itemId);
 
   void clearIdentityMap();
 }

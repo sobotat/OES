@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/ui/main/course/CourseEditScreen.dart';
@@ -13,12 +12,15 @@ import 'package:oes/ui/main/courseItems/homework/CourseHomeworkScreen.dart';
 import 'package:oes/ui/main/courseItems/homework/CourseHomeworkSubmitScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteEditScreen.dart';
 import 'package:oes/ui/main/courseItems/note/CourseNoteScreen.dart';
+import 'package:oes/ui/main/courseItems/quiz/CourseQuizEditScreen.dart';
 import 'package:oes/ui/main/courseItems/quiz/CourseQuizInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestEditScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestTeacherInfoScreen.dart';
+import 'package:oes/ui/main/courseItems/userQuiz/CourseUserQuizEditScreen.dart';
+import 'package:oes/ui/main/courseItems/userQuiz/CourseUserQuizInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/userQuiz/CourseUserQuizScreen.dart';
 import 'package:oes/ui/network/NoApiScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
@@ -216,6 +218,19 @@ class AppRouter {
                 ]
               ),
               GoRoute(
+                path: 'create-quiz',
+                name: 'create-course-quiz',
+                redirect: authCheckRedirect,
+                builder: (context, state) {
+                  _setActiveUri(context, state);
+                  int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                  return CourseQuizEditScreen(
+                      courseId: courseId,
+                      quizId: -1
+                  );
+                },
+              ),
+              GoRoute(
                 path: 'quiz/:quiz_id',
                 name: 'course-quiz',
                 redirect: authCheckRedirect,
@@ -229,6 +244,20 @@ class AppRouter {
                   );
                 },
                 routes: [
+                  GoRoute(
+                    path: 'edit',
+                    name: 'edit-course-quiz',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
+                      return CourseQuizEditScreen(
+                        courseId: courseId,
+                        quizId: id,
+                      );
+                    },
+                  ),
                   GoRoute(
                     path: 'start',
                     name: 'start-course-quiz',
@@ -246,18 +275,61 @@ class AppRouter {
                 ]
               ),
               GoRoute(
-                path: 'user-quiz/:quiz_id',
-                name: 'course-user-quiz',
+                path: 'create-userquiz',
+                name: 'create-course-userquiz',
                 redirect: authCheckRedirect,
                 builder: (context, state) {
                   _setActiveUri(context, state);
                   int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
-                  int id = int.parse(state.pathParameters['quiz_id'] ?? '-1');
-                  return CourseUserQuizScreen(
-                    courseId: courseId,
-                    quizId: id,
+                  return CourseUserQuizEditScreen(
+                      courseId: courseId,
+                      quizId: -1
                   );
                 },
+              ),
+              GoRoute(
+                  path: 'user-quiz/:userquiz_id',
+                  name: 'course-userquiz',
+                  redirect: authCheckRedirect,
+                  builder: (context, state) {
+                    _setActiveUri(context, state);
+                    int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                    int id = int.parse(state.pathParameters['userquiz_id'] ?? '-1');
+                    return CourseUserQuizInfoScreen(
+                      courseId: courseId,
+                      quizId: id,
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'edit',
+                      name: 'edit-course-userquiz',
+                      redirect: authCheckRedirect,
+                      builder: (context, state) {
+                        _setActiveUri(context, state);
+                        int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                        int id = int.parse(state.pathParameters['userquiz_id'] ?? '-1');
+                        return CourseUserQuizEditScreen(
+                          courseId: courseId,
+                          quizId: id,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'start',
+                      name: 'start-course-userquiz',
+                      redirect: authCheckRedirect,
+                      builder: (context, state) {
+                        _setActiveUri(context, state);
+                        int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                        int id = int.parse(state.pathParameters['userquiz_id'] ?? '-1');
+                        return CourseUserQuizScreen(
+                          courseId: courseId,
+                          quizId: id,
+                        );
+                      },
+                    ),
+                  ]
               ),
               GoRoute(
                 path: 'create-homework',

@@ -45,14 +45,6 @@ class Course extends ApiObject {
     return _students!;
   }
 
-  Future<List<UserQuiz>> get userQuizzes async {
-    if (_userQuizzes != null) return _userQuizzes!;
-    SignedUser? user = AppSecurity.instance.user;
-    if (user == null) return [];
-    _userQuizzes = await CourseGateway.instance.getUserQuizzes(user);
-    return _userQuizzes!;
-  }
-
   Future<bool> isTeacherInCourse(User user) async {
     for(User teacher in await teachers) {
       if (user.id == teacher.id) {

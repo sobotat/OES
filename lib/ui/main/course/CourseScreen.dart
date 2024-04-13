@@ -85,14 +85,6 @@ class _CourseScreenState extends State<CourseScreen> {
                         },
                       ),
                       _BigIconButton(
-                        icon: Icons.quiz,
-                        text: "Quiz",
-                        onClick: () {
-                          print("Create Quiz");
-                          context.pop();
-                        },
-                      ),
-                      _BigIconButton(
                         icon: Icons.home_work,
                         text: "Homework",
                         onClick: () {
@@ -109,6 +101,26 @@ class _CourseScreenState extends State<CourseScreen> {
                         onClick: () {
                           print("Create Notes");
                           context.goNamed("create-course-note", pathParameters: {
+                            "course_id": course.id.toString(),
+                          });
+                          context.pop();
+                        },
+                      ),
+                      _BigIconButton(
+                        icon: Icons.quiz,
+                        text: "Quiz",
+                        onClick: () {
+                          context.goNamed("create-course-quiz", pathParameters: {
+                            "course_id": course.id.toString(),
+                          });
+                          context.pop();
+                        },
+                      ),
+                      _BigIconButton(
+                        icon: Icons.person,
+                        text: "User Quiz",
+                        onClick: () {
+                          context.goNamed("create-course-userquiz", pathParameters: {
                             "course_id": course.id.toString(),
                           });
                           context.pop();
@@ -218,26 +230,6 @@ class _CourseScreenState extends State<CourseScreen> {
                                             course: course,
                                             item: item
                                         );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              const Heading(headingText: 'My Quizzes'),
-                              BackgroundBody(
-                                child: FutureBuilder(
-                                  future: course.userQuizzes,
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) return const WidgetLoading();
-                                    return ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: snapshot.data!.length,
-                                      itemBuilder: (context, index) {
-                                        // return _UserQuizWidget(
-                                        //   course: course!,
-                                        //   quiz: snapshot.data![index],
-                                        // );
-                                        return Container();
                                       },
                                     );
                                   },
@@ -399,7 +391,7 @@ class _CourseItemWidget extends StatelessWidget {
   }
 
   void edit(BuildContext context) {
-    if(!isTeacher) return;
+    if(!isTeacher && item.type != "userquiz") return;
     debugPrint('Edit ${item.type} ${item.name}');
     context.goNamed('edit-course-${item.type}', pathParameters: {
       'course_id': course.id.toString(),
@@ -413,7 +405,7 @@ class _CourseItemWidget extends StatelessWidget {
       case 'note': return 'Note';
       case 'homework': return 'Hw';
       case 'quiz': return 'Qz';
-      case 'user-quiz': return 'U-Qz';
+      case 'userquiz': return 'U-Qz';
     }
     return item.type;
   }
@@ -424,7 +416,7 @@ class _CourseItemWidget extends StatelessWidget {
       case 'note': return Colors.deepPurple.shade400;
       case 'homework': return Colors.teal;
       case 'quiz': return Colors.greenAccent;
-      case 'user-quiz': return Colors.lightGreen;
+      case 'userquiz': return Colors.lightGreen;
     }
     return Colors.blueAccent;
   }
@@ -445,7 +437,7 @@ class _CourseItemWidget extends StatelessWidget {
         edit(context);
       } : null,
       actions: [
-        isTeacher ? Padding(
+        isTeacher || item.type == "userquiz" ? Padding(
           padding: const EdgeInsets.all(5),
           child: Button(
             text: "",
