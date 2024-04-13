@@ -1,10 +1,12 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/objects/courseItems/Quiz.dart';
+import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -43,13 +45,46 @@ class CourseQuizInfoScreen extends StatelessWidget {
               bool isTeacher = snapshot.data!;
 
               return FutureBuilder(
-                future: Future(() => Quiz(id: 1, name: "Testing quiz", created: DateTime.now(), createdById: 1, isVisible: true, scheduled: DateTime.now(), end: DateTime.now().add(Duration(days: 3)))),
+                future: Future(() async {
+                  var x = await CourseGateway.instance.getCourseItems(courseId);
+                  return x.where((element) => element.id == quizId).singleOrNull;
+                } as FutureOr Function()),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return const Center(child: WidgetLoading());
-                  Quiz quiz = snapshot.data as Quiz;
+                  CourseItem quiz = snapshot.data;
                   return ListView(
                     children: [
-                      Heading(headingText: quiz.name),
+                      Heading(
+                        headingText: quiz.name,
+                        actions: [
+                          FutureBuilder<bool>(
+                              future: Future(() async {
+                                Course? course = await CourseGateway.instance.getCourse(courseId);
+                                return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
+                              }),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) return Container();
+                                bool isTeacher = snapshot.data!;
+                                if (!isTeacher) return Container();
+                                return Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Button(
+                                    icon: Icons.edit,
+                                    toolTip: "Edit",
+                                    maxWidth: 40,
+                                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                                    onClick: (context) {
+                                      context.goNamed('edit-course-quiz', pathParameters: {
+                                        'course_id': courseId.toString(),
+                                        'quiz_id': quizId.toString(),
+                                      });
+                                    },
+                                  ),
+                                );
+                              }
+                          ),
+                        ],
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: width > overflow ? 50 : 15,

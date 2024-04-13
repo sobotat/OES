@@ -1,6 +1,3 @@
-
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,7 +6,6 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
@@ -123,6 +119,9 @@ class _BodyState extends State<_Body> {
         await signalR!.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
         if(mounted) setState(() {});
       },
+      onReconnecting: () {
+        if(mounted) setState(() {});
+      },
     );
 
     bool started = await signalR!.start({
@@ -134,14 +133,10 @@ class _BodyState extends State<_Body> {
           }
         }
 
-        if (users.isNotEmpty) {
+        if (users.isNotEmpty && (!widget.isTeacher || (AppSecurity.instance.user!.id != arguments[1]))) {
           User joined = users.where((element) => element.id == arguments[1]).single;
           Toast.makeToast(text: 'Joined: ${joined.firstName} ${joined.lastName}');
         }
-        setState(() {});
-      },
-      "JoinGroupErrorCallback": (arguments) {
-        print('Join Error: $arguments');
         setState(() {});
       },
       "RemoveFromGroupCallback": (arguments) {
@@ -157,7 +152,6 @@ class _BodyState extends State<_Body> {
         countSubmitted += 1;
         setState(() {});
       },
-
       "NextQuestionCallback": (arguments) {
         state = _ScreenState.question;
         if (arguments.isNotEmpty) {
@@ -167,25 +161,16 @@ class _BodyState extends State<_Body> {
         }
         setState(() {});
       },
-      "NextQuestionErrorCallback": (arguments) {
-        print("NextQuestionErrorCallback: $arguments");
-      },
       "ShowCurrentQuestionResultsCallback": (arguments) {
         state = _ScreenState.result;
-        print("ShowCurrentQuestionResult: $arguments");
         if (!widget.isTeacher && arguments.length >= 2) {
           points = arguments[0];
           position = arguments[1];
         }
-        countRemainingQuestions = arguments[1];
         setState(() {});
-      },
-      "ShowCurrentQuestionResultsErrorCallback": (arguments) {
-        print("ShowCurrentQuestionResultsErrorCallback: $arguments");
       },
       "ShowResultsCallback": (arguments) {
         state = _ScreenState.score;
-        print(arguments);
         if (arguments.isNotEmpty) {
           score = [];
           for (Map<String, dynamic> json in arguments[0]) {
@@ -197,6 +182,7 @@ class _BodyState extends State<_Body> {
             });
           }
         }
+        countRemainingQuestions = arguments[1];
         setState(() {});
       },
 
@@ -231,7 +217,7 @@ class _BodyState extends State<_Body> {
       children: [
         Container(
           height: 3,
-          color: signalR!.getState() == HubConnectionState.Connected ? Colors.green : Colors.red,
+          color: signalR!.getState() == HubConnectionState.Connected ? Colors.green : signalR!.getState() == HubConnectionState.Reconnecting ? Colors.orange : Colors.red,
         ),
         Expanded(
           child: Builder(
@@ -465,6 +451,7 @@ class _QuestionState extends State<_Question> {
                     }
 
                     return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Flexible(
                           child: Column(
@@ -614,7 +601,7 @@ class _Score extends StatelessWidget {
               bottom: 20
           ),
           child: isTeacher ? Button(
-            text: remainingQuestions != 0 ? "Next Question" : "Finish Quiz",
+            text: remainingQuestions != 0 ? "Next Question [Questions to go $remainingQuestions]" : "Finish Quiz",
             maxWidth: double.infinity,
             backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
             onClick: (context) {
