@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,21 +10,20 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
-import 'package:oes/src/objects/questions/PickManyQuestion.dart';
+import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
+import 'package:oes/src/objects/questions/QuestionFactory.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/services/SignalR.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
-import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
-import 'package:signalr_netcore/errors.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 
 class CourseQuizScreen extends StatelessWidget {
@@ -99,7 +100,12 @@ class _BodyState extends State<_Body> {
   SignalR? signalR;
   _ScreenState state = _ScreenState.waiting;
   List<User> users = [];
-  Question? question = PickManyQuestion(id: 1, name: "Testing", description: "Hello dart-sdk/lib/_internal/js_dev_runtime/private/ddc_runtime/errors.dart 297:3", points: 3, options: [QuestionOption(id: 1, text: "Yes", points: 3), QuestionOption(id: 1, text: "No", points: 0),QuestionOption(id: 1, text: "Maybe", points: 3),]);
+  List<Map<String, dynamic>> score = [];
+  Question? question;
+  bool submittedQuestion = false;
+  int points = 0, position = 0;
+  int countRemainingQuestions = 0;
+  int countSubmitted = 0;
 
   @override
   void initState() {
@@ -120,30 +126,94 @@ class _BodyState extends State<_Body> {
   }
 
   Future<void> initSignalR() async {
-    signalR = SignalR("signalr/quiz");
+    signalR = SignalR("signalr/quiz",
+      onReconnected: () async {
+        await signalR!.send("JoinGroup", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+        if(mounted) setState(() {});
+      },
+    );
+
     bool started = await signalR!.start({
       "JoinGroupCallback": (arguments) {
         users = [];
-        if (arguments != null && arguments.isNotEmpty) {
+        if (arguments.isNotEmpty) {
           for (Map<String, dynamic> argv in arguments[0] as List<dynamic>) {
             users.add(User.fromJson(argv));
           }
         }
-        if (users.isNotEmpty) Toast.makeToast(text: 'Joined: ${users.last.firstName} ${users.last.lastName}');
+
+        if (users.isNotEmpty) {
+          User joined = users.where((element) => element.id == arguments[1]).single;
+          Toast.makeToast(text: 'Joined: ${joined.firstName} ${joined.lastName}');
+        }
         setState(() {});
       },
       "JoinGroupErrorCallback": (arguments) {
-        Toast.makeToast(text: 'Join Error: $arguments');
+        print('Join Error: $arguments');
         setState(() {});
       },
       "RemoveFromGroupCallback": (arguments) {
+        users = [];
+        if (arguments.isNotEmpty) {
+          for (Map<String, dynamic> argv in arguments[0] as List<dynamic>) {
+            users.add(User.fromJson(argv));
+          }
+        }
         setState(() {});
       },
-      "SendAnswerErrorCallback": (arguments) {
-        Toast.makeToast(text: 'Answer Error: $arguments');
+      "SubmitAnswerCallback": (arguments) {
+        countSubmitted += 1;
         setState(() {});
       },
+
+      "NextQuestionCallback": (arguments) {
+        state = _ScreenState.question;
+        if (arguments.isNotEmpty) {
+          countSubmitted = 0;
+          question = QuestionFactory.fromJson(arguments[0] as Map<String, dynamic>);
+          submittedQuestion = false;
+        }
+        setState(() {});
+      },
+      "NextQuestionErrorCallback": (arguments) {
+        print("NextQuestionErrorCallback: $arguments");
+      },
+      "ShowCurrentQuestionResultsCallback": (arguments) {
+        state = _ScreenState.result;
+        print("ShowCurrentQuestionResult: $arguments");
+        if (!widget.isTeacher && arguments.length >= 2) {
+          points = arguments[0];
+          position = arguments[1];
+        }
+        countRemainingQuestions = arguments[1];
+        setState(() {});
+      },
+      "ShowCurrentQuestionResultsErrorCallback": (arguments) {
+        print("ShowCurrentQuestionResultsErrorCallback: $arguments");
+      },
+      "ShowResultsCallback": (arguments) {
+        state = _ScreenState.score;
+        print(arguments);
+        if (arguments.isNotEmpty) {
+          score = [];
+          for (Map<String, dynamic> json in arguments[0]) {
+            int points = json.remove("points");
+            User user = User.fromJson(json);
+            score.add({
+              "user": user,
+              "points": points,
+            });
+          }
+        }
+        setState(() {});
+      },
+
       "QuizFinished": (arguments) {
+        state = _ScreenState.waiting;
+        Toast.makeToast(text: "Finished");
+        setState(() {});
+      },
+      "QuizQuit": (arguments) {
         if(mounted) context.pop();
       }
     }).onError((error, stackTrace) {
@@ -179,17 +249,59 @@ class _BodyState extends State<_Body> {
                   return _Users(
                     users: users,
                     isTeacher: widget.isTeacher,
+                    onStart: () {
+                      signalR!.send("NextQuestion", arguments: [AppSecurity.instance.user!.id, widget.quiz.id, true]);
+                    },
                   );
                 case _ScreenState.question:
                   if (question == null) return const Center(child: WidgetLoading());
                   return _Question(
                     question: question!,
+                    submitted: submittedQuestion,
+                    countSubmitted: countSubmitted,
+                    countUsers: users.length,
                     isTeacher: widget.isTeacher,
+                    onSubmit: (options) {
+                      List<Map<String, dynamic>> answers = [];
+                      for(AnswerOption option in options) {
+                        submittedQuestion = true;
+                        answers.add({
+                          "optionId": option.id,
+                          "questionId": option.questionId,
+                          "submittedAt": DateTime.now().toUtc().toString().replaceAll(' ', 'T')
+                        });
+                      }
+                      setState(() {});
+                      signalR!.send("SubmitAnswer", arguments: [AppSecurity.instance.user!.id, widget.quiz.id, answers]);
+                    },
+                    onShowResult: () {
+                      signalR!.send("ShowCurrentQuestionResults", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+                      Future.delayed(const Duration(seconds: 5), () {
+                        if (mounted) {
+                          signalR!.send("ShowResults", arguments: [AppSecurity.instance.user!.id, widget.quiz.id]);
+                        }
+                      },);
+                      setState(() {
+                        state = _ScreenState.result;
+                      });
+                    },
                   );
                 case _ScreenState.result:
-                  return const _Result();
+                  return _Result(
+                    points: points,
+                    position: position,
+                    countOfUsers: users.length,
+                    isTeacher: widget.isTeacher,
+                  );
                 case _ScreenState.score:
-                  return const _Score();
+                  return _Score(
+                    score: score,
+                    isTeacher: widget.isTeacher,
+                    remainingQuestions: countRemainingQuestions,
+                    onNextQuestion: () {
+                      signalR!.send("NextQuestion", arguments: [AppSecurity.instance.user!.id, widget.quiz.id, false]);
+                    },
+                  );
                 default:
                   throw UnimplementedError();
               }
@@ -205,11 +317,13 @@ class _Users extends StatelessWidget {
   const _Users({
     required this.users,
     required this.isTeacher,
+    required this.onStart,
     super.key
   });
 
   final List<User> users;
   final bool isTeacher;
+  final Function() onStart;
 
   @override
   Widget build(BuildContext context) {
@@ -238,27 +352,22 @@ class _Users extends StatelessWidget {
             ),
           ),
         ),
-        isTeacher ? Padding(
+        Padding(
           padding: EdgeInsets.only(
-            left: width > overflow ? 50 : 15,
-            right: width > overflow ? 50 : 15,
-            bottom: 20
+              left: width > overflow ? 50 : 15,
+              right: width > overflow ? 50 : 15,
+              bottom: 20
           ),
-          child: Button(
+          child: isTeacher ? Button(
             text: "Start Quiz",
             maxWidth: double.infinity,
             backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
             onClick: (context) {
-
+              onStart();
             },
+          ) : const Text("Waiting for teacher to start Quiz",
+            style: TextStyle(fontStyle: FontStyle.italic),
           ),
-        ) : Button(
-          text: "Show Result",
-          maxWidth: double.infinity,
-          backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-          onClick: (context) {
-
-          },
         )
       ],
     );
@@ -269,11 +378,21 @@ class _Question extends StatefulWidget {
   const _Question({
     required this.question,
     required this.isTeacher,
+    required this.submitted,
+    required this.countSubmitted,
+    required this.countUsers,
+    required this.onSubmit,
+    required this.onShowResult,
     super.key
   });
 
   final Question question;
   final bool isTeacher;
+  final bool submitted;
+  final int countSubmitted;
+  final int countUsers;
+  final Function(List<AnswerOption> options) onSubmit;
+  final Function() onShowResult;
 
   @override
   State<_Question> createState() => _QuestionState();
@@ -311,56 +430,104 @@ class _QuestionState extends State<_Question> {
           padding: EdgeInsets.symmetric(
             horizontal: width > overflow ? 50 : 15
           ),
-          child: !widget.isTeacher ? Center(
-            child: Builder(
-              builder: (context) {
-                List<Widget> children = [];
-                for(QuestionOption option in widget.question.options) {
-                  children.add(
-                    Button(
-                      text: option.text,
-                      maxHeight: (height / 4) / (widget.question.options.length / 2),
-                      maxWidth: (width / 2).floor() - 100,
-                      backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-                      borderColor: selected.contains(option) ? Colors.green.shade700 : null,
-                      borderWidth: 4,
-                      onClick: (context) {
-                        if(selected.contains(option)) {
-                          selected.remove(option);
+          child: !widget.isTeacher && !widget.submitted ? Column(
+            children: [
+              Center(
+                child: Builder(
+                  builder: (context) {
+                    List<Widget> childrenLeft = [];
+                    List<Widget> childrenRight = [];
+                    
+                    bool isLeft = true;
+                    for(QuestionOption option in widget.question.options) {
+                      Widget w = Button(
+                        text: option.text,
+                        maxHeight: (height / 4) / (widget.question.options.length / 2),
+                        maxWidth: double.infinity,
+                        backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+                        borderColor: selected.contains(option) ? Colors.green.shade700 : null,
+                        borderWidth: 4,
+                        onClick: (context) {
+                          if(selected.contains(option)) {
+                            selected.remove(option);
+                            setState(() {});
+                            return;
+                          }
+                          if(widget.question is PickOneQuestion) {
+                            selected.clear();
+                          }
+                          selected.add(option);
                           setState(() {});
-                          return;
-                        }
-                        if(widget.question is PickOneQuestion) {
-                          selected.clear();
-                        }
-                        selected.add(option);
-                        setState(() {});
-                      },
-                    )
-                  );
-                }
+                        },
+                      );
+                      
+                      if(isLeft) {
+                        childrenLeft.add(w);
+                        childrenLeft.add(const SizedBox(height: 20,));
+                      } else {
+                        childrenRight.add(w);
+                        childrenRight.add(const SizedBox(height: 20,));
+                      }
 
-                return Wrap(
-                  runSpacing: 20,
-                  spacing: 20,
-                  children: children,
-                );
-              }
-            ),
-          ) : Column(
+                      isLeft = !isLeft;
+                    }
+
+                    return Row(
+                      children: [
+                        Flexible(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: childrenLeft,
+                          ),
+                        ),
+                        const SizedBox(width: 20,),
+                        Flexible(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: childrenRight,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Button(
+                    text: "Submit",
+                    maxWidth: double.infinity,
+                    backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+                    onClick: (context) {
+                      List<AnswerOption> options = [];
+                      for (QuestionOption o in selected) {
+                        AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
+                        options.add(option);
+                      }
+                      widget.onSubmit(options);
+                    },
+                  )
+                ],
+              ),
+            ],
+          ) :
+          widget.isTeacher ? Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 20,),
+              Text("Submitted ${widget.countSubmitted}/${widget.countUsers}", textAlign: TextAlign.center,),
+              const SizedBox(height: 5,),
               Button(
                 text: "Show Results",
                 maxWidth: double.infinity,
                 backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
                 onClick: (context) {
-
+                  widget.onShowResult();
                 },
               ),
             ],
-          ),
+          ) : Container(),
         ),
         const SizedBox(height: 20,)
       ],
@@ -369,19 +536,103 @@ class _QuestionState extends State<_Question> {
 }
 
 class _Result extends StatelessWidget {
-  const _Result({super.key});
+  const _Result({
+    required this.points,
+    required this.position,
+    required this.countOfUsers,
+    required this.isTeacher,
+    super.key
+  });
+
+  final int points;
+  final int position;
+  final int countOfUsers;
+  final bool isTeacher;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    if (isTeacher) {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Please wait", style: TextStyle(fontSize: 45)),
+          Text("Others are looking at result", style: TextStyle(fontSize: 30),)
+        ],
+      );
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Got $points Points", style: const TextStyle(fontSize: 45),),
+        Text("Position $position/$countOfUsers", style: const TextStyle(fontSize: 30),)
+      ],
+    );
   }
 }
 
 class _Score extends StatelessWidget {
-  const _Score({super.key});
+  const _Score({
+    required this.score,
+    required this.isTeacher,
+    required this.remainingQuestions,
+    required this.onNextQuestion,
+    super.key
+  });
+
+  final List<Map<String, dynamic>> score;
+  final bool isTeacher;
+  final int remainingQuestions;
+  final Function() onNextQuestion;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return Column(
+      children: [
+        const Heading(
+          headingText: "Scores",
+        ),
+        Flexible(
+          child: BackgroundBody(
+            child: ListView.builder(
+                itemCount: score.length,
+                itemBuilder: (context, index) {
+                  Map<String,dynamic> s = score[index];
+                  User user = s['user'];
+                  int points = s['points'];
+
+                  return IconItem(
+                    icon: Text(" ${index + 1}."),
+                    body: Text("${user.firstName} ${user.lastName} (${user.username})"),
+                    actions: [
+                      Text("${points}b")
+                    ],
+                  );
+                }
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              left: width > overflow ? 50 : 15,
+              right: width > overflow ? 50 : 15,
+              bottom: 20
+          ),
+          child: isTeacher ? Button(
+            text: remainingQuestions != 0 ? "Next Question" : "Finish Quiz",
+            maxWidth: double.infinity,
+            backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+            onClick: (context) {
+              onNextQuestion();
+            },
+          ) : remainingQuestions != 0 ? Text("Waiting for teacher to start next Question [Questions to go $remainingQuestions]",
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ) : Container(),
+        )
+      ],
+    );
   }
 }
