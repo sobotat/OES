@@ -2,6 +2,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppRouter.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 
@@ -63,7 +64,7 @@ class Toast {
         BuildContext? currentContext = AppRouter.instance.getCurrentContext();
 
         print("🔷 Toast -> ${data.text}");
-        if (currentContext != null) {
+        if (currentContext != null && currentContext.mounted) {
           showDialog(
               barrierColor: Colors.transparent,
               barrierDismissible: true,
@@ -118,7 +119,7 @@ class Toast {
         }
 
         await Future.delayed(Duration(milliseconds: data.duration.duration));
-        if (isActive) AppRouter.instance.router.pop();
+        if (isActive && currentContext != null && currentContext.mounted) currentContext.pop();
         await Future.delayed(const Duration(milliseconds: 200));
 
         if (_pendingMessages.isEmpty) {
