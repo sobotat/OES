@@ -37,4 +37,8 @@ abstract class Question extends ApiObject {
     };
   }
 
+  @override
+  String toString() {
+    return '{id: $id, type: $type, name: $name, description: $description, options: $options, points: $points}';
+  }
 }
