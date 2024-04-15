@@ -132,10 +132,10 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
 
     switch(questionType) {
       case "pick-one":
-        widget.quiz.questions.add(PickOneQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options));
+        widget.quiz.questions.add(PickOneQuestion(id: -1, name: "Pick One", description: "Description", points: 0, options: options));
         break;
       case "pick-many":
-        widget.quiz.questions.add(PickManyQuestion(id: -1, name: "Title", description: "Description", points: 0, options: options));
+        widget.quiz.questions.add(PickManyQuestion(id: -1, name: "Pick Many", description: "Description", points: 0, options: options));
         break;
       default:
         print("Add Question Failed -> Type [$questionType] is Not Supported");
