@@ -18,3 +18,6 @@
 FROM httpd:2.4
 COPY ./build/web/ /usr/local/apache2/htdocs/
 COPY ./web-deeplinks/ /usr/local/apache2/htdocs/
+
+COPY ./build/windows/x64/runner/Release/oes.msix /usr/local/apache2/htdocs/app-download/oes-windows.msix
+COPY ./build/app/outputs/flutter-apk/app-release.apk /usr/local/apache2/htdocs/app-download/oes-android.apk

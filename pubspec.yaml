@@ -115,5 +115,6 @@ msix_config:
   publisher_display_name: ---
   identity_name: com.oes.oes
   msix_version: 1.0.0.0
-  logo_path: art\icon.png
+  logo_path: assets/logo.jpg
   capabilities: internetClient
+  install_certificate: false
