@@ -157,6 +157,7 @@ class _BodyState extends State<_Body> {
         if (arguments.isNotEmpty) {
           countSubmitted = 0;
           question = QuestionFactory.fromJson(arguments[0] as Map<String, dynamic>);
+          question!.options.shuffle();
           submittedQuestion = false;
         }
         setState(() {});

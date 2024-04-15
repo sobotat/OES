@@ -68,9 +68,18 @@ class _BodyState extends State<_Body> {
   void initState() {
     super.initState();
     Future(() {
-      questionsStack = List.from(widget.userQuiz.questions);
-      setState(() {});
+      resetQuestions();
     },);
+  }
+
+  void resetQuestions() {
+    questionsStack = List.from(widget.userQuiz.questions);
+    questionsStack.shuffle();
+    for(Question q in questionsStack) {
+      q.options.shuffle();
+    }
+    showResult = false;
+    setState(() {});
   }
 
   @override
@@ -115,9 +124,7 @@ class _BodyState extends State<_Body> {
                     text: "Restart",
                     maxWidth: double.infinity,
                     onClick: (context) {
-                      questionsStack = List.from(widget.userQuiz.questions);
-                      showResult = false;
-                      setState(() {});
+                      resetQuestions();
                     },
                   ),
                   const SizedBox(height: 10,),
