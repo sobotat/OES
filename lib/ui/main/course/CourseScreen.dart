@@ -42,7 +42,7 @@ class _CourseScreenState extends State<CourseScreen> {
     return false;
   }
 
-  Future<void> showCreateDialog(BuildContext context, Course course) async {
+  Future<void> showCreateDialog(BuildContext context, Course course, bool isTeacher) async {
     refreshKey.currentState?.disableRefreshOnPop();
     await showDialog(
       context: context,
@@ -50,7 +50,7 @@ class _CourseScreenState extends State<CourseScreen> {
         return PopupDialog(
           alignment: Alignment.center,
           child: Container(
-            width: 490,
+            width: isTeacher ? 490 : 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Theme.of(context).colorScheme.background,
@@ -73,7 +73,7 @@ class _CourseScreenState extends State<CourseScreen> {
                     runSpacing: 10,
                     alignment: WrapAlignment.center,
                     children: [
-                      _BigIconButton(
+                      isTeacher ? _BigIconButton(
                         icon: Icons.text_increase,
                         text: "Test",
                         onClick: () {
@@ -83,8 +83,8 @@ class _CourseScreenState extends State<CourseScreen> {
                           });
                           context.pop();
                         },
-                      ),
-                      _BigIconButton(
+                      ) : Container(),
+                      isTeacher ? _BigIconButton(
                         icon: Icons.home_work,
                         text: "Homework",
                         onClick: () {
@@ -94,8 +94,8 @@ class _CourseScreenState extends State<CourseScreen> {
                           });
                           context.pop();
                         },
-                      ),
-                      _BigIconButton(
+                      ) : Container(),
+                      isTeacher ? _BigIconButton(
                         icon: Icons.file_open,
                         text: "Notes",
                         onClick: () {
@@ -105,8 +105,8 @@ class _CourseScreenState extends State<CourseScreen> {
                           });
                           context.pop();
                         },
-                      ),
-                      _BigIconButton(
+                      ) : Container(),
+                      isTeacher ? _BigIconButton(
                         icon: Icons.quiz,
                         text: "Quiz",
                         onClick: () {
@@ -115,7 +115,7 @@ class _CourseScreenState extends State<CourseScreen> {
                           });
                           context.pop();
                         },
-                      ),
+                      ) : Container(),
                       _BigIconButton(
                         icon: Icons.person,
                         text: "User Quiz",
@@ -184,7 +184,7 @@ class _CourseScreenState extends State<CourseScreen> {
                             children: [
                               Heading(
                                 headingText: course.name,
-                                actions: isTeacher ? [
+                                actions: [
                                   Padding(
                                     padding: const EdgeInsets.all(5),
                                     child: Button(
@@ -193,11 +193,11 @@ class _CourseScreenState extends State<CourseScreen> {
                                       maxWidth: 40,
                                       backgroundColor: Theme.of(context).colorScheme.secondary,
                                       onClick: (context) {
-                                        showCreateDialog(context, course);
+                                        showCreateDialog(context, course, isTeacher);
                                       },
                                     ),
                                   ),
-                                ] : null,
+                                ],
                               ),
                               const SizedBox(height: 10,),
                               _Description(width: width, overflow: overflow, course: course),
