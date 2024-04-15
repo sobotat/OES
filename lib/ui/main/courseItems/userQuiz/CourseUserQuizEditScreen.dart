@@ -57,13 +57,13 @@ class _CourseUserQuizEditScreenState extends State<CourseUserQuizEditScreen> {
               return UserQuiz(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, isVisible: true, questions: [
                 PickOneQuestion(id: 1, name: "Pick One", description: "Description", points: 0, options: [
                   QuestionOption(id: -1, text: "Option 1", points: 0),
-                  QuestionOption(id: -1, text: "Option 2", points: 3),
+                  QuestionOption(id: -1, text: "Option 2", points: 0),
                   QuestionOption(id: -1, text: "Option 3", points: 0)
                 ]),
                 PickManyQuestion(id: 2, name: "Pick Many", description: "Description", points: 0, options: [
-                  QuestionOption(id: -1, text: "Option 1", points: 3),
+                  QuestionOption(id: -1, text: "Option 1", points: 0),
                   QuestionOption(id: -1, text: "Option 2", points: 0),
-                  QuestionOption(id: -1, text: "Option 3", points: 3)
+                  QuestionOption(id: -1, text: "Option 3", points: 0)
                 ])
               ],);
             },),
