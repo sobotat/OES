@@ -23,6 +23,19 @@ function Run-Command {
     }
 }
 
+# Verify Docker daemon is accessible by running a simple Docker command
+try {
+    docker info | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Failed to connect to Docker daemon. Please ensure Docker is running and try again."
+        exit 1
+    }
+    Write-Host "Docker daemon is running."
+} catch {
+    Write-Host "Failed to connect to Docker daemon. Please ensure Docker is running and try again."
+    exit 1
+}
+
 # Build the Flutter web
 Run-Command "flutter build web" $true
 
