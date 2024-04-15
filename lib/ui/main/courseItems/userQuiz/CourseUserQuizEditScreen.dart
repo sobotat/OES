@@ -444,7 +444,11 @@ class _EditorState extends State<_Editor> {
     bool success = await UserQuizGateway.instance.delete(widget.quiz.id);
     if (success) {
       Toast.makeSuccessToast(text: "UserQuiz was Deleted", duration: ToastDuration.short);
-      context.pop();
+      if (mounted) {
+        context.goNamed("course", pathParameters: {
+          "course_id": widget.courseId.toString(),
+        });
+      }
       return;
     }
     Toast.makeErrorToast(text: "Failed to Delete UserQuiz", duration: ToastDuration.large);
@@ -679,6 +683,14 @@ class _QuestionOptionsEditorFactory extends StatefulWidget {
 
 class _QuestionOptionsEditorFactoryState extends State<_QuestionOptionsEditorFactory> {
   void recalculatePoints() {
+    if (widget.question.type == "pick-one") {
+      int max = 0;
+      for(int points in widget.question.options.map((e) => e.points).toList()){
+        if (points > max) max = points;
+      }
+      widget.question.points = max;
+      return;
+    }
     widget.question.points = 0;
     for (QuestionOption option in widget.question.options) {
       if (option.points <= 0) continue;
@@ -730,74 +742,11 @@ class _QuestionOptionsEditorFactoryState extends State<_QuestionOptionsEditorFac
           )
         ],
       );
-      case 'open':
-        return _OpenOption(
-          question: widget.question,
-          onUpdated: () {
-            widget.onUpdated();
-          },
-        );
       default:
         return const Placeholder();
     }
   }
 }
-
-class _OpenOption extends StatefulWidget {
-  const _OpenOption({
-    required this.question,
-    required this.onUpdated,
-    super.key
-  });
-
-  final Question question;
-  final Function() onUpdated;
-
-  @override
-  State<_OpenOption> createState() => _OpenOptionState();
-}
-
-class _OpenOptionState extends State<_OpenOption> {
-
-  TextEditingController pointsController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    pointsController.text = widget.question.points.toString();
-  }
-
-  @override
-  void dispose() {
-    pointsController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Flexible(
-      child: TextField(
-        controller: pointsController,
-        keyboardType: TextInputType.number,
-        maxLines: 1,
-        decoration: InputDecoration(
-          labelText: "Points",
-          labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
-        ),
-        onChanged: (value) {
-          try {
-            widget.question.points = int.parse(value);
-          } on FormatException catch (_) {
-            widget.question.points = 0;
-            pointsController.text = '0';
-          }
-          widget.onUpdated();
-        },
-      ),
-    );
-  }
-}
-
 
 class _PickOptions extends StatefulWidget {
   const _PickOptions({
@@ -874,6 +823,7 @@ class _PickOptionsState extends State<_PickOptions> {
               maxLines: 1,
               maxLength: 10,
               onChanged: (value) {
+                if (value == "-") return;
                 try {
                   widget.option.points = int.parse(value);
                 } on FormatException catch (_) {

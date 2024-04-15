@@ -471,7 +471,11 @@ class _EditorState extends State<_Editor> {
     bool success = await TestGateway.instance.delete(widget.test.id);
     if (success) {
       Toast.makeSuccessToast(text: "Test was Deleted", duration: ToastDuration.short);
-      context.pop();
+      if (mounted) {
+        context.goNamed("course", pathParameters: {
+          "course_id": widget.courseId.toString(),
+        });
+      }
       return;
     }
     Toast.makeErrorToast(text: "Failed to Delete Test", duration: ToastDuration.large);
@@ -725,6 +729,14 @@ class _QuestionOptionsEditorFactory extends StatefulWidget {
 
 class _QuestionOptionsEditorFactoryState extends State<_QuestionOptionsEditorFactory> {
   void recalculatePoints() {
+    if (widget.question.type == "pick-one") {
+      int max = 0;
+      for(int points in widget.question.options.map((e) => e.points).toList()){
+        if (points > max) max = points;
+      }
+      widget.question.points = max;
+      return;
+    }
     widget.question.points = 0;
     for (QuestionOption option in widget.question.options) {
       if (option.points <= 0) continue;
@@ -831,6 +843,7 @@ class _OpenOptionState extends State<_OpenOption> {
           labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
         ),
         onChanged: (value) {
+          if (value == "-") return;
           try {
             widget.question.points = int.parse(value);
           } on FormatException catch (_) {
@@ -920,6 +933,7 @@ class _PickOptionsState extends State<_PickOptions> {
               maxLines: 1,
               maxLength: 10,
               onChanged: (value) {
+                if (value == "-") return;
                 try {
                   widget.option.points = int.parse(value);
                 } on FormatException catch (_) {
