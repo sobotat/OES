@@ -1,6 +1,15 @@
+import 'package:download/download.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
+import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/restApi/api/http/HttpRequest.dart';
+import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
+import 'package:oes/src/restApi/api/http/RequestResult.dart';
+import 'package:oes/src/services/DeviceInfo.dart';
+import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -28,6 +37,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
         children: [
           _Title(width: width, overflow: overflow),
           const _WhyToUse(),
+          const _Download(),
         ],
       ),
     );
@@ -151,6 +161,88 @@ class _GoToMain extends StatelessWidget {
         onClick: (context) {
           context.goNamed('main');
         },
+      ),
+    );
+  }
+}
+
+class _Download extends StatelessWidget {
+  const _Download({super.key});
+
+  Future<void> downloadApp(String fileName) async {
+    Device device = await DeviceInfo.getDevice();
+    String? path;
+    if (device.isWeb) {
+      path = fileName;
+    } else {
+      path = await FilePicker.platform.getDirectoryPath(dialogTitle: "Download Location");
+      if (path == null) {
+        return;
+      }
+      path += "/$fileName";
+    }
+    debugPrint("Downloading File to $path");
+
+    String baseUrl = "${Uri.base}app-download";
+    RequestResult result = await HttpRequest.instance.get("$baseUrl/$fileName",
+      options: HttpRequestOptions(
+          responseType: HttpResponseType.bytes
+      ),
+    );
+
+    if (!result.checkOk()) {
+      Toast.makeErrorToast(text: "File failed to Download", duration: ToastDuration.large);
+      return;
+    }
+
+    await download(Stream.fromIterable(result.data as List<int>), path);
+    Toast.makeSuccessToast(text: "File Downloaded", duration: ToastDuration.large);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(50),
+      alignment: Alignment.center,
+      height: 300,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondary,
+        borderRadius: BorderRadius.circular(10)
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text("Download", style: TextStyle(fontSize: 50),),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Button(
+                  icon: AppIcons.icon_windows,
+                  iconSize: 50,
+                  maxWidth: 150,
+                  maxHeight: 150,
+                  onClick: (context) async {
+                    downloadApp("oes-windows.msix");
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Button(
+                  icon: AppIcons.icon_android,
+                  iconSize: 50,
+                  maxWidth: 150,
+                  maxHeight: 150,
+                  onClick: (context) {
+                    downloadApp("oes-android.apk");
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
