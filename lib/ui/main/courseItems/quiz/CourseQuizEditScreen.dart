@@ -13,6 +13,7 @@ import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/courseItems/QuizGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -423,6 +424,12 @@ class _Editor extends StatefulWidget {
 class _EditorState extends State<_Editor> {
 
   Future<void> save() async {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
 
     if (widget.quiz.name.isEmpty) {
       Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
@@ -434,11 +441,15 @@ class _EditorState extends State<_Editor> {
 
     if (response != null) {
       Toast.makeSuccessToast(text: "Quiz was Saved", duration: ToastDuration.short);
-      context.pop();
+      if (mounted) {
+        context.pop();
+        context.pop();
+      }
       return;
     }
 
     Toast.makeErrorToast(text: "Failed to Save Quiz", duration: ToastDuration.large);
+    if (mounted) context.pop();
   }
 
   Future<void> delete() async {

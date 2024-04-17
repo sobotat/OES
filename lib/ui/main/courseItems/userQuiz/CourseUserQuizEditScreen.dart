@@ -7,17 +7,16 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
-import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
-import 'package:oes/ui/assets/templates/DateTimeItem.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -421,6 +420,12 @@ class _Editor extends StatefulWidget {
 class _EditorState extends State<_Editor> {
 
   Future<void> save() async {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
 
     if (widget.quiz.name.isEmpty) {
       Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
@@ -432,11 +437,15 @@ class _EditorState extends State<_Editor> {
 
     if (response != null) {
       Toast.makeSuccessToast(text: "UserQuiz was Saved", duration: ToastDuration.short);
-      context.pop();
+      if (mounted) {
+        context.pop();
+        context.pop();
+      }
       return;
     }
 
     Toast.makeErrorToast(text: "Failed to Save UserQuiz", duration: ToastDuration.large);
+    if (mounted) context.pop();
   }
 
   Future<void> delete() async {
