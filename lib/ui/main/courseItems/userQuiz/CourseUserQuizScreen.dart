@@ -213,6 +213,7 @@ class _QuestionState extends State<_Question> {
                       borderColor: widget.showResults ? (isSelected ? Colors.green : Colors.red ) : isSelected ? Colors.green.shade700 : null,
                       borderWidth: widget.showResults ? 8 : 4,
                       onClick: (context) {
+                        if (widget.showResults) return;
                         if(selected.contains(option)) {
                           selected.remove(option);
                           setState(() {});
