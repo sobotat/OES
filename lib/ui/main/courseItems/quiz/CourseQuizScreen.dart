@@ -164,9 +164,16 @@ class _BodyState extends State<_Body> {
       },
       "ShowCurrentQuestionResultsCallback": (arguments) {
         state = _ScreenState.result;
-        if (!widget.isTeacher && arguments.length >= 2) {
-          points = arguments[0];
-          position = arguments[1];
+        if (!widget.isTeacher && arguments.isNotEmpty) {
+          points = arguments[0][AppSecurity.instance.user!.id]["points"];
+          position = arguments[0][AppSecurity.instance.user!.id]["position"];
+        }
+        if (widget.isTeacher) {
+          Future.delayed(const Duration(seconds: 5), () {
+            if (mounted) {
+              signalR!.send("ShowResults", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
+            }
+          },);
         }
         setState(() {});
       },
@@ -255,14 +262,6 @@ class _BodyState extends State<_Body> {
                     },
                     onShowResult: () {
                       signalR!.send("ShowCurrentQuestionResults", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
-                      Future.delayed(const Duration(seconds: 5), () {
-                        if (mounted) {
-                          signalR!.send("ShowResults", arguments: [AppSecurity.instance.user!.id, widget.quizId]);
-                        }
-                      },);
-                      setState(() {
-                        state = _ScreenState.result;
-                      });
                     },
                   );
                 case _ScreenState.result:
