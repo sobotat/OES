@@ -47,6 +47,7 @@ dependencies:
   url_launcher: ^6.2.5
   file_picker: ^8.0.0+1
   download: ^1.0.0
+  pdf: ^3.10.8
 
 dev_dependencies:
   flutter_test:
