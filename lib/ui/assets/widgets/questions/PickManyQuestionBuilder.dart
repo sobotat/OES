@@ -26,7 +26,7 @@ class PickManyQuestionBuilder extends QuestionBuilder<PickManyQuestion> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Heading(
-          headingText: question.name,
+          headingText: question.name + " (pick many)",
           actions: [
             Text("Max ${question.points} points")
           ],
