@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/ui/main/course/CourseEditScreen.dart';
@@ -121,13 +121,13 @@ class AppRouter {
           GoRoute(
             path: 'test',
             name: 'test',
-            // redirect: (context, state) {
-            //   if (kReleaseMode){
-            //     debugPrint('This is Release so redirecting to Home');
-            //     return '/';
-            //   }
-            //   return null;
-            // },
+            redirect: (context, state) {
+              if (kReleaseMode){
+                debugPrint('This is Release so redirecting to Home');
+                return '/';
+              }
+              return null;
+            },
             builder: (context, state) {
               _setActiveUri(context, state);
               return const TestScreen();

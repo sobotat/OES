@@ -64,18 +64,18 @@ class _MainScreenState extends State<MainScreen> {
           );
         }
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: '3',
-            onPressed: () {
-              context.goNamed('test');
-            },
-            child: const Icon(AppIcons.icon_darkmode),
-          ),
-        ],
-      ),
+      // floatingActionButton: Column(
+      //   mainAxisAlignment: MainAxisAlignment.end,
+      //   children: [
+      //     FloatingActionButton(
+      //       heroTag: '3',
+      //       onPressed: () {
+      //         context.goNamed('test');
+      //       },
+      //       child: const Icon(AppIcons.icon_darkmode),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
