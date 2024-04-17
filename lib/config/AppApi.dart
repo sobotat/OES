@@ -24,6 +24,10 @@ class AppApi extends ChangeNotifier {
   }
 
   Future<void> init() async {
+    String? mainUrl = await LocalStorage.instance.get("mainServerUrl");
+    if (mainUrl != null) {
+      mainServerUrl = mainUrl;
+    }
     String? organizationName = await LocalStorage.instance.get("organization");
     if (organizationName == null) return;
 
