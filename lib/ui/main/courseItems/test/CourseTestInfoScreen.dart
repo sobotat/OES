@@ -109,7 +109,41 @@ class _TeacherBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        const Heading(headingText: "Info"),
+        Heading(
+          headingText: "Info",
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.print,
+                toolTip: "Print",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) {
+                  context.goNamed('print-course-test', pathParameters: {
+                    'course_id': courseId.toString(),
+                    'test_id': testId.toString(),
+                  });
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.edit,
+                toolTip: "Edit",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) {
+                  context.goNamed('edit-course-test', pathParameters: {
+                    'course_id': courseId.toString(),
+                    'test_id': testId.toString(),
+                  });
+                },
+              ),
+            )
+          ],
+        ),
         BackgroundBody(
           child: Padding(
             padding: const EdgeInsets.all(10),

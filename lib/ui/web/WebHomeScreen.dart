@@ -1,6 +1,8 @@
 import 'package:download/download.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
@@ -13,6 +15,7 @@ import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class WebHomeScreen extends StatefulWidget {
   const WebHomeScreen({super.key});
@@ -169,36 +172,6 @@ class _GoToMain extends StatelessWidget {
 class _Download extends StatelessWidget {
   const _Download({super.key});
 
-  Future<void> downloadApp(String fileName) async {
-    Device device = await DeviceInfo.getDevice();
-    String? path;
-    if (device.isWeb) {
-      path = fileName;
-    } else {
-      path = await FilePicker.platform.getDirectoryPath(dialogTitle: "Download Location");
-      if (path == null) {
-        return;
-      }
-      path += "/$fileName";
-    }
-    debugPrint("Downloading File to $path");
-
-    String baseUrl = "${Uri.base}app-download";
-    RequestResult result = await HttpRequest.instance.get("$baseUrl/$fileName",
-      options: HttpRequestOptions(
-          responseType: HttpResponseType.bytes
-      ),
-    );
-
-    if (!result.checkOk()) {
-      Toast.makeErrorToast(text: "File failed to Download", duration: ToastDuration.large);
-      return;
-    }
-
-    await download(Stream.fromIterable(result.data as List<int>), path);
-    Toast.makeSuccessToast(text: "File Downloaded", duration: ToastDuration.large);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -209,40 +182,133 @@ class _Download extends StatelessWidget {
         color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(10)
       ),
-      child: Column(
+      child: const Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text("Download", style: TextStyle(fontSize: 50),),
+          Text("Download", style: TextStyle(fontSize: 50),),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Button(
-                  icon: AppIcons.icon_windows,
-                  iconSize: 50,
-                  maxWidth: 150,
-                  maxHeight: 150,
-                  onClick: (context) async {
-                    downloadApp("oes-windows.msix");
-                  },
-                ),
+              _DownloadButton(
+                fileName: "oes-windows.msix",
+                icon: AppIcons.icon_windows,
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Button(
-                  icon: AppIcons.icon_android,
-                  iconSize: 50,
-                  maxWidth: 150,
-                  maxHeight: 150,
-                  onClick: (context) {
-                    downloadApp("oes-android.apk");
-                  },
-                ),
+              _DownloadButton(
+                fileName: "oes-android.apk",
+                icon: AppIcons.icon_android,
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DownloadButton extends StatefulWidget {
+  const _DownloadButton({
+    required this.fileName,
+    required this.icon,
+    super.key
+  });
+
+  final String fileName;
+  final IconData icon;
+
+  @override
+  State<_DownloadButton> createState() => _DownloadButtonState();
+}
+
+class _DownloadButtonState extends State<_DownloadButton> {
+
+  int progress = -1;
+
+  Future<void> downloadApp(String fileName) async {
+    setState(() {
+      progress = 0;
+    });
+    Device device = await DeviceInfo.getDevice();
+    String? path;
+    if (device.isWeb) {
+      path = fileName;
+    } else {
+      path = await FilePicker.platform.getDirectoryPath(dialogTitle: "Download Location");
+      if (path == null) {
+        setState(() {
+          progress = -1;
+        });
+        return;
+      }
+      path += "/$fileName";
+    }
+    debugPrint("Downloading File to $path");
+
+    String baseUrl = "${Uri.base}app-download";
+    if(baseUrl.contains("localhost")) {
+      for(int p = 0; p <= 100; p++) {
+        setState(() {
+          progress = p;
+        });
+        await Future.delayed(const Duration(milliseconds: 20));
+      }
+      setState(() {
+        progress = -1;
+      });
+      return;
+    }
+
+    RequestResult result = await HttpRequest.instance.get("$baseUrl/$fileName",
+      options: HttpRequestOptions(
+          responseType: HttpResponseType.bytes
+      ),
+      onReceiveProgress: (progress) {
+        setState(() {
+          this.progress = (progress * 100).round();
+        });
+      },
+    );
+
+    if (!result.checkOk()) {
+      Toast.makeErrorToast(text: "File failed to Download", duration: ToastDuration.large);
+      setState(() {
+        progress = -1;
+      });
+      return;
+    }
+
+    await download(Stream.fromIterable(result.data as List<int>), path);
+    Toast.makeSuccessToast(text: "File Downloaded", duration: ToastDuration.large);
+    setState(() {
+      progress = -1;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Button(
+        maxWidth: 150,
+        maxHeight: 150,
+        onClick: (context) async {
+          downloadApp(widget.fileName);
+        },
+        child: Builder(
+          builder: (context) {
+            if (progress != -1) {
+              return Column(
+                children: [
+                  const WidgetLoading(),
+                  Text(" $progress%")
+                ],
+              );
+            }
+            return Icon(
+              widget.icon,
+              size: 50,
+            );
+          },
+        ),
       ),
     );
   }

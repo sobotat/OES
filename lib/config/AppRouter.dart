@@ -17,6 +17,7 @@ import 'package:oes/ui/main/courseItems/quiz/CourseQuizInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/quiz/CourseQuizScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestEditScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestInfoScreen.dart';
+import 'package:oes/ui/main/courseItems/test/CourseTestPrintScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestScreen.dart';
 import 'package:oes/ui/main/courseItems/test/CourseTestTeacherInfoScreen.dart';
 import 'package:oes/ui/main/courseItems/userQuiz/CourseUserQuizEditScreen.dart';
@@ -212,6 +213,20 @@ class AppRouter {
                         courseId: courseId,
                         testId: id,
                         userId: userId,
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'print',
+                    name: 'print-course-test',
+                    redirect: authCheckRedirect,
+                    builder: (context, state) {
+                      _setActiveUri(context, state);
+                      int courseId = int.parse(state.pathParameters['course_id'] ?? '-1');
+                      int id = int.parse(state.pathParameters['test_id'] ?? '-1');
+                      return CourseTestPrintScreen(
+                        courseId: courseId,
+                        testId: id,
                       );
                     },
                   ),
