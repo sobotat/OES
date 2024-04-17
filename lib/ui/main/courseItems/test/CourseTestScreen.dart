@@ -9,6 +9,7 @@ import 'package:oes/src/objects/courseItems/Test.dart';
 import 'package:oes/src/objects/questions/AnswerOption.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -225,7 +226,14 @@ Possible causes:
     );
 
     if (wantFinishTest) {
+      showDialog(
+        context: context,
+        useSafeArea: true,
+        barrierDismissible: false,
+        builder: (context) => const LoadingDialog(),
+      );
       allowPop = await onFinishTest();
+      context.pop();
     }
     return allowPop;
   }
