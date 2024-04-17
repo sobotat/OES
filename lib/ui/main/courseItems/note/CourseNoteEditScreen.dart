@@ -5,6 +5,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Note.dart';
 import 'package:oes/src/restApi/interface/courseItems/NoteGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
@@ -246,6 +247,13 @@ class _EditorState extends State<_Editor> {
   }
 
   Future<void> save() async {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
+
     widget.note.isVisible = isVisible;
     widget.note.name = nameController.text;
     widget.note.data = editorController.text;
@@ -255,11 +263,15 @@ class _EditorState extends State<_Editor> {
 
     if (response != null) {
       Toast.makeSuccessToast(text: "Note was Saved", duration: ToastDuration.short);
-      if (mounted) context.pop();
+      if (mounted) {
+        context.pop();
+        context.pop();
+      }
       return;
     }
 
     Toast.makeErrorToast(text: "Failed to Save Note", duration: ToastDuration.large);
+    if (mounted) context.pop();
   }
 
   Future<void> delete() async {

@@ -94,6 +94,7 @@ class _BodyState extends State<_Body> {
   }
 
   Future<void> submit() async {
+    if (progress != -1) return;
     setState(() {
       progress = 0;
       failedUpload = false;

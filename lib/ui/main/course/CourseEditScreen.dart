@@ -8,6 +8,7 @@ import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -161,6 +162,13 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
   }
 
   Future<void> save() async {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
+
     Course course = editCourse!;
     course.name = nameController.text.trim();
     course.shortName = shortNameController.text.trim();
@@ -171,7 +179,10 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
     if (colorChanged) course.color = color;
 
     await CourseGateway.instance.updateCourse(course);
-    if (mounted) Toast.makeToast(text: "Course Saved", icon: Icons.save);
+
+    Toast.makeToast(text: "Course Saved", icon: Icons.save);
+
+    if (mounted) context.pop();
     if (widget.onUpdated != null) {
       widget.onUpdated!();
     }
