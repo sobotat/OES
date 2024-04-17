@@ -12,6 +12,7 @@ class OpenQuestion extends Question {
   }) : super(type: 'open', options: []);
 
   String answer = "";
+  double? similarityPercentage;
 
   factory OpenQuestion.fromJson(Map<String, dynamic> json) {
     return OpenQuestion(
@@ -34,6 +35,7 @@ class OpenQuestion extends Question {
     if (answers.isEmpty) return;
     AnswerOption answer = answers.first;
     this.answer = answer.text;
+    similarityPercentage = answer.similarityPercentage;
   }
 
   @override

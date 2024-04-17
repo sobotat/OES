@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/Review.dart';
 
@@ -64,11 +65,25 @@ class _ReviewBarState extends State<ReviewBar> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Attempt Points ${widget.question.getPointsFromAnswers()}",
+                    "Attempt Points: ${widget.question.getPointsFromAnswers()}",
                     style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
+                  widget.question is OpenQuestion ? Builder(
+                    builder: (context) {
+                      double? per = (widget.question as OpenQuestion).similarityPercentage;
+                      if(per != null) {
+                        per = (per * 10).round() / 10;
+                      }
+                      return Text(
+                        "Similarity: ${per == null ? "Not Calculated Yet" : "$per%"}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      );
+                    }
+                  ) : Container(),
                 ],
               ),
             ),
