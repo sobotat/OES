@@ -108,6 +108,10 @@ class _ReviewBarState extends State<ReviewBar> {
                         ),
                         maxLines: 1,
                         onChanged: (value) {
+                          if (value == "-") {
+                            widget.review.points = 0;
+                            return;
+                          }
                           bool wasNull = widget.review.points == null;
                           widget.review.points = int.tryParse(value.trim());
                           if (widget.review.points == null || wasNull) setState(() {});
