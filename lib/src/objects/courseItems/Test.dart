@@ -12,13 +12,14 @@ class Test extends ExamItem {
     required super.createdById,
     required super.scheduled,
     required super.end,
-    required super.duration,
     required super.isVisible,
     required super.questions,
+    required this.duration,
     required this.maxAttempts,
     required this.password,
   }) : super(type: 'test');
 
+  int duration;
   int maxAttempts;
   String? password;
 
@@ -26,6 +27,7 @@ class Test extends ExamItem {
   Map<String, dynamic> toMap() {
     return super.toMap()
       ..addAll({
+        'duration': duration,
         'maxAttempts': maxAttempts,
       });
   }

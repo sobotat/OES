@@ -13,17 +13,14 @@ abstract class ExamItem extends SchedulableItem {
     required super.scheduled,
     required super.end,
     required super.isVisible,
-    required this.duration,
     required this.questions,
   });
 
-  int duration;
   List<Question> questions;
 
   @override
   Map<String, dynamic> toMap() {
     return super.toMap()..addAll({
-      'duration': duration,
       'questions': questions.map((e) => e.toMap()).toList(),
     });
   }
