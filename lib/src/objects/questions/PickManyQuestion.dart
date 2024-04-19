@@ -1,9 +1,9 @@
 
 import 'package:oes/src/objects/questions/AnswerOption.dart';
-import 'package:oes/src/objects/questions/MultipleChoiceQuestion.dart';
+import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 
-class PickManyQuestion extends MultipleChoiceQuestion {
+class PickManyQuestion extends Question {
 
   PickManyQuestion({
     required super.id,
