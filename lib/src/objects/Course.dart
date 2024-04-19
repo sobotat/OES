@@ -21,7 +21,6 @@ class Course extends ApiObject {
   String shortName;
   String description;
   Color? color;
-  List<UserQuiz>? _userQuizzes;
   List<User>? _teachers;
   List<User>? _students;
 
