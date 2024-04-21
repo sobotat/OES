@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -38,6 +39,12 @@ class UserInfoButton extends StatelessWidget {
               toolTip: user != null ? 'User Detail' : 'Sign-In',
               shouldPopOnClick: shouldPopOnClick,
               onClick: (context) {
+                if (user == null) {
+                  context.goNamed('sign-in', queryParameters: {
+                    "path": AppRouter.instance.activeUri,
+                  });
+                  return;
+                }
                 context.goNamed('user-detail');
               },
               minWidth: 200,
@@ -47,7 +54,7 @@ class UserInfoButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    user != null ? '${user.firstName} ${user.lastName}' : 'Not Logged',
+                    user != null ? '${user.firstName} ${user.lastName}' : 'Sign-In',
                     style: TextStyle(
                       fontSize: 15,
                       color: textColor,
