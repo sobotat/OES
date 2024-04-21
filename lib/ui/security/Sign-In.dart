@@ -141,7 +141,7 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
       ),
       child: Column(
         children: [
-          const Text('Organizations', style: TextStyle(fontSize: 40)),
+          const Text('Organizations', style: TextStyle(fontSize: 35)),
           Flexible(
             child: FutureBuilder(
               future: OrganizationGateway.instance.getAll(filterController.text),
@@ -152,15 +152,18 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
                   itemCount: organizations.length,
                   itemBuilder: (context, index) {
                     Organization organization = organizations[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Button(
-                        text: organization.name,
-                        toolTip: organization.url,
-                        maxHeight: 30,
-                        onClick: (context) {
-                          widget.onSelected(organization);
-                        },
+                    return IntrinsicHeight(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Button(
+                          text: organization.name,
+                          toolTip: organization.url,
+                          minHeight: 50,
+                          maxHeight: double.infinity,
+                          onClick: (context) {
+                            widget.onSelected(organization);
+                          },
+                        ),
                       ),
                     );
                   },
@@ -439,7 +442,6 @@ class _RememberAndResetState extends State<_RememberAndReset> {
           children: [
             Center(child: buildRememberMe(context)),
             const SizedBox(height: 5,),
-            Center(child: buildResetPassword(context)),
           ],
         ),
       );
@@ -448,23 +450,9 @@ class _RememberAndResetState extends State<_RememberAndReset> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           buildRememberMe(context),
-          buildResetPassword(context),
         ],
       );
     }
-  }
-
-  Widget buildResetPassword(BuildContext context) {
-    return RichText(
-        text: TextSpan(
-          text: 'Reset Password',
-          style: TextStyle(color: AppTheme.isDarkMode() ? Colors.grey : Colors.grey[800]),
-          recognizer: TapGestureRecognizer()..onTap = () {
-            debugPrint('Not Implemented');
-            //TODO: Implement
-          },
-        ),
-      );
   }
 
   Widget buildRememberMe(BuildContext context) {
