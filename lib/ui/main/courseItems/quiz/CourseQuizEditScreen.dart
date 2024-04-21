@@ -810,13 +810,11 @@ class _PickOptionsState extends State<_PickOptions> {
           Flexible(
             child: TextField(
               controller: textController,
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: const InputDecoration(
                 labelText: "Option Text",
-                counter: Container(height: 0,),
               ),
-              maxLines: 1,
-              maxLength: 60,
               onChanged: (value) {
                 widget.option.text = value;
                 widget.onUpdated(widget.index);
@@ -829,20 +827,19 @@ class _PickOptionsState extends State<_PickOptions> {
             child: TextField(
               controller: pointsController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Points +/-",
-                counter: Container(height: 0,),
               ),
               maxLines: 1,
-              maxLength: 10,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r"^(-?[0-9]*)?$"))
+              ],
               onChanged: (value) {
-                if (value == "-") return;
-                try {
-                  widget.option.points = int.parse(value);
-                } on FormatException catch (_) {
+                if (value.isEmpty || value == "-") {
                   widget.option.points = 0;
-                  pointsController.text = '0';
+                  return;
                 }
+                widget.option.points = int.parse(value);
                 widget.onUpdated(widget.index);
               },
             ),

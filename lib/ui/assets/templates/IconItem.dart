@@ -63,48 +63,52 @@ class IconItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: backgroundColor ?? Theme.of(context).colorScheme.primary
               ),
-              child: Row(
-                mainAxisAlignment: mainSize == MainAxisSize.max ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
-                mainAxisSize: mainSize,
-                children: [
-                  Flexible(
-                    flex: bodyFlex,
-                    child: Row(
-                      mainAxisSize: mainSize,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(5),
-                          width: width,
-                          height: height,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: color,
-                          ),
-                          alignment: Alignment.center,
-                          child: icon,
-                        ),
-                        body != null ? Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: body!,
-                          ),
-                        ) : Container(),
-                      ],
-                    ),
-                  ),
-                  Flexible(
-                    flex: actions.isEmpty ? 0 : 1,
-                    fit: FlexFit.tight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 5),
+              child: IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: mainSize == MainAxisSize.max ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+                  mainAxisSize: mainSize,
+                  children: [
+                    Flexible(
+                      flex: bodyFlex,
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: actions,
+                        mainAxisSize: mainSize,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(5),
+                            width: width,
+                            height: height,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: color,
+                            ),
+                            alignment: Alignment.center,
+                            child: icon,
+                          ),
+                          body != null ? Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: body!,
+                            ),
+                          ) : Container(),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Flexible(
+                      flex: actions.isEmpty ? 0 : 1,
+                      fit: FlexFit.tight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: actions,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

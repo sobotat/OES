@@ -918,13 +918,11 @@ class _PickOptionsState extends State<_PickOptions> {
           Flexible(
             child: TextField(
               controller: textController,
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: const InputDecoration(
                 labelText: "Option Text",
-                counter: Container(height: 0,),
               ),
-              maxLines: 1,
-              maxLength: 60,
               onChanged: (value) {
                 widget.option.text = value;
                 widget.onUpdated(widget.index);
@@ -937,20 +935,19 @@ class _PickOptionsState extends State<_PickOptions> {
             child: TextField(
               controller: pointsController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Points +/-",
-                counter: Container(height: 0,),
               ),
               maxLines: 1,
-              maxLength: 10,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r"^(-?[0-9]*)?$"))
+              ],
               onChanged: (value) {
-                if (value == "-") return;
-                try {
-                  widget.option.points = int.parse(value);
-                } on FormatException catch (_) {
+                if (value.isEmpty || value == "-") {
                   widget.option.points = 0;
-                  pointsController.text = '0';
+                  return;
                 }
+                widget.option.points = int.parse(value);
                 widget.onUpdated(widget.index);
               },
             ),
@@ -969,7 +966,7 @@ class _PickOptionsState extends State<_PickOptions> {
           )
         ],
       ),
-      height: 65,
+      height: null,
       color: color,
       backgroundColor: Theme.of(context).colorScheme.secondary,
     );
@@ -1075,16 +1072,15 @@ class _InfoState extends State<_Info> {
                       labelText: 'Max Duration (minutes)',
                     ),
                     inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
+                      FilteringTextInputFormatter.allow(RegExp(r"^([0-9]*)?$"))
                     ],
                     maxLines: 1,
                     onChanged: (value) {
-                      try {
-                        widget.test.duration = int.parse(value);
-                      } on FormatException catch(_) {
+                      if (value.isEmpty) {
                         widget.test.duration = 0;
-                        durationController.text = "0";
+                        return;
                       }
+                      widget.test.duration = int.parse(value);
                     },
                   ),
                 ),
@@ -1099,11 +1095,15 @@ class _InfoState extends State<_Info> {
                       labelText: 'Max Attempts',
                     ),
                     inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
+                      FilteringTextInputFormatter.allow(RegExp(r"^([0-9]*)?$"))
                     ],
                     maxLines: 1,
                     onChanged: (value) {
-                      widget.test.maxAttempts = int.parse(maxAttemptsController.text.trim().isNotEmpty ? maxAttemptsController.text.trim() : "0");
+                      if (value.isEmpty) {
+                        widget.test.maxAttempts = 0;
+                        return;
+                      }
+                      widget.test.maxAttempts = int.parse(value);
                     },
                   ),
                 ),

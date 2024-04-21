@@ -127,6 +127,7 @@ class _Option extends StatelessWidget {
     Color color = isSelected ? Colors.green.shade700 : Theme.of(context).colorScheme.background;
 
     return IconItem(
+      height: null,
       icon: Text(
         " ${index + 1}.",
         style: Theme.of(context).textTheme.displaySmall!.copyWith(
@@ -134,10 +135,16 @@ class _Option extends StatelessWidget {
             color: AppTheme.getActiveTheme().calculateTextColor(color, context)
         ),
       ),
-      body: SelectableText(
-        question.options[index].text,
-        style: Theme.of(context).textTheme.displayMedium!.copyWith(
-          fontSize: 16,
+      body: Container(
+        constraints: const BoxConstraints(
+          minHeight: 40,
+        ),
+        alignment: Alignment.centerLeft,
+        child: SelectableText(
+          question.options[index].text,
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+            fontSize: 16,
+          ),
         ),
       ),
       color: color,

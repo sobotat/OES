@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
@@ -107,14 +108,16 @@ class _ReviewBarState extends State<ReviewBar> {
                           ) : null,
                         ),
                         maxLines: 1,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r"^(-?[0-9]*)?$"))
+                        ],
                         onChanged: (value) {
-                          if (value == "-") {
-                            widget.review.points = 0;
+                          if (value.isEmpty || value == "-") {
+                            widget.review.points = null;
                             return;
                           }
-                          bool wasNull = widget.review.points == null;
-                          widget.review.points = int.tryParse(value.trim());
-                          if (widget.review.points == null || wasNull) setState(() {});
+                          widget.review.points = int.parse(value);
+                          setState(() {});
                         },
                       );
                     }
