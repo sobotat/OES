@@ -174,10 +174,15 @@ class _Download extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
     return Container(
-      margin: const EdgeInsets.all(50),
+      margin: EdgeInsets.symmetric(
+        horizontal: width > overflow ? 50 : 15,
+        vertical: 20
+      ),
       alignment: Alignment.center,
-      height: 300,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(10)
@@ -187,15 +192,19 @@ class _Download extends StatelessWidget {
         children: [
           Text("Download", style: TextStyle(fontSize: 50),),
           Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _DownloadButton(
-                fileName: "oes-windows.msix",
-                icon: AppIcons.icon_windows,
+              Flexible(
+                child: _DownloadButton(
+                  fileName: "oes-windows.msix",
+                  icon: AppIcons.icon_windows,
+                ),
               ),
-              _DownloadButton(
-                fileName: "oes-android.apk",
-                icon: AppIcons.icon_android,
+              Flexible(
+                child: _DownloadButton(
+                  fileName: "oes-android.apk",
+                  icon: AppIcons.icon_android,
+                ),
               ),
             ],
           ),
