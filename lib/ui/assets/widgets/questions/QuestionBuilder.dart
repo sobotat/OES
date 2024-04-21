@@ -96,16 +96,11 @@ class _ReviewBarState extends State<ReviewBar> {
                 children: [
                   Builder(
                     builder: (context) {
-                      bool nullValue = widget.review.points == null;
-
                       return TextField(
                         controller: controller,
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: nullValue ? "No Points Set" :"Points",
-                          labelStyle: nullValue ? TextStyle(
-                            color: Colors.red.shade700
-                          ) : null,
+                        decoration: const InputDecoration(
+                          labelText: "Points",
                         ),
                         maxLines: 1,
                         inputFormatters: [
@@ -113,11 +108,10 @@ class _ReviewBarState extends State<ReviewBar> {
                         ],
                         onChanged: (value) {
                           if (value.isEmpty || value == "-") {
-                            widget.review.points = null;
+                            widget.review.points = 0;
                             return;
                           }
                           widget.review.points = int.parse(value);
-                          setState(() {});
                         },
                       );
                     }
