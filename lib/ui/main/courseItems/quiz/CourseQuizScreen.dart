@@ -141,7 +141,7 @@ class _BodyState extends State<_Body> {
       },
       "RemoveFromGroupCallback": (arguments) {
         users = [];
-        if (arguments.isNotEmpty) {
+        if (arguments.isNotEmpty && arguments[0] is! String) {
           for (Map<String, dynamic> argv in arguments[0] as List<dynamic>) {
             users.add(User.fromJson(argv));
           }
@@ -165,9 +165,17 @@ class _BodyState extends State<_Body> {
       "ShowCurrentQuestionResultsCallback": (arguments) {
         state = _ScreenState.result;
         if (!widget.isTeacher && arguments.isNotEmpty) {
-          points = arguments[0][AppSecurity.instance.user!.id]["points"];
-          position = arguments[0][AppSecurity.instance.user!.id]["position"];
+          Map<String, dynamic> data = Map.from(arguments[0]);
+          String user = AppSecurity.instance.user!.id.toString();
+          if (data.containsKey(user)) {
+            points = data[user]!["points"]!;
+            position = data[user]!["position"]!;
+          } else {
+            points = -1;
+            position = -1;
+          }
         }
+
         if (widget.isTeacher) {
           Future.delayed(const Duration(seconds: 5), () {
             if (mounted) {
