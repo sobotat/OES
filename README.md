@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="art/icon.png" alt="SE_Trader Logo" width="150" height="150">
+  <img src="assets/logo.jpg" alt="SE_Trader Logo" width="150" height="150">
 </p>
 
 <h3 align="center">Online E-Learning System</h3>
@@ -24,9 +24,9 @@ The app is made like a Bachelor's thesis.
 
 ---
 ### <span style="color:#96c8ff">UI</span>
-![UI](art/v0.0.1-Main-Light.png)
+![UI-Main](art/v1.0.0-Main.png)
 
-![UI](art/v0.0.1-Main-Dark.png)
+![UI-Course](art/v1.0.0-Course.png)
 
 ---
 ### <span style="color:#96c8ff">How To Use</span>
