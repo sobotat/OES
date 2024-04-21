@@ -11,6 +11,7 @@ import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/Review.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/TestGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -132,6 +133,7 @@ class _BodyState extends State<_Body> {
 
   Future<void> saveReview(List<Review> reviews) async {
     if(_selected == null) return;
+    showDialog(context: context, builder: (context) => const LoadingDialog(),);
 
     if (reviews.where((element) => element.points == null).isNotEmpty) {
       Toast.makeErrorToast(text: "Please Fill All Points");
@@ -145,9 +147,11 @@ class _BodyState extends State<_Body> {
         _selected = null;
       });
       widget.onUpdated();
+      if(mounted) context.pop();
       return;
     }
     Toast.makeErrorToast(text: "Review Failed Upload");
+    if(mounted) context.pop();
   }
 
   @override
