@@ -2,6 +2,7 @@ import 'package:download/download.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppIcons.dart';
@@ -36,12 +37,19 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
           width > overflow ? const _GoToMain(maxWidth: 150,) : const _GoToMain(),
         ],
       ),
-      body: ListView(
-        children: [
-          _Title(width: width, overflow: overflow),
-          const _WhyToUse(),
-          const _Download(),
+      body: GradientContainer(
+        borderRadius: BorderRadius.zero,
+        colors: [
+          Theme.of(context).colorScheme.secondary,
+          Theme.of(context).extension<AppCustomColors>()!.accent,
         ],
+        child: ListView(
+          children: [
+            _Title(width: width, overflow: overflow),
+            const _WhyToUse(),
+            const _Download(),
+          ],
+        ),
       ),
     );
   }
@@ -57,41 +65,152 @@ class _WhyToUse extends StatelessWidget {
     return const Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Learn with fun and ease"),
-        Text("Create your own quiz as student"),
-        Text("Use it on all Platforms"),
-        _ImageBanner(text: "aaaaaaaaaaaaaaa")
+        // Text("Learn with fun and ease"),
+        // Text("Create your own quiz as student"),
+        // Text("Use it on all Platforms"),
+        _ImageBanner(
+          text: "Modern and Simple UI\nWith Animations",
+          file: 'assets/images/main.png',
+          alignment: _Align.right,
+        ),
+        _ImageBanner(
+          text: "Supported Tests, Homeworks, Online Quizzes and many more",
+          file: 'assets/images/course.png',
+          alignment: _Align.left,
+        ),
       ],
     );
   }
 }
 
+enum _Align{
+  left,
+  right
+}
+
 class _ImageBanner extends StatelessWidget {
   const _ImageBanner({
     required this.text,
+    required this.file,
+    this.alignment = _Align.right,
     super.key
   });
 
   final String text;
+  final _Align alignment;
+  final String file;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Flexible(
-          flex: 1,
-          child: Center(
-            child: Text(text, textAlign: TextAlign.right,),
-          )
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+          horizontal: width > overflow ? 50 : 15,
+          vertical: 20
+      ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondary,
+        borderRadius: BorderRadius.circular(10)
+      ),
+      child: Builder(
+        builder: (context) {
+          if (alignment == _Align.left) {
+            List<Widget> widgets = [
+              _BannerImage(
+                file: file,
+              ),
+              _BannerText(
+                text: text,
+                align: TextAlign.right,
+              )
+            ];
+
+            if (width < overflow) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: widgets,
+              );
+            }
+            return Row(
+              children: widgets,
+            );
+          }
+          List<Widget> widgets = [
+            _BannerText(
+              text: text,
+              align: TextAlign.left,
+            ),
+            _BannerImage(
+              file: file,
+            ),
+          ];
+          if (width < overflow) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widgets,
+            );
+          }
+          return Row(
+            children: widgets,
+          );
+        }
+      ),
+    );
+  }
+}
+
+class _BannerImage extends StatelessWidget {
+  const _BannerImage({
+    required this.file,
+    super.key,
+  });
+
+  final String file;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Material(
+          elevation: 10,
+          borderRadius: BorderRadius.circular(20),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset(file),
+          ),
         ),
-        Flexible(
-          child: Image.network(
-            "https://media.istockphoto.com/id/952696392/vector/television-test-card.jpg?s=612x612&w=0&k=20&c=HLKN1cPrugPVtcPI6RK60CVb2wKq39ERVa9LgfLW38s=",
-            height: 400,
-            width: 400,
-          )
+      )
+    );
+  }
+}
+
+class _BannerText extends StatelessWidget {
+  const _BannerText({
+    super.key,
+    required this.text,
+    required this.align,
+  });
+
+  final String text;
+  final TextAlign align;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(text, textAlign: align, style: const TextStyle(fontSize: 16),),
+          ],
         ),
-      ],
+      )
     );
   }
 }
@@ -110,33 +229,24 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
-      child: GradientContainer(
-        borderRadius: BorderRadius.zero,
-        colors: [
-          Theme.of(context).colorScheme.secondary,
-          Theme.of(context).extension<AppCustomColors>()!.accent,
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 700,
-              child: Center(
-                child: Text(width > overflow ? 'Online E-Learning System' : 'Online\nE-Learning\nSystem',
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                    fontSize: width > overflow ? 50 : 35,
-                    letterSpacing: 15,
-                    fontWeight: FontWeight.w500,
-                    color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
-                  ),
-                  textAlign: TextAlign.center
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 700,
+            child: Center(
+              child: Text(width > overflow ? 'Online E-Learning System' : 'Online\nE-Learning\nSystem',
+                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                  fontSize: width > overflow ? 50 : 35,
+                  letterSpacing: 15,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
                 ),
+                textAlign: TextAlign.center
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
