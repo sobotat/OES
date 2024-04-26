@@ -34,6 +34,8 @@ class _SignInState extends State<SignIn> {
     Future(() {
       if (path.contains('sign-out')) {
         path = '/';
+      } else {
+        path = widget.path;
       }
       setState(() {
         organization = AppApi.instance.organization;
