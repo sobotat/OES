@@ -449,17 +449,17 @@ class _EditorState extends State<_Editor> {
   }
 
   Future<void> save() async {
+    if (widget.test.name.isEmpty) {
+      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
+      return;
+    }
+
     showDialog(
       context: context,
       useSafeArea: true,
       barrierDismissible: false,
       builder: (context) => const LoadingDialog(),
     );
-
-    if (widget.test.name.isEmpty) {
-      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
-      return;
-    }
 
     Test? response = widget.isNew ? await TestGateway.instance.create(widget.courseId, widget.test, passwordController.text) :
                                     await TestGateway.instance.update(widget.test, passwordController.text);

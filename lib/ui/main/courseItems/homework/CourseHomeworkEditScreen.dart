@@ -93,6 +93,11 @@ class _BodyState extends State<_Body> {
   GlobalKey<_PreviewState> key = GlobalKey();
 
   Future<void> save() async {
+    if (widget.homework.name.isEmpty) {
+      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
+      return;
+    }
+
     showDialog(
       context: context,
       useSafeArea: true,

@@ -6,6 +6,7 @@ import 'package:download/download.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
@@ -16,6 +17,7 @@ import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
@@ -252,10 +254,19 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                     controller: pointsController,
                                     keyboardType: TextInputType.number,
                                     maxLines: 1,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r"^(-?[0-9]*)?$"))
+                                    ],
                                     decoration: InputDecoration(
                                       labelText: "Points",
                                       labelStyle: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
                                     ),
+                                    onChanged: (value) {
+                                      if (value.isEmpty || value == "-") {
+                                        pointsController.text = "0";
+                                      }
+                                      pointsController.text = value;
+                                    },
                                   ),
                                 ),
                                 Padding(
@@ -269,12 +280,12 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                     text: "Assign Points and Review Text",
                                     maxWidth: double.infinity,
                                     backgroundColor: Colors.green.shade700,
-                                    onClick: (context) {
-                                      Future(() async {
-                                        int points = int.parse(pointsController.text.trim().isNotEmpty ? pointsController.text.trim() : "0");
-                                        await HomeworkGateway.instance.submitScore(widget.homework.id, user.id, points);
-                                        await HomeworkGateway.instance.submitReviewText(widget.homework.id, submission[submissionIndex].id, textController.text.trim());
-                                      },);
+                                    onClick: (context) async {
+                                      showDialog(context: context, builder: (context) => const LoadingDialog(),);
+                                      int points = int.parse(pointsController.text.isEmpty ? "0" : pointsController.text);
+                                      await HomeworkGateway.instance.submitScore(widget.homework.id, user.id, points);
+                                      await HomeworkGateway.instance.submitReviewText(widget.homework.id, submission[submissionIndex].id, textController.text.trim());
+                                      if(mounted) context.pop();
                                     },
                                   ),
                                 )

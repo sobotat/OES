@@ -247,6 +247,11 @@ class _EditorState extends State<_Editor> {
   }
 
   Future<void> save() async {
+    if (widget.note.name.isEmpty) {
+      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
+      return;
+    }
+
     showDialog(
       context: context,
       useSafeArea: true,

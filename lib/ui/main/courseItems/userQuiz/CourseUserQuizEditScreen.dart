@@ -420,17 +420,17 @@ class _Editor extends StatefulWidget {
 class _EditorState extends State<_Editor> {
 
   Future<void> save() async {
+    if (widget.quiz.name.isEmpty) {
+      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
+      return;
+    }
+
     showDialog(
       context: context,
       useSafeArea: true,
       barrierDismissible: false,
       builder: (context) => const LoadingDialog(),
     );
-
-    if (widget.quiz.name.isEmpty) {
-      Toast.makeErrorToast(text: "Name cannot be Empty", duration: ToastDuration.large);
-      return;
-    }
 
     UserQuiz? response = widget.isNew ? await UserQuizGateway.instance.create(widget.courseId, widget.quiz) :
                                     await UserQuizGateway.instance.update(widget.quiz);
