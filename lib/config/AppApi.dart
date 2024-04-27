@@ -1,15 +1,18 @@
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:oes/src/objects/Organization.dart';
 import 'package:oes/src/restApi/interface/OrganizationGateway.dart';
 import 'package:oes/src/services/LocalStorage.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class AppApi extends ChangeNotifier {
 
   static final AppApi instance = AppApi._();
   AppApi._();
 
-  String mainServerUrl = 'http://oes-main.sobotovi.net:8002';
+  String mainServerUrl = '';
   String _apiServerUrl = '';
   Organization? organization;
 
@@ -24,10 +27,9 @@ class AppApi extends ChangeNotifier {
   }
 
   Future<void> init() async {
-    String? mainUrl = await LocalStorage.instance.get("mainServerUrl");
-    if (mainUrl != null) {
-      mainServerUrl = mainUrl;
-    }
+    Map<String, dynamic> configFile = jsonDecode(await rootBundle.loadString('assets/config/config.json'));
+    mainServerUrl = configFile["mainServerUrl"] as String;
+
     String? organizationName = await LocalStorage.instance.get("organization");
     if (organizationName == null) return;
 
