@@ -255,6 +255,8 @@ class ApiHomeworkGateway implements HomeworkGateway {
     RequestResult result = await HttpRequest.instance.put("$userBasePath/$userId/homework-scores/$id",
         options: AuthHttpRequestOptions(
           token: AppSecurity.instance.user!.token,
+          sendTimeout: const Duration(minutes: 30),
+          receiveTimeout: const Duration(minutes: 5)
         ),
         data: points.toString()
     ).onError((error, stackTrace) {
