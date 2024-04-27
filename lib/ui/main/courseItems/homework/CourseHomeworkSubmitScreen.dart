@@ -305,7 +305,8 @@ class _SelectFile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Button(
-        text: "Upload",
+        text: "Select Files",
+        icon: Icons.file_copy_rounded,
         maxWidth: double.infinity,
         onClick: (context) async {
           await selectFile();
