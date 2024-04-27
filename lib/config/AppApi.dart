@@ -12,7 +12,7 @@ class AppApi extends ChangeNotifier {
   static final AppApi instance = AppApi._();
   AppApi._();
 
-  String mainServerUrl = '';
+  String mainServerUrl = 'http://oes-main.sobotovi.net:8002';
   String _apiServerUrl = '';
   Organization? organization;
 
@@ -27,9 +27,6 @@ class AppApi extends ChangeNotifier {
   }
 
   Future<void> init() async {
-    Map<String, dynamic> configFile = jsonDecode(await rootBundle.loadString('assets/config/config.json'));
-    mainServerUrl = configFile["mainServerUrl"] as String;
-
     String? organizationName = await LocalStorage.instance.get("organization");
     if (organizationName == null) return;
 

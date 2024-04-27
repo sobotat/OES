@@ -75,7 +75,6 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/config/
     - google_fonts/
     - google_fonts/FlowCircular/
     - google_fonts/Outfit/
