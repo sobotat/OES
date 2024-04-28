@@ -28,68 +28,71 @@ class CourseNoteEditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: AppSecurity.instance,
-      builder: (context, child) {
-        if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading());
-        return FutureBuilder(
-          future: Future(() async {
-            if (!isNew()) {
-              return await NoteGateway.instance.get(noteId);
-            }
-            return Note(
-                id: -1,
-                name:'Title',
-                created: DateTime.now(),
-                createdById: AppSecurity.instance.user!.id,
-                isVisible: true,
-                data: """          
-- First
-- Second
-- Third
-                   
-Some **more** *text*
-              
-## Types    
-1. Vars
-2. Functions
-3. Classes
+    return Scaffold(
+      appBar: const AppAppBar(),
+      body: ListenableBuilder(
+        listenable: AppSecurity.instance,
+        builder: (context, child) {
+          if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading());
+          return FutureBuilder(
+            future: Future(() async {
+              if (!isNew()) {
+                return await NoteGateway.instance.get(noteId);
+              }
+              return Note(
+                  id: -1,
+                  name:'Title',
+                  created: DateTime.now(),
+                  createdById: AppSecurity.instance.user!.id,
+                  isVisible: true,
+                  data: """          
+      - First
+      - Second
+      - Third
+                     
+      Some **more** *text*
+                
+      ## Types    
+      1. Vars
+      2. Functions
+      3. Classes
+      
+      > some info
+      
+      ---
+      ### Code
+      ```java
+      public static void main(String args[]) {  
+        System.out.println("Hello World");  
+      }
+      ```
+      ```bash
+        ./something
+      ```
+      ---
+      
+      # Image
+      ![Image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfjL9xNhvpuUtKH9v-a1X_FD0BRg7lrFBTIo0Fz7reTywPZwVMRVkYrzVp1q0v-BlVrnw&usqp=CAU)
+      
+                  """
+              );
+            }),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Toast.makeErrorToast(text: "Failed to load Notes");
+                context.pop();
+              }
+              if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+              Note note = snapshot.data!;
 
-> some info
-
----
-### Code
-```java
-public static void main(String args[]) {  
-  System.out.println("Hello World");  
-}
-```
-```bash
-  ./something
-```
----
-
-# Image
-![Image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfjL9xNhvpuUtKH9v-a1X_FD0BRg7lrFBTIo0Fz7reTywPZwVMRVkYrzVp1q0v-BlVrnw&usqp=CAU)
-
-                """
-            );
-          }),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              Toast.makeErrorToast(text: "Failed to load Notes");
-              context.pop();
-            }
-            if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
-            Note note = snapshot.data!;
-
-            return _Body(
-              courseId: courseId,
-              note: note,
-            );
-          },
-        );
-      },
+              return _Body(
+                courseId: courseId,
+                note: note,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -130,9 +133,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     var overflow = 500;
 
     if (width > overflow) {
-      return Scaffold(
-        appBar: const AppAppBar(),
-        body: ListView(
+      return ListView(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,8 +155,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
               ],
             )
           ],
-        ),
-      );
+        );
     }
     return Scaffold(
       appBar: const AppAppBar(),
