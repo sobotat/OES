@@ -256,7 +256,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
         options: AuthHttpRequestOptions(
           token: AppSecurity.instance.user!.token,
           sendTimeout: const Duration(minutes: 30),
-          receiveTimeout: const Duration(minutes: 5)
+          receiveTimeout: const Duration(minutes: 30)
         ),
         data: points.toString()
     ).onError((error, stackTrace) {
