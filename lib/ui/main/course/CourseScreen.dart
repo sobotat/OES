@@ -21,11 +21,11 @@ import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({
-    required this.courseID,
+    required this.courseId,
     super.key
   });
 
-  final int courseID;
+  final int courseId;
 
   @override
   State<CourseScreen> createState() => _CourseScreenState();
@@ -34,6 +34,13 @@ class CourseScreen extends StatefulWidget {
 class _CourseScreenState extends State<CourseScreen> {
 
   GlobalKey<RefreshWidgetState> refreshKey = GlobalKey<RefreshWidgetState>();
+  late Future<List<CourseItem>> items = Future.value([]);
+
+  @override
+  void initState() {
+    items = CourseGateway.instance.getCourseItems(widget.courseId);
+    super.initState();
+  }
 
   Future<bool> getIsTeacher(Course course) async {
     if (AppSecurity.instance.isLoggedIn()) {
@@ -147,6 +154,7 @@ class _CourseScreenState extends State<CourseScreen> {
     return Scaffold(
       appBar: AppAppBar(
         onRefresh: () {
+          items = CourseGateway.instance.getCourseItems(widget.courseId);
           refreshKey.currentState?.refresh();
         },
       ),
@@ -157,10 +165,11 @@ class _CourseScreenState extends State<CourseScreen> {
           return RefreshWidget(
             key: refreshKey,
             onRefreshed: () {
+              items = CourseGateway.instance.getCourseItems(widget.courseId);
               setState(() {});
             },
             child: FutureBuilder(
-                future: CourseGateway.instance.getCourse(widget.courseID),
+                future: CourseGateway.instance.getCourse(widget.courseId),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     Toast.makeErrorToast(text: "Failed to load Course");
@@ -214,7 +223,7 @@ class _CourseScreenState extends State<CourseScreen> {
                               ) : Container(),
                               BackgroundBody(
                                 child: FutureBuilder<List<CourseItem>>(
-                                  future: CourseGateway.instance.getCourseItems(course.id),
+                                  future: items,
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) return const WidgetLoading();
                                     List<CourseItem> items = snapshot.data!;

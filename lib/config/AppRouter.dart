@@ -140,7 +140,7 @@ class AppRouter {
             builder: (context, state) {
               _setActiveUri(context, state);
               int id = int.parse(state.pathParameters['course_id'] ?? '-1');
-              return CourseScreen(courseID: id);
+              return CourseScreen(courseId: id);
             },
             routes: [
               GoRoute(
