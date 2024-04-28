@@ -4,7 +4,14 @@ import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class LoadingDialog extends StatelessWidget {
-  const LoadingDialog({super.key});
+  const LoadingDialog({
+    this.progress,
+    this.progressColor,
+    super.key
+  });
+
+  final double? progress;
+  final Color? progressColor;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,10 @@ class LoadingDialog extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
           ),
           padding: const EdgeInsets.all(10),
-          child: const WidgetLoading(),
+          child: WidgetLoading(
+            progress: progress,
+            color: progressColor,
+          ),
         ),
       ),
     );

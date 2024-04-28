@@ -4,8 +4,13 @@ import 'package:oes/config/AppTheme.dart';
 
 class WidgetLoading extends StatelessWidget {
   const WidgetLoading({
+    this.progress,
+    this.color,
     super.key,
   });
+
+  final double? progress;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,8 @@ class WidgetLoading extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(25),
           child: CircularProgressIndicator(
-            color: Theme.of(context).extension<AppCustomColors>()!.accent,
+            value: progress,
+            color: color ?? Theme.of(context).extension<AppCustomColors>()!.accent,
           ),
         ),
       ],

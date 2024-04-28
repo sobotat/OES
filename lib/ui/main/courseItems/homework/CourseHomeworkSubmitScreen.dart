@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/Homework.dart';
 import 'package:oes/src/restApi/interface/courseItems/HomeworkGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
@@ -95,8 +97,17 @@ class _BodyState extends State<_Body> {
 
   Future<void> submit() async {
     if (progress != -1) return;
+
+    GlobalKey<_UploadDialogState> dialogKey = GlobalKey();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _UploadDialog(key: dialogKey,),
+    );
+
     setState(() {
       progress = 0;
+      dialogKey.currentState?.setProgress(progress / 100);
       failedUpload = false;
     });
     List<MultipartFile> files = key.currentState?.getFiles() ?? [];
@@ -104,22 +115,26 @@ class _BodyState extends State<_Body> {
       onProgress: (progress) {
         setState(() {
           this.progress = (progress * 100).round();
+          dialogKey.currentState?.setProgress(progress != 1 ? progress : null);
         });
       },)
         .onError((error, stackTrace) {
       if (error is RangeError) Toast.makeErrorToast(text: "File is too large");
       progress = 0;
       print("Submit Error: $error");
+      if (mounted) context.pop();
       return false;
     }
     );
     if (success) {
+      if (mounted) context.pop();
       Toast.makeSuccessToast(text: "File was Uploaded");
       progress = 101;
       Future.delayed(const Duration(seconds: 1), () {
         widget.onSubmitted();
       },);
     } else {
+      if (mounted) context.pop();
       Toast.makeErrorToast(text: "Failed to Upload File");
       progress = -1;
       failedUpload = true;
@@ -213,6 +228,33 @@ class _BodyState extends State<_Body> {
   }
 }
 
+class _UploadDialog extends StatefulWidget {
+  const _UploadDialog({super.key});
+
+  @override
+  State<_UploadDialog> createState() => _UploadDialogState();
+}
+
+class _UploadDialogState extends State<_UploadDialog> {
+
+  double? progress = 0;
+
+  void setProgress(double? value) {
+    setState(() {
+      progress = value?.clamp(0, 1);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingDialog(
+      progress: progress,
+      progressColor: Colors.green.shade700,
+    );
+  }
+}
+
+
 class _Files extends StatefulWidget {
   const _Files({
     required this.homeworkId,
@@ -264,9 +306,9 @@ class _FilesState extends State<_Files> {
             );
           },
         ),
-        _SelectFile(onSelected: (file) {
+        _SelectFile(onSelected: (files) {
           setState(() {
-            files.add(file);
+            this.files = files;
           });
         },)
       ],
@@ -280,24 +322,28 @@ class _SelectFile extends StatelessWidget {
     super.key
   });
 
-  final Function(PlatformFile file) onSelected;
+  final Function(List<PlatformFile> files) onSelected;
 
   Future<void> selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
     );
 
+    List<PlatformFile> out = [];
+
     if (result != null) {
       for(PlatformFile file in result.files) {
         debugPrint("Filename: ${file.name}, Size: ${file.size}");
-        if (file.size >= 1000000000) {
-          Toast.makeErrorToast(text: "File is too large");
-          continue;
+        if (file.size >= 130000000) {
+          Toast.makeErrorToast(text: "File [${file.name}] is too large [Max is 130MB]");
+          return;
         }
 
-        onSelected(file);
+        out.add(file);
       }
     }
+
+    onSelected(out);
   }
 
   @override

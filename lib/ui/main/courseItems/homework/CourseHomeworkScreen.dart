@@ -281,7 +281,11 @@ class _TeacherBodyState extends State<_TeacherBody> {
                                     maxWidth: double.infinity,
                                     backgroundColor: Colors.green.shade700,
                                     onClick: (context) async {
-                                      showDialog(context: context, builder: (context) => const LoadingDialog(),);
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) => const LoadingDialog(),
+                                      );
                                       int points = int.parse(pointsController.text.isEmpty ? "0" : pointsController.text);
                                       await HomeworkGateway.instance.submitScore(widget.homework.id, user.id, points);
                                       await HomeworkGateway.instance.submitReviewText(widget.homework.id, submission[submissionIndex].id, textController.text.trim());

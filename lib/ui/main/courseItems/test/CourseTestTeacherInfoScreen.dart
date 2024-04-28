@@ -133,7 +133,11 @@ class _BodyState extends State<_Body> {
 
   Future<void> saveReview(List<Review> reviews) async {
     if(_selected == null) return;
-    showDialog(context: context, builder: (context) => const LoadingDialog(),);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
 
     if (reviews.where((element) => element.points == null).isNotEmpty) {
       Toast.makeErrorToast(text: "Please Fill All Points");
