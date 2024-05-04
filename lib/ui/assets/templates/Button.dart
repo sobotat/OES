@@ -107,6 +107,7 @@ class Button extends StatelessWidget {
                       text != '' ?
                       Text(
                         text,
+                        softWrap: true,
                         style: TextStyle(
                           fontSize: 15,
                           color: activeTextColor,
