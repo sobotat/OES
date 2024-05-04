@@ -1,11 +1,15 @@
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:download/download.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
 import 'package:oes/src/objects/questions/OpenQuestion.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
@@ -13,6 +17,7 @@ import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/courseItems/QuizGateway.dart';
+import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
@@ -467,6 +472,36 @@ class _EditorState extends State<_Editor> {
     Toast.makeErrorToast(text: "Failed to Delete Quiz", duration: ToastDuration.large);
   }
 
+  Future<void> export() async {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
+
+    Device device = await DeviceInfo.getDevice();
+    String fileName = "${widget.quiz.name}_${DateTime.now()}.json";
+    String? path;
+    if (device.isWeb) {
+      path = fileName;
+    } else {
+      path = await FilePicker.platform.getDirectoryPath(dialogTitle: "Download Location");
+      if (path == null) {
+        if(mounted) context.pop();
+        return;
+      }
+      path += "/$fileName";
+    }
+    debugPrint("Downloading File to $path");
+
+    String json = jsonEncode(widget.quiz.toMap());
+    List<int> data = utf8.encode(json);
+    download(Stream.fromIterable(data), path);
+
+    if (mounted) context.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -484,6 +519,18 @@ class _EditorState extends State<_Editor> {
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 onClick: (context) {
                   save();
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.download,
+                toolTip: "Export",
+                maxWidth: 40,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                onClick: (context) {
+                  export();
                 },
               ),
             ),

@@ -1,6 +1,8 @@
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
@@ -8,7 +10,12 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
+import 'package:oes/src/objects/courseItems/Quiz.dart';
+import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/QuizGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -19,7 +26,7 @@ import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/RefreshWidget.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
-class CourseScreen extends StatefulWidget {
+class CourseScreen extends StatelessWidget {
   const CourseScreen({
     required this.courseId,
     super.key
@@ -28,17 +35,44 @@ class CourseScreen extends StatefulWidget {
   final int courseId;
 
   @override
-  State<CourseScreen> createState() => _CourseScreenState();
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: AppSecurity.instance,
+      builder: (context, _) {
+        if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
+        return FutureBuilder(
+          future: CourseGateway.instance.getCourse(courseId),
+          builder: (context, snapshot) {
+            if(!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),),);
+            return _Body(course: snapshot.data!);
+          }
+        );
+      }
+    );
+  }
 }
 
-class _CourseScreenState extends State<CourseScreen> {
+
+class _Body extends StatefulWidget {
+  const _Body({
+    required this.course,
+    super.key
+  });
+
+  final Course course;
+
+  @override
+  State<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
 
   GlobalKey<RefreshWidgetState> refreshKey = GlobalKey<RefreshWidgetState>();
   late Future<List<CourseItem>> items = Future.value([]);
 
   @override
   void initState() {
-    items = CourseGateway.instance.getCourseItems(widget.courseId);
+    items = CourseGateway.instance.getCourseItems(widget.course.id);
     super.initState();
   }
 
@@ -47,6 +81,59 @@ class _CourseScreenState extends State<CourseScreen> {
       return await course.isTeacherInCourse(AppSecurity.instance.user!);
     }
     return false;
+  }
+
+  Future<void> import() async {
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
+
+    bool isTeacher = await getIsTeacher(widget.course);
+
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+      );
+
+      if (result != null) {
+        PlatformFile? file = result.files.firstOrNull;
+
+        if (file != null) {
+          debugPrint("Filename: ${file.name}, Size: ${file.size}");
+          String data = utf8.decode(List.from(file.bytes as List<int>));
+          Map<String, dynamic> json = jsonDecode(data);
+
+          switch (json['type']) {
+            case "quiz":
+              if (!isTeacher) {
+                if (mounted) context.pop();
+                Toast.makeErrorToast(text: "You Must Be Teacher");
+                return;
+              }
+              QuizGateway.instance.create(widget.course.id, Quiz.fromJson(json));
+              break;
+            case "userquiz":
+              UserQuizGateway.instance.create(widget.course.id, UserQuiz.fromJson(json));
+              break;
+            default:
+              if (mounted) context.pop();
+              Toast.makeErrorToast(text: "Not Implemented");
+              return;
+          }
+        }
+
+        if (mounted) context.pop();
+        Toast.makeSuccessToast(text: "Import Success");
+        return;
+      }
+    } catch (e) {
+      print("Failed Import: $e");
+    }
+
+    if(mounted) context.pop();
   }
 
   Future<void> showCreateDialog(BuildContext context, Course course, bool isTeacher) async {
@@ -133,6 +220,14 @@ class _CourseScreenState extends State<CourseScreen> {
                           context.pop();
                         },
                       ),
+                      _BigIconButton(
+                        icon: Icons.upload,
+                        text: "Import",
+                        onClick: () {
+                          context.pop();
+                          import();
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -154,106 +249,89 @@ class _CourseScreenState extends State<CourseScreen> {
     return Scaffold(
       appBar: AppAppBar(
         onRefresh: () {
-          items = CourseGateway.instance.getCourseItems(widget.courseId);
+          items = CourseGateway.instance.getCourseItems(widget.course.id);
           refreshKey.currentState?.refresh();
         },
       ),
-      body: ListenableBuilder(
-          listenable: AppSecurity.instance,
-        builder: (context, x) {
-          if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
-          return RefreshWidget(
-            key: refreshKey,
-            onRefreshed: () {
-              items = CourseGateway.instance.getCourseItems(widget.courseId);
-              setState(() {});
-            },
-            child: FutureBuilder(
-                future: CourseGateway.instance.getCourse(widget.courseId),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    Toast.makeErrorToast(text: "Failed to load Course");
-                    context.pop();
-                  }
-                  if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
-                  Course course = snapshot.data!;
-                  return FutureBuilder(
-                    future: getIsTeacher(course),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        Toast.makeErrorToast(text: "Failed to load IsTeacher in Course");
-                      }
-                      if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
-                      bool isTeacher = snapshot.data!;
-                      return ListView(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Heading(
-                                headingText: course.name,
-                                actions: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Button(
-                                      icon: Icons.add,
-                                      toolTip: "Create",
-                                      maxWidth: 40,
-                                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                                      onClick: (context) {
-                                        showCreateDialog(context, course, isTeacher);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10,),
-                              _Description(width: width, overflow: overflow, course: course),
-                              course.description != '' ? Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: width > overflow ? 50 : 15,
-                                ),
-                                child: const Column(
-                                  children: [
-                                    SizedBox(height: 10,),
-                                    HeadingLine(),
-                                  ],
-                                ),
-                              ) : Container(),
-                              BackgroundBody(
-                                child: FutureBuilder<List<CourseItem>>(
-                                  future: items,
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) return const WidgetLoading();
-                                    List<CourseItem> items = snapshot.data!;
-                                    items.sort((a, b) => b.created.compareTo(a.created),);
-
-                                    return ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: items.length,
-                                      itemBuilder: (context, index) {
-                                        CourseItem item = items[index];
-                                        return _CourseItemWidget(
-                                            isTeacher: isTeacher,
-                                            course: course,
-                                            item: item
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
+      body: RefreshWidget(
+        key: refreshKey,
+        onRefreshed: () {
+          items = CourseGateway.instance.getCourseItems(widget.course.id);
+          setState(() {});
+        },
+        child: FutureBuilder(
+          future: getIsTeacher(widget.course),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              Toast.makeErrorToast(text: "Failed to load IsTeacher in Course");
+            }
+            if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
+            bool isTeacher = snapshot.data!;
+            return ListView(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Heading(
+                      headingText: widget.course.name,
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Button(
+                            icon: Icons.add,
+                            toolTip: "Create",
+                            maxWidth: 40,
+                            backgroundColor: Theme.of(context).colorScheme.secondary,
+                            onClick: (context) {
+                              showCreateDialog(context, widget.course, isTeacher);
+                            },
                           ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10,),
+                    _Description(width: width, overflow: overflow, course: widget.course),
+                    widget.course.description != '' ? Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width > overflow ? 50 : 15,
+                      ),
+                      child: const Column(
+                        children: [
+                          SizedBox(height: 10,),
+                          HeadingLine(),
                         ],
-                      );
-                    }
-                  );
-                },
-            ),
-          );
-        }
+                      ),
+                    ) : Container(),
+                    BackgroundBody(
+                      child: FutureBuilder<List<CourseItem>>(
+                        future: items,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return const WidgetLoading();
+                          List<CourseItem> items = snapshot.data!;
+                          items.sort((a, b) => b.created.compareTo(a.created),);
+
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              CourseItem item = items[index];
+                              return _CourseItemWidget(
+                                  isTeacher: isTeacher,
+                                  course: widget.course,
+                                  item: item
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }
+        ),
       ),
     );
   }
