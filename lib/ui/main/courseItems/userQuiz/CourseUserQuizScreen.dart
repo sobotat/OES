@@ -11,6 +11,7 @@ import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
+import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
@@ -183,9 +184,10 @@ class _QuestionState extends State<_Question> {
           child: Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(20),
-            child: Text(widget.question.description,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 30),
+            child: AppMarkdown(
+              data: widget.question.description,
+              textAlign: widget.question.description.contains("#") ? WrapAlignment.start : WrapAlignment.center,
+              testSize: 25,
             )
           ),
         ),

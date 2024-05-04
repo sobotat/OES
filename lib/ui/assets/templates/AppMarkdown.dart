@@ -11,11 +11,15 @@ class AppMarkdown extends StatelessWidget {
   const AppMarkdown({
     required this.data,
     this.flipBlocksColors = true,
+    this.textAlign = WrapAlignment.start,
+    this.testSize = 12,
     super.key
   });
 
   final String data;
   final bool flipBlocksColors;
+  final WrapAlignment textAlign;
+  final double testSize;
 
   @override
   Widget build(BuildContext context) {
@@ -41,29 +45,36 @@ class AppMarkdown extends StatelessWidget {
         },
         styleSheet: MarkdownStyleSheet(
           h1: TextStyle(
-              fontSize: 24,
+              fontSize: testSize + 10,
               color: Theme.of(context).extension<AppCustomColors>()!.accent,
               fontWeight: FontWeight.bold
           ),
           h2: TextStyle(
-              fontSize: 20,
+              fontSize: testSize + 8,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h3: TextStyle(
-              fontSize: 18,
+              fontSize: testSize + 6,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h4: TextStyle(
-              fontSize: 16,
+              fontSize: testSize + 4,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h5: TextStyle(
-              fontSize: 15,
+              fontSize: testSize + 3,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h6: TextStyle(
-              fontSize: 14,
+              fontSize: testSize + 2,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
+          ),
+          textAlign: textAlign,
+          a: TextStyle(
+            fontSize: testSize,
+          ),
+          p: TextStyle(
+            fontSize: testSize
           ),
           horizontalRuleDecoration: BoxDecoration(
             border: Border.symmetric(horizontal: BorderSide(
@@ -71,15 +82,16 @@ class AppMarkdown extends StatelessWidget {
               width: 2
             ),),
           ),
-          blockquote: const TextStyle(
-              color: Colors.red
+          blockquote: TextStyle(
+            fontSize: testSize,
+            color: Colors.red
           ),
           blockquoteDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: flipBlocksColors ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
           ),
           code: TextStyle(
-              fontSize: 14,
+              fontSize: testSize,
               color: Theme.of(context).textTheme.bodyMedium!.color
           ),
           codeblockPadding: const EdgeInsets.all(8),

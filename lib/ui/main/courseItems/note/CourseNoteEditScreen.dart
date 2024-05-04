@@ -46,33 +46,33 @@ class CourseNoteEditScreen extends StatelessWidget {
                   createdById: AppSecurity.instance.user!.id,
                   isVisible: true,
                   data: """          
-      - First
-      - Second
-      - Third
-                     
-      Some **more** *text*
-                
-      ## Types    
-      1. Vars
-      2. Functions
-      3. Classes
-      
-      > some info
-      
-      ---
-      ### Code
-      ```java
-      public static void main(String args[]) {  
-        System.out.println("Hello World");  
-      }
-      ```
-      ```bash
-        ./something
-      ```
-      ---
-      
-      # Image
-      ![Image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfjL9xNhvpuUtKH9v-a1X_FD0BRg7lrFBTIo0Fz7reTywPZwVMRVkYrzVp1q0v-BlVrnw&usqp=CAU)
+- First
+- Second
+- Third
+               
+Some **more** *text*
+          
+## Types    
+1. Vars
+2. Functions
+3. Classes
+
+> some info
+
+---
+### Code
+```java
+public static void main(String args[]) {  
+  System.out.println("Hello World");  
+}
+```
+```bash
+  ./something
+```
+---
+
+# Image
+![Image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfjL9xNhvpuUtKH9v-a1X_FD0BRg7lrFBTIo0Fz7reTywPZwVMRVkYrzVp1q0v-BlVrnw&usqp=CAU)
       
                   """
               );

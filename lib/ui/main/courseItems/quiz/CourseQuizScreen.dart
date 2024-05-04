@@ -15,6 +15,7 @@ import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/services/SignalR.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
+import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
@@ -406,9 +407,10 @@ class _QuestionState extends State<_Question> {
           child: Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(20),
-            child: Text(widget.question.description,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: widget.isTeacher ? 60 : 30),
+            child: AppMarkdown(
+              data: widget.question.description,
+              textAlign: widget.question.description.contains("#") ? WrapAlignment.start : WrapAlignment.center,
+              testSize: widget.isTeacher ? 35 : 25,
             )
           ),
         ),
