@@ -430,7 +430,7 @@ class _QuestionState extends State<_Question> {
                     for(QuestionOption option in widget.question.options) {
                       Widget w = Button(
                         text: option.text,
-                        maxHeight: (height / 4) / (widget.question.options.length / 2),
+                        maxHeight: (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1),
                         maxWidth: double.infinity,
                         backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
                         borderColor: selected.contains(option) ? Colors.green.shade700 : null,
@@ -449,7 +449,7 @@ class _QuestionState extends State<_Question> {
                         },
                       );
                       
-                      if(isLeft) {
+                      if(isLeft || width < overflow) {
                         childrenLeft.add(w);
                         childrenLeft.add(const SizedBox(height: 20,));
                       } else {
@@ -469,13 +469,13 @@ class _QuestionState extends State<_Question> {
                             children: childrenLeft,
                           ),
                         ),
-                        const SizedBox(width: 20,),
-                        Flexible(
+                        width >= overflow ? const SizedBox(width: 20,) : Container(),
+                        width >= overflow ? Flexible(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: childrenRight,
                           ),
-                        ),
+                        ) : Container(),
                       ],
                     );
                   }
