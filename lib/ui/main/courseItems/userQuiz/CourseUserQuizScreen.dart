@@ -199,17 +199,19 @@ class _QuestionState extends State<_Question> {
             children: [
               Builder(
                 builder: (context) {
+                  var width = MediaQuery.of(context).size.width;
+                  var overflow = 950;
+
                   List<Widget> childrenLeft = [];
                   List<Widget> childrenRight = [];
 
                   bool isLeft = true;
                   for(QuestionOption option in widget.question.options) {
                     bool isSelected = selected.contains(option);
-                    bool result = isSelected && option.points > 0 ? true : false;
 
                     Widget w = Button(
                       text: option.text,
-                      maxHeight: (height / 4) / (widget.question.options.length / 2),
+                      maxHeight: (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1),
                       maxWidth: double.infinity,
                       backgroundColor: widget.showResults ? (option.points > 0 ? Colors.green.shade700 : Colors.red.shade700 ) : Theme.of(context).extension<AppCustomColors>()!.accent,
                       borderColor: widget.showResults ? (isSelected ? Colors.green : Colors.red ) : isSelected ? Colors.green.shade700 : null,
@@ -238,7 +240,7 @@ class _QuestionState extends State<_Question> {
                       },
                     );
 
-                    if(isLeft) {
+                    if(isLeft || width < overflow) {
                       childrenLeft.add(w);
                       childrenLeft.add(const SizedBox(height: 20,));
                     } else {
@@ -258,13 +260,13 @@ class _QuestionState extends State<_Question> {
                           children: childrenLeft,
                         ),
                       ),
-                      const SizedBox(width: 20,),
-                      Flexible(
+                      width >= overflow ? const SizedBox(width: 20,) : Container(),
+                      width >= overflow ? Flexible(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: childrenRight,
                         ),
-                      ),
+                      ) : Container(),
                     ],
                   );
                 }
