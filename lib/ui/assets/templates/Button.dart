@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import '../../../config/AppTheme.dart';
 
@@ -83,29 +85,25 @@ class Button extends StatelessWidget {
                 ) : null,
                 color: activeBackgroundColor,
               ),
-              child: OverflowBox(
-                minWidth: 0,
-                minHeight: 0,
-                maxWidth: double.infinity,
-                maxHeight: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    icon != null ? Padding(
-                      padding: const EdgeInsets.only(
-                        left: 5,
-                        right: 5,
-                        top: 1,
-                      ),
-                      child: Icon(
-                        icon,
-                        color: activeTextColor,
-                        size: iconSize,
-                      ),
-                    ) : Container(),
-                    child ?? (
-                      text != '' ?
-                      Text(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  icon != null ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 5,
+                      right: 5,
+                      top: 1,
+                    ),
+                    child: Icon(
+                      icon,
+                      color: activeTextColor,
+                      size: iconSize,
+                    ),
+                  ) : Container(),
+                  child ?? (
+                    text != '' ?
+                    Flexible(
+                      child: Text(
                         text,
                         softWrap: true,
                         style: TextStyle(
@@ -113,10 +111,10 @@ class Button extends StatelessWidget {
                           color: activeTextColor,
                           fontFamily: fontFamily,
                         ),
-                      ) : Container()
-                    ),
-                  ],
-                ),
+                      ),
+                    ) : Container()
+                  ),
+                ],
               ),
             ),
           ),
