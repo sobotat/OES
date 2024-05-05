@@ -18,5 +18,5 @@
 FROM httpd:2.4
 COPY ./build/web/ /usr/local/apache2/htdocs/
 
-COPY ./build/windows/x64/runner/Release/oes.msix /usr/local/apache2/htdocs/app-download/oes-windows.msix
+COPY ./build/windows/x64/runner/Release/oes.zip /usr/local/apache2/htdocs/app-download/oes-windows.zip
 COPY ./build/app/outputs/apk/release/app-release.apk /usr/local/apache2/htdocs/app-download/oes-android.apk
