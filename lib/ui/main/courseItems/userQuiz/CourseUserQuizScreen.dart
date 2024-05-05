@@ -199,9 +199,6 @@ class _QuestionState extends State<_Question> {
             children: [
               Builder(
                 builder: (context) {
-                  var width = MediaQuery.of(context).size.width;
-                  var overflow = 950;
-
                   List<Widget> childrenLeft = [];
                   List<Widget> childrenRight = [];
 
