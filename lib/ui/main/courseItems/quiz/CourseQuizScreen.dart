@@ -446,6 +446,15 @@ class _QuestionState extends State<_Question> {
                           }
                           selected.add(option);
                           setState(() {});
+
+                          if (widget.question.type == "pick-one") {
+                            List<AnswerOption> options = [];
+                            for (QuestionOption o in selected) {
+                              AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
+                              options.add(option);
+                            }
+                            widget.onSubmit(options);
+                          }
                         },
                       );
                       
@@ -484,7 +493,7 @@ class _QuestionState extends State<_Question> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Button(
+                  widget.question.type != "pick-one" ? Button(
                     text: "Submit",
                     maxWidth: double.infinity,
                     backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
@@ -496,7 +505,7 @@ class _QuestionState extends State<_Question> {
                       }
                       widget.onSubmit(options);
                     },
-                  )
+                  ) : Container()
                 ],
               ),
             ],
