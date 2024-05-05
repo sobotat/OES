@@ -43,7 +43,16 @@ Run-Command "flutter build web" $true
 Run-Command "flutter build apk" $true
 
 # Create MSIX package
-Run-Command "dart run msix:create" $true
+#Run-Command "dart run msix:create" $true
+
+# Build the Flutter Windows
+Run-Command "flutter build windows" $true
+$sourcePath = "build/windows/x64/runner/Release/*"
+$destinationZip = "build/windows/x64/runner/Release/oes.zip"
+if (Test-Path $destinationZip) {
+    Remove-Item $destinationZip
+}
+Compress-Archive -Path $sourcePath -DestinationPath $destinationZip
 
 # Build Docker image and push
 Run-Command "docker buildx build --builder mybuilder --platform linux/amd64,linux/arm64,linux/arm/v7 -t sobotat/oes-web --push ." $true

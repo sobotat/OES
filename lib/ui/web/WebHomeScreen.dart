@@ -306,7 +306,7 @@ class _Download extends StatelessWidget {
             children: [
               Flexible(
                 child: _DownloadButton(
-                  fileName: "oes-windows.msix",
+                  fileName: "oes-windows.zip",
                   icon: AppIcons.icon_windows,
                 ),
               ),
