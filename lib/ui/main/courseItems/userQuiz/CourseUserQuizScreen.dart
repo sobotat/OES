@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
@@ -67,10 +67,8 @@ class _BodyState extends State<_Body> {
 
   @override
   void initState() {
+    resetQuestions();
     super.initState();
-    Future(() {
-      resetQuestions();
-    },);
   }
 
   void resetQuestions() {
@@ -80,7 +78,6 @@ class _BodyState extends State<_Body> {
       q.options.shuffle();
     }
     showResult = false;
-    setState(() {});
   }
 
   @override
@@ -99,11 +96,11 @@ class _BodyState extends State<_Body> {
             onSubmit: (options) {
               showResult = true;
               setState(() {});
-              Future.delayed(const Duration(seconds: 5), () {
-                showResult = false;
-                questionsStack.removeAt(0);
-                if(mounted) setState(() {});
-              },);
+            },
+            showNext: () {
+              showResult = false;
+              questionsStack.removeAt(0);
+              setState(() {});
             },
           ) : Center(
             child: Container(
@@ -151,12 +148,14 @@ class _Question extends StatefulWidget {
     required this.question,
     required this.showResults,
     required this.onSubmit,
+    required this.showNext,
     super.key
   });
 
   final Question question;
   final bool showResults;
   final Function(List<AnswerOption> options) onSubmit;
+  final Function() showNext;
 
   @override
   State<_Question> createState() => _QuestionState();
@@ -165,11 +164,19 @@ class _Question extends StatefulWidget {
 class _QuestionState extends State<_Question> {
 
   List<QuestionOption> selected = [];
+  Timer? nextQuestionTimer;
 
   @override
   void dispose() {
     selected.clear();
     super.dispose();
+  }
+
+  void setTimer() {
+    nextQuestionTimer = Timer(const Duration(seconds: 5), () {
+      nextQuestionTimer = null;
+      widget.showNext();
+    });
   }
 
   @override
@@ -232,6 +239,7 @@ class _QuestionState extends State<_Question> {
                             AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
                             options.add(option);
                           }
+                          setTimer();
                           widget.onSubmit(options);
                         }
                       },
@@ -278,8 +286,24 @@ class _QuestionState extends State<_Question> {
                     AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
                     options.add(option);
                   }
+                  setTimer();
                   widget.onSubmit(options);
                 },
+              ) : Container(),
+              nextQuestionTimer != null ? Button(
+                  text: nextQuestionTimer!.isActive ? "Pause" : "Continue",
+                  maxWidth: double.infinity,
+                  backgroundColor: nextQuestionTimer!.isActive ? Colors.red.shade700 : Theme.of(context).colorScheme.secondary,
+                  icon: nextQuestionTimer!.isActive ? Icons.pause : Icons.play_arrow_outlined,
+                  onClick: (context) {
+                    if(nextQuestionTimer!.isActive) {
+                      nextQuestionTimer!.cancel();
+                      setState(() {});
+                      return;
+                    }
+                    nextQuestionTimer = null;
+                    widget.showNext();
+                  }
               ) : Container(),
             ],
           ),
