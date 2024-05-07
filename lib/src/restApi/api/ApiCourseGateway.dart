@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:oes/config/AppApi.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
-import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
@@ -25,7 +23,7 @@ class ApiCourseGateway implements CourseGateway {
     if (course != null) return course;
 
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
-        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -48,7 +46,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<List<CourseItem>> getCourseItems(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/items',
-        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -77,7 +75,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<List<User>> getCourseTeachers(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
-        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
         queryParameters: {
           'courseId': id,
           'userCourseRoles': [0],
@@ -110,7 +108,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<List<User>> getCourseStudents(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
-        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+        options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
         queryParameters: {
           'courseId': id,
           'userCourseRoles': [1],
@@ -141,10 +139,10 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<List<Course>> getUserCourses(SignedUser user) async {
+  Future<List<Course>> getUserCourses(User user) async {
 
     RequestResult result = await HttpRequest.instance.get(basePath,
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'userId': user.id,
       }
@@ -200,7 +198,7 @@ class ApiCourseGateway implements CourseGateway {
     });
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${course.id}',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: data,
     );
 
@@ -228,7 +226,7 @@ class ApiCourseGateway implements CourseGateway {
       ..addAll({'attendantIds': []});
 
     RequestResult result = await HttpRequest.instance.post(basePath,
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: data,
     );
 
@@ -252,7 +250,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<bool> deleteCourse(Course course) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/${course.id}',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -278,7 +276,7 @@ class ApiCourseGateway implements CourseGateway {
   Future<bool> joinCourse(String code) async {
 
     RequestResult result = await HttpRequest.instance.put('$basePath/$code/join',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -303,7 +301,7 @@ class ApiCourseGateway implements CourseGateway {
   Future<String?> generateCode(Course course) async {
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${course.id}/code',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -323,7 +321,7 @@ class ApiCourseGateway implements CourseGateway {
   @override
   Future<String?> getCode(Course course) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/${course.id}/code',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {

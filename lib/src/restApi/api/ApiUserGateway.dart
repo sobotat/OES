@@ -5,7 +5,6 @@ import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
-import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
@@ -18,8 +17,7 @@ class ApiUserGateway implements UserGateway {
   String basePath = '${AppApi.instance.apiServerUrl}/api';
 
   @override
-  Future<SignedUser?> loginWithUsernameAndPassword(String username, String password, bool rememberMe, Device device) async {
-    print(basePath);
+  Future<User?> loginWithUsernameAndPassword(String username, String password, Device device) async {
     RequestResult result = await HttpRequest.instance.post('$basePath/auth/login',
       data: {
         'username': username,
@@ -35,8 +33,8 @@ class ApiUserGateway implements UserGateway {
     }
 
     try {
-      SignedUser user = SignedUser.fromJson(result.data);
-      await SecureStorage.instance.set('token', user.token);
+      User user = User.fromJson(result.data);
+      await SecureStorage.instance.set('token', result.data['token']);
 
       return user;
     } on Exception {
@@ -45,7 +43,7 @@ class ApiUserGateway implements UserGateway {
   }
 
   @override
-  Future<SignedUser?> loginWithToken(String token) async {
+  Future<User?> loginWithToken(String token) async {
     RequestResult result = await HttpRequest.instance.post('$basePath/auth/tokenLogin',
       options: AuthHttpRequestOptions(token: token)
     );
@@ -57,8 +55,8 @@ class ApiUserGateway implements UserGateway {
     }
 
     try {
-      SignedUser user = SignedUser.fromJson(result.data);
-      await SecureStorage.instance.set('token', user.token);
+      User user = User.fromJson(result.data);
+      await SecureStorage.instance.set('token', result.data['token']);
 
       return user;
     } on Exception {
@@ -114,7 +112,7 @@ class ApiUserGateway implements UserGateway {
   @override
   Future<User?> getUser(int userId) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/users/$userId',
-        options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token)
+        options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken())
     );
 
     if (result.checkUnauthorized()) {
@@ -141,7 +139,7 @@ class ApiUserGateway implements UserGateway {
     };
 
     RequestResult result = await HttpRequest.instance.get('$basePath/users',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: query,
     );
 
@@ -176,7 +174,7 @@ class ApiUserGateway implements UserGateway {
     };
 
     RequestResult result = await HttpRequest.instance.get('$basePath/users/search',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: query,
     );
 

@@ -1,16 +1,14 @@
 
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
-import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/api/ApiCourseGateway.dart';
 
 abstract class CourseGateway {
 
   static final CourseGateway instance = ApiCourseGateway();
 
-  Future<List<Course>> getUserCourses(SignedUser user);
+  Future<List<Course>> getUserCourses(User user);
   Future<Course?> getCourse(int id);
   Future<Course?> createCourse(Course course);
   Future<bool> updateCourse(Course course);

@@ -29,7 +29,7 @@ class SignalR {
         .withUrl('${AppApi.instance.apiServerUrl}/$url',
           options: HttpConnectionOptions(
             accessTokenFactory: () async {
-              return AppSecurity.instance.user!.token;
+              return await AppSecurity.instance.getToken();
             },
           )
         )

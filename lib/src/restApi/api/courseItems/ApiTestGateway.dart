@@ -20,7 +20,7 @@ class ApiTestGateway implements TestGateway {
     Map<String, dynamic> query = password != null? {'password': password,} : {};
 
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: query,
     );
 
@@ -43,7 +43,7 @@ class ApiTestGateway implements TestGateway {
   Future<List<TestSubmission>> getUserSubmission(int id, int userId) async {
 
     RequestResult result = await HttpRequest.instance.get('$userBasePath/$userId/test-submissions',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         "testId": id
       },
@@ -70,7 +70,7 @@ class ApiTestGateway implements TestGateway {
   @override
   Future<List<AnswerOption>> getAnswers(int id, int submissionId) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions/$submissionId',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -95,7 +95,7 @@ class ApiTestGateway implements TestGateway {
   @override
   Future<List<Review>> getReviews(int id, int submissionId) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/submissions/$submissionId/reviews',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -132,7 +132,7 @@ class ApiTestGateway implements TestGateway {
     }
 
     RequestResult result = await HttpRequest.instance.post(basePath,
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'courseId':courseId,
       },
@@ -168,7 +168,7 @@ class ApiTestGateway implements TestGateway {
     }
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${test.id}',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: data,
     );
 
@@ -195,7 +195,7 @@ class ApiTestGateway implements TestGateway {
     };
 
     RequestResult result = await HttpRequest.instance.post('$basePath/submit',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: query,
     );
 
@@ -217,7 +217,7 @@ class ApiTestGateway implements TestGateway {
   Future<bool> submitReview(int id, int submissionId, List<Review> reviews) async {
 
     RequestResult result = await HttpRequest.instance.put('$basePath/$id/submissions/$submissionId/reviews',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: reviews.map((e) => e.toMap()).toList(),
     );
 
@@ -238,7 +238,7 @@ class ApiTestGateway implements TestGateway {
   @override
   Future<bool> delete(int id) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -258,7 +258,7 @@ class ApiTestGateway implements TestGateway {
   @override
   Future<TestInfo?> getInfo(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/info',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -280,7 +280,7 @@ class ApiTestGateway implements TestGateway {
     RequestResult result = await HttpRequest.instance.get(
         '$basePath/$id/check-password',
         options: AuthHttpRequestOptions(
-            token: AppSecurity.instance.user!.token),
+            token: await AppSecurity.instance.getToken()),
         queryParameters: {
           'password': password,
         }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:oes/config/AppApi.dart';
 import 'package:oes/config/AppRouter.dart';
 import 'package:oes/src/objects/Device.dart';
-import 'package:oes/src/objects/SignedUser.dart';
+import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/SecureStorage.dart';
@@ -11,7 +11,7 @@ class AppSecurity extends ChangeNotifier {
 
   static final AppSecurity instance = AppSecurity();
 
-  SignedUser? user;
+  User? user;
 
   bool _isInit = false;
   bool get isInit => _isInit;
@@ -45,7 +45,7 @@ class AppSecurity extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String username, String password, {bool? rememberMe}) async {
+  Future<bool> login(String username, String password) async {
     if (!AppApi.instance.haveApiUrl()) {
       debugPrint("Did not get Organization Url -> Redirecting to Sign-In");
       AppRouter.instance.router.goNamed("sign-in", queryParameters: {
@@ -57,7 +57,7 @@ class AppSecurity extends ChangeNotifier {
     }
 
     Device device = await DeviceInfo.getDevice();
-    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, rememberMe ?? true, device)
+    user = await UserGateway.instance.loginWithUsernameAndPassword(username, password, device)
       .onError((error, stackTrace) {
         debugPrint("Failed to Sign in User with Username and Password");
         return null;
@@ -74,15 +74,15 @@ class AppSecurity extends ChangeNotifier {
 
   Future<void> logout() async {
     if (user == null) return;
-    await UserGateway.instance.logout(user!.token);
+    await UserGateway.instance.logout(await getToken());
     user = null;
     notifyListeners();
   }
 
   Future<void> logoutFromDevice(String deviceToken) async {
     if(user != null) {
-      var devices = (await user!.signedDevices).where((element) => element.deviceToken == deviceToken && element.deviceToken == user!.token);
-      user!.clearCache();
+      String token = await getToken();
+      var devices = (await UserGateway.instance.getDevices(token)).where((element) => element.deviceToken == deviceToken && element.deviceToken == token);
       if (devices.isNotEmpty) {
         logout();
       } else {
@@ -90,6 +90,10 @@ class AppSecurity extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  Future<String> getToken() async {
+    return (await SecureStorage.instance.get("token")) ?? "";
   }
 
   bool isLoggedIn(){

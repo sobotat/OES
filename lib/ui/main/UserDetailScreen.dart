@@ -3,6 +3,7 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/SignedDevice.dart';
+import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
@@ -125,25 +126,34 @@ class _Devices extends StatelessWidget {
           return ListenableBuilder(
             listenable: AppSecurity.instance,
             builder: (context, child) {
-              return FutureBuilder<List<SignedDevice>?>(
-                  future: AppSecurity.instance.user!.signedDevices,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: SignedDeviceWidget(
-                            device: snapshot.data![index],
-                          ),
+              return FutureBuilder(
+                future: AppSecurity.instance.getToken(),
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData) return const Center(child: WidgetLoading());
+                  String token = snapshot.data!;
+
+                  return FutureBuilder<List<SignedDevice>?>(
+                      future: UserGateway.instance.getDevices(token),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: SignedDeviceWidget(
+                                device: snapshot.data![index],
+                                currentToken: token,
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                    } else {
-                      return const Center(child: WidgetLoading());
-                    }
-                  }
+                        } else {
+                          return const Center(child: WidgetLoading());
+                        }
+                      }
+                  );
+                }
               );
             },
           );

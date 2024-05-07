@@ -15,7 +15,7 @@ class ApiUserQuizGateway extends UserQuizGateway {
   @override
   Future<UserQuiz?> get(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -46,7 +46,7 @@ class ApiUserQuizGateway extends UserQuizGateway {
     }
 
     RequestResult result = await HttpRequest.instance.post(basePath,
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'courseId':courseId,
       },
@@ -80,7 +80,7 @@ class ApiUserQuizGateway extends UserQuizGateway {
     }
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${quiz.id}',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: data,
     );
 
@@ -101,7 +101,7 @@ class ApiUserQuizGateway extends UserQuizGateway {
   @override
   Future<bool> delete(int id) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {

@@ -10,13 +10,15 @@ class SignedDeviceWidget extends StatelessWidget {
 
   const SignedDeviceWidget({
     required this.device,
+    required this.currentToken,
     super.key
   });
 
   final SignedDevice device;
+  final String currentToken;
 
   bool isCurrent() {
-    return device.deviceToken == AppSecurity.instance.user!.token;
+    return device.deviceToken == currentToken;
   }
 
   IconData getIcon() {

@@ -15,7 +15,7 @@ class ApiNoteGateway extends NoteGateway {
   @override
   Future<Note?> get(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -41,7 +41,7 @@ class ApiNoteGateway extends NoteGateway {
     print(basePath.toString());
 
     RequestResult result = await HttpRequest.instance.post(basePath,
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'courseId':courseId,
       },
@@ -68,7 +68,7 @@ class ApiNoteGateway extends NoteGateway {
     data.remove('id');
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${note.id}',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: data,
     );
 
@@ -89,7 +89,7 @@ class ApiNoteGateway extends NoteGateway {
   @override
   Future<bool> delete(int id) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {

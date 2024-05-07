@@ -5,7 +5,6 @@ import 'package:oes/config/AppIcons.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
-import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/services/NewTabOpener.dart';
@@ -164,7 +163,7 @@ class _CoursesState extends State<_Courses> {
   @override
   Widget build(BuildContext context) {
     if(!AppSecurity.instance.isLoggedIn()) return const Center(child: WidgetLoading(),);
-    SignedUser user = AppSecurity.instance.user!;
+    User user = AppSecurity.instance.user!;
     UserRole role = user.role ?? UserRole.student;
     return Column(
       mainAxisSize: MainAxisSize.min,

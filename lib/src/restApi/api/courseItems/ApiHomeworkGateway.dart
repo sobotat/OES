@@ -20,7 +20,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   @override
   Future<Homework?> get(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -46,7 +46,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   @override
   Future<List<HomeworkSubmission>> getUserSubmission(int id, int userId) async {
     RequestResult result = await HttpRequest.instance.get('$userBasePath/$userId/homework-submissions',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         "homeworkId": id,
       }
@@ -74,7 +74,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   Future<List<int>?> getAttachment(int attachmentId, { Function(double progress)? onProgress }) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/attachments/$attachmentId',
       options: AuthHttpRequestOptions(
-        token: AppSecurity.instance.user!.token,
+        token: await AppSecurity.instance.getToken(),
         responseType: HttpResponseType.bytes
       ),
       onReceiveProgress: onProgress
@@ -101,7 +101,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
     data.remove('type');
 
     RequestResult result = await HttpRequest.instance.post(basePath,
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'courseId':courseId,
       },
@@ -128,7 +128,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
     data.remove('id');
 
     RequestResult result = await HttpRequest.instance.put('$basePath/${homework.id}',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       data: data,
     );
 
@@ -149,7 +149,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   @override
   Future<bool> delete(int id) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/$id',
-      options: AuthHttpRequestOptions(token: AppSecurity.instance.user!.token),
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
@@ -176,7 +176,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
 
     RequestResult result = await HttpRequest.instance.post("$basePath/$id/submissions",
       options: AuthHttpRequestOptions(
-        token: AppSecurity.instance.user!.token,
+        token: await AppSecurity.instance.getToken(),
         contentType: "multipart/form-data",
         sendTimeout: const Duration(minutes: 1),
         receiveTimeout: const Duration(minutes: 1)
@@ -205,7 +205,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   Future<bool> submitReviewText(int id, int submitId, String text) async {
     RequestResult result = await HttpRequest.instance.patch("$basePath/$id/submissions/$submitId",
       options: AuthHttpRequestOptions(
-          token: AppSecurity.instance.user!.token,
+          token: await AppSecurity.instance.getToken(),
       ),
       data: "\"$text\""
     ).onError((error, stackTrace) {
@@ -230,7 +230,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   Future<int?> getScore(int id, int userId) async {
     RequestResult result = await HttpRequest.instance.get("$userBasePath/$userId/homework-scores/$id",
         options: AuthHttpRequestOptions(
-          token: AppSecurity.instance.user!.token,
+          token: await AppSecurity.instance.getToken(),
         ),
     ).onError((error, stackTrace) {
       throw error!;
@@ -254,7 +254,7 @@ class ApiHomeworkGateway implements HomeworkGateway {
   Future<bool> submitScore(int id, int userId, int points) async {
     RequestResult result = await HttpRequest.instance.put("$userBasePath/$userId/homework-scores/$id",
         options: AuthHttpRequestOptions(
-          token: AppSecurity.instance.user!.token,
+          token: await AppSecurity.instance.getToken(),
           sendTimeout: const Duration(minutes: 30),
           receiveTimeout: const Duration(minutes: 30)
         ),
