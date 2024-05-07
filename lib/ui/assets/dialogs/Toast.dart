@@ -71,46 +71,7 @@ class Toast {
               useSafeArea: true,
               context: currentContext,
               builder: (context) {
-                return PopupDialog(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 50,
-                        left: 20,
-                        right: 20,
-                      ),
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade800,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 10
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              data.icon != null ? Padding(
-                                padding: const EdgeInsets.only(right: 5),
-                                child: Icon(data.icon,
-                                  size: 20,
-                                  color: data.iconColor,
-                                ),
-                              ) : Container(height: 0,),
-                              Text(data.text,
-                                softWrap: true,
-                                style: TextStyle(color: data.textColor),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                );
+                return _ToastWidget(data: data);
               }).then((value) {
             isActive = false;
           });
@@ -143,4 +104,57 @@ class Toast {
     Toast.makeToast(text: text, duration: duration, icon: Icons.error, iconColor: Colors.red.shade700);
   }
 
+}
+
+class _ToastWidget extends StatelessWidget {
+  const _ToastWidget({
+    super.key,
+    required this.data,
+  });
+
+  final ToastQueueData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupDialog(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            bottom: 50,
+            left: 20,
+            right: 20,
+          ),
+          child: Material(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade800,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  data.icon != null ? Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: Icon(data.icon,
+                      size: 20,
+                      color: data.iconColor,
+                    ),
+                  ) : Container(height: 0,),
+                  Text(data.text,
+                    softWrap: true,
+                    style: TextStyle(color: data.textColor),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+    );
+  }
 }
