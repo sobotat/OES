@@ -15,6 +15,7 @@ import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/QuizGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
+import 'package:oes/src/services/NewTabOpener.dart';
 import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
@@ -477,6 +478,14 @@ class _CourseItemWidget extends StatelessWidget {
     );
   }
 
+  void openNewTab(BuildContext context) {
+    String path = context.namedLocation('course-${item.type}', pathParameters: {
+      'course_id': course.id.toString(),
+      '${item.type}_id': item.id.toString()}
+    );
+    NewTabOpener.open(path);
+  }
+
   void edit(BuildContext context) {
     if(!isTeacher && item.type != "userquiz") return;
     debugPrint('Edit ${item.type} ${item.name}');
@@ -512,6 +521,7 @@ class _CourseItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconItem(
       onClick: (context) => open(context),
+      onMiddleClick: (context) => openNewTab(context),
       icon: _IconText(
           text: getIconText(),
           backgroundColor: getColor()

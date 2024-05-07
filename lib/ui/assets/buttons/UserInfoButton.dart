@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oes/config/AppRouter.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/src/services/NewTabOpener.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 
 class UserInfoButton extends StatelessWidget {
@@ -46,6 +47,11 @@ class UserInfoButton extends StatelessWidget {
                   return;
                 }
                 context.goNamed('user-detail');
+              },
+              onMiddleClick: (context) {
+                if(user == null) return;
+                String path = context.namedLocation("user-detail");
+                NewTabOpener.open(path);
               },
               minWidth: 200,
               maxWidth: double.infinity,

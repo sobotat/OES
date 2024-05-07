@@ -8,6 +8,7 @@ import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/SignedUser.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
+import 'package:oes/src/services/NewTabOpener.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -100,6 +101,9 @@ class _BackToWeb extends StatelessWidget {
           text: 'To Web',
           onClick: (context) {
             context.goNamed('/');
+          },
+          onMiddleClick: (context) {
+            NewTabOpener.open(context.namedLocation("/"));
           },
         ),
       );
@@ -374,6 +378,11 @@ class _CourseItem extends StatelessWidget {
     context.goNamed('course', pathParameters: {'course_id': course.id.toString()});
   }
 
+  void openInNewTab(BuildContext context) {
+    String path = context.namedLocation("course", pathParameters: {'course_id': course.id.toString()});
+    NewTabOpener.open(path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return IconItem(
@@ -405,6 +414,7 @@ class _CourseItem extends StatelessWidget {
       ] : [],
       color: course.color ?? Colors.blueAccent,
       onClick: (context) => open(context),
+      onMiddleClick: (context) => openInNewTab(context),
       onHold: (context) => edit(context),
     );
   }

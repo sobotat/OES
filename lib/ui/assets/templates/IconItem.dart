@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oes/ui/assets/templates/MiddleClickListener.dart';
 
 class IconItem extends StatelessWidget {
   const IconItem({
@@ -14,6 +15,8 @@ class IconItem extends StatelessWidget {
     this.borderColor,
     this.borderWidth = 2,
     this.onClick,
+    this.onMiddleClick,
+    this.callMiddleClickOnNonWeb = false,
     this.onHold,
     this.mainSize = MainAxisSize.max,
     this.alignment = Alignment.centerLeft,
@@ -31,7 +34,8 @@ class IconItem extends StatelessWidget {
   final Color? backgroundColor;
   final Color? borderColor;
   final double borderWidth;
-  final Function(BuildContext context)? onClick, onHold;
+  final Function(BuildContext context)? onClick, onMiddleClick, onHold;
+  final bool callMiddleClickOnNonWeb;
   final MainAxisSize mainSize;
   final Alignment alignment;
   final EdgeInsets padding;
@@ -42,72 +46,79 @@ class IconItem extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Padding(
         padding: padding,
-        child: Material(
-          elevation: 10,
-          borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: () {
-              if (onClick != null) onClick!(context);
-            },
-            onLongPress: () {
-              if (onHold != null) onHold!(context);
-            },
+        child: MiddleClickListener(
+          onMiddleClick: (context, isWeb) {
+            if(onMiddleClick != null && (isWeb || callMiddleClickOnNonWeb)) {
+              onMiddleClick!(context);
+            }
+          },
+          child: Material(
+            elevation: 10,
             borderRadius: BorderRadius.circular(10),
-            child: Ink(
-              height: height,
-              decoration: BoxDecoration(
-                border: borderColor != null ? Border.all(
-                  width: borderWidth,
-                  color: borderColor!,
-                ) : null,
-                borderRadius: BorderRadius.circular(10),
-                color: backgroundColor ?? Theme.of(context).colorScheme.primary
-              ),
-              child: IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: mainSize == MainAxisSize.max ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
-                  mainAxisSize: mainSize,
-                  children: [
-                    Flexible(
-                      flex: bodyFlex,
-                      child: Row(
-                        mainAxisSize: mainSize,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(5),
-                            width: width,
-                            height: height,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: color,
-                            ),
-                            alignment: Alignment.center,
-                            child: icon,
-                          ),
-                          body != null ? Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: body!,
-                            ),
-                          ) : Container(),
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      flex: actions.isEmpty ? 0 : 1,
-                      fit: FlexFit.tight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 5),
+            child: InkWell(
+              onTap: () {
+                if (onClick != null) onClick!(context);
+              },
+              onLongPress: () {
+                if (onHold != null) onHold!(context);
+              },
+              borderRadius: BorderRadius.circular(10),
+              child: Ink(
+                height: height,
+                decoration: BoxDecoration(
+                  border: borderColor != null ? Border.all(
+                    width: borderWidth,
+                    color: borderColor!,
+                  ) : null,
+                  borderRadius: BorderRadius.circular(10),
+                  color: backgroundColor ?? Theme.of(context).colorScheme.primary
+                ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: mainSize == MainAxisSize.max ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+                    mainAxisSize: mainSize,
+                    children: [
+                      Flexible(
+                        flex: bodyFlex,
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: mainSize,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: actions,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(5),
+                              width: width,
+                              height: height,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: color,
+                              ),
+                              alignment: Alignment.center,
+                              child: icon,
+                            ),
+                            body != null ? Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: body!,
+                              ),
+                            ) : Container(),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      Flexible(
+                        flex: actions.isEmpty ? 0 : 1,
+                        fit: FlexFit.tight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: actions,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -11,6 +11,7 @@ class AppApi extends ChangeNotifier {
   String mainServerUrl = 'http://oes-main.sobotovi.net:8002';
   String _apiServerUrl = '';
   Organization? organization;
+  bool isInit = false;
 
   String get apiServerUrl => _apiServerUrl;
   set apiServerUrl(String value) {
@@ -24,11 +25,18 @@ class AppApi extends ChangeNotifier {
 
   Future<void> init() async {
     String? organizationName = await LocalStorage.instance.get("organization");
-    if (organizationName == null) return;
+    if (organizationName == null) {
+      isInit = true;
+      return;
+    }
 
     Organization? organization = await OrganizationGateway.instance.get(organizationName);
-    if (organization == null) return;
+    if (organization == null) {
+      isInit = true;
+      return;
+    }
     setOrganization(organization);
+    isInit = true;
   }
 
   Future<void> setOrganization(Organization organization) async {

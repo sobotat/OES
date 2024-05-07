@@ -30,17 +30,13 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
+    if (path.contains('sign-out')) {
+      path = '/';
+    } else {
+      path = widget.path;
+    }
+    organization = AppApi.instance.organization;
     super.initState();
-    Future(() {
-      if (path.contains('sign-out')) {
-        path = '/';
-      } else {
-        path = widget.path;
-      }
-      setState(() {
-        organization = AppApi.instance.organization;
-      });
-    },);
   }
 
   @override

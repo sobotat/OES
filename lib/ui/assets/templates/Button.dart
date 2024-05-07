@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/ui/assets/templates/MiddleClickListener.dart';
 import '../../../config/AppTheme.dart';
 
 class Button extends StatelessWidget {
@@ -12,6 +13,8 @@ class Button extends StatelessWidget {
     this.toolTip,
     this.toolTipWaitDuration,
     this.onClick,
+    this.onMiddleClick,
+    this.callMiddleClickInNonWeb = false,
     this.shouldPopOnClick = false,
     this.minWidth,
     this.minHeight,
@@ -33,6 +36,8 @@ class Button extends StatelessWidget {
   final String? toolTip;
   final Duration? toolTipWaitDuration;
   final Function(BuildContext context)? onClick;
+  final Function(BuildContext context)? onMiddleClick;
+  final bool callMiddleClickInNonWeb;
   final bool shouldPopOnClick;
 
   final double? maxWidth;
@@ -54,67 +59,74 @@ class Button extends StatelessWidget {
     Color activeBackgroundColor = backgroundColor ?? Theme.of(context).colorScheme.primary;
     Color activeTextColor = textColor ?? AppTheme.getActiveTheme().calculateTextColor(activeBackgroundColor, context);
 
-    return Material(
-      elevation: 10,
-      borderRadius: borderRadius ?? BorderRadius.circular(10),
-      child: InkWell(
-        onTap: onClick != null ? () {
-          onClick!(context);
-
-          if (shouldPopOnClick) {
-            context.pop();
-          }
-        } : null,
+    return MiddleClickListener(
+      onMiddleClick: (context, isWeb) {
+        if(onMiddleClick != null && (isWeb || callMiddleClickInNonWeb)) {
+          onMiddleClick!(context);
+        }
+      },
+      child: Material(
+        elevation: 10,
         borderRadius: borderRadius ?? BorderRadius.circular(10),
-        child: Tooltip(
-          message: toolTip ?? '',
-          waitDuration: toolTipWaitDuration ?? const Duration(milliseconds: 500),
-          child: Container(
-            constraints: BoxConstraints(
-              minWidth: minWidth ?? maxWidth ?? 200,
-              minHeight: minHeight ?? maxHeight ?? 35,
-              maxWidth: maxWidth ?? 200,
-              maxHeight: maxHeight ?? 35,
-            ),
-            child: Ink(
-              decoration: BoxDecoration(
-                borderRadius: borderRadius ?? BorderRadius.circular(10),
-                border: borderColor != null ? Border.all(
-                  width: borderWidth,
-                  color: borderColor!,
-                ) : null,
-                color: activeBackgroundColor,
+        child: InkWell(
+          onTap: onClick != null ? () {
+            onClick!(context);
+
+            if (shouldPopOnClick) {
+              context.pop();
+            }
+          } : null,
+          borderRadius: borderRadius ?? BorderRadius.circular(10),
+          child: Tooltip(
+            message: toolTip ?? '',
+            waitDuration: toolTipWaitDuration ?? const Duration(milliseconds: 500),
+            child: Container(
+              constraints: BoxConstraints(
+                minWidth: minWidth ?? maxWidth ?? 200,
+                minHeight: minHeight ?? maxHeight ?? 35,
+                maxWidth: maxWidth ?? 200,
+                maxHeight: maxHeight ?? 35,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  icon != null ? Padding(
-                    padding: const EdgeInsets.only(
-                      left: 5,
-                      right: 5,
-                      top: 1,
-                    ),
-                    child: Icon(
-                      icon,
-                      color: activeTextColor,
-                      size: iconSize,
-                    ),
-                  ) : Container(),
-                  child ?? (
-                    text != '' ?
-                    Flexible(
-                      child: Text(
-                        text,
-                        softWrap: true,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: activeTextColor,
-                          fontFamily: fontFamily,
-                        ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  borderRadius: borderRadius ?? BorderRadius.circular(10),
+                  border: borderColor != null ? Border.all(
+                    width: borderWidth,
+                    color: borderColor!,
+                  ) : null,
+                  color: activeBackgroundColor,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon != null ? Padding(
+                      padding: const EdgeInsets.only(
+                        left: 5,
+                        right: 5,
+                        top: 1,
                       ),
-                    ) : Container()
-                  ),
-                ],
+                      child: Icon(
+                        icon,
+                        color: activeTextColor,
+                        size: iconSize,
+                      ),
+                    ) : Container(),
+                    child ?? (
+                      text != '' ?
+                      Flexible(
+                        child: Text(
+                          text,
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: activeTextColor,
+                            fontFamily: fontFamily,
+                          ),
+                        ),
+                      ) : Container()
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

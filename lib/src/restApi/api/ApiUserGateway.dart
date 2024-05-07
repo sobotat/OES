@@ -68,7 +68,7 @@ class ApiUserGateway implements UserGateway {
 
   @override
   Future<void> logout(String token) async {
-    SecureStorage.instance.remove('token');
+    // SecureStorage.instance.remove('token');
 
     await HttpRequest.instance.post('$basePath/auth/tokenLogout',
         options: AuthHttpRequestOptions(token: token)

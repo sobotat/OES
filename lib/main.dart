@@ -9,6 +9,7 @@ import 'package:oes/config/LightTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/services/NetworkChecker.dart';
 import 'package:oes/src/services/SecureStorage.dart';
+import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,15 +37,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: AppTheme.activeThemeMode,
-      builder: (BuildContext context, Widget? child) {
-        return MaterialApp.router(
-          title: 'OES',
-          debugShowCheckedModeBanner: false,
-          theme: LightTheme.instance.getTheme(context),
-          darkTheme: DarkTheme.instance.getTheme(context),
-          themeMode: AppTheme.activeThemeMode.themeMode,
-          routerConfig: AppRouter.instance.router,
+      listenable: AppApi.instance,
+      builder: (context, _) {
+        if (!AppApi.instance.isInit) {
+          return Material(
+            color: AppTheme.getActiveTheme().getTheme(context).colorScheme.background,
+          );
+        }
+        return ListenableBuilder(
+          listenable: AppTheme.activeThemeMode,
+          builder: (BuildContext context, Widget? child) {
+            return MaterialApp.router(
+              title: 'OES',
+              debugShowCheckedModeBanner: false,
+              theme: LightTheme.instance.getTheme(context),
+              darkTheme: DarkTheme.instance.getTheme(context),
+              themeMode: AppTheme.activeThemeMode.themeMode,
+              routerConfig: AppRouter.instance.router,
+            );
+          }
         );
       }
     );

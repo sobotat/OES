@@ -12,6 +12,7 @@ import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
 import 'package:oes/src/restApi/api/http/RequestResult.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
+import 'package:oes/src/services/NewTabOpener.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
@@ -273,6 +274,10 @@ class _GoToMain extends StatelessWidget {
         maxWidth: maxWidth,
         onClick: (context) {
           context.goNamed('main');
+        },
+        onMiddleClick: (context) {
+          String path = context.namedLocation("main");
+          NewTabOpener.open(path);
         },
       ),
     );
