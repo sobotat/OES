@@ -157,49 +157,46 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           ],
         );
     }
-    return Scaffold(
-      appBar: const AppAppBar(),
-      body: Column(
-        children: [
-          TabBar(
+    return Column(
+      children: [
+        TabBar(
+          controller: tabController,
+          labelStyle: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium!.color,
+            fontWeight: FontWeight.bold
+          ),
+          indicatorColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+          tabs: const [
+            Tab(text: 'Editor',),
+            Tab(text: 'Preview',),
+          ],
+        ),
+        Flexible(
+          child: TabBarView(
             controller: tabController,
-            labelStyle: TextStyle(
-              color: Theme.of(context).textTheme.bodyMedium!.color,
-              fontWeight: FontWeight.bold
-            ),
-            indicatorColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-            tabs: const [
-              Tab(text: 'Editor',),
-              Tab(text: 'Preview',),
-            ],
+            children: [
+              ListView(
+                shrinkWrap: true,
+                children: [
+                  _Editor(
+                    courseId: widget.courseId,
+                    note: widget.note,
+                    onUpdated: (updatedNote) {
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+              ListView(
+                shrinkWrap: true,
+                children: [
+                  _Preview(note: widget.note),
+                ],
+              )
+            ]
           ),
-          Flexible(
-            child: TabBarView(
-              controller: tabController,
-              children: [
-                ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _Editor(
-                      courseId: widget.courseId,
-                      note: widget.note,
-                      onUpdated: (updatedNote) {
-                        setState(() {});
-                      },
-                    ),
-                  ],
-                ),
-                ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _Preview(note: widget.note),
-                  ],
-                )
-              ]
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
