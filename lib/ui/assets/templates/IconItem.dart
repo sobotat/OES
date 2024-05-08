@@ -108,7 +108,7 @@ class IconItem extends StatelessWidget {
                         flex: actions.isEmpty ? 0 : 1,
                         fit: FlexFit.tight,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 5),
+                          padding: const EdgeInsets.all(5),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.end,
