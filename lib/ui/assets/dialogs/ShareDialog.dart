@@ -108,7 +108,6 @@ class _ShareDialogState extends State<ShareDialog> {
     bool success = await removeUser(user.id);
     if (success) {
       if(mounted) context.pop();
-      if(mounted) context.pop();
       return;
     }
   }
@@ -156,6 +155,7 @@ class _ShareDialogState extends State<ShareDialog> {
                             return Container();
                           }
                           return isEditor ? _Input(
+                            courseId: widget.courseId,
                             addUser: (username) => addUser(username),
                           ) : _LeaveButton(
                             leave: () => leave(),
@@ -204,10 +204,12 @@ class _LeaveButton extends StatelessWidget {
 
 class _Input extends StatefulWidget {
   const _Input({
+    required this.courseId,
     required this.addUser,
     super.key,
   });
-  
+
+  final int courseId;
   final Function(String username) addUser;
 
   @override
@@ -215,9 +217,19 @@ class _Input extends StatefulWidget {
 }
 
 class _InputState extends State<_Input> {
-  
-  TextEditingController controller = TextEditingController();
-  
+
+  List<String> usernames = [];
+  SearchController controller = SearchController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future(() async {
+      List<User> users = await CourseGateway.instance.getUsers(widget.courseId);
+      usernames = users.map((e) => e.username).toList();
+    },);
+  }
+
   @override
   void dispose() {
     controller.dispose();
@@ -231,11 +243,40 @@ class _InputState extends State<_Input> {
       child: Row(
         children: [
           Flexible(
-            child: TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: "Username"
+            child: SearchAnchor(
+              searchController: controller,
+              viewConstraints: const BoxConstraints(
+                maxWidth: 300,
+                maxHeight: 400
               ),
+              builder: (context, controller) {
+                return SearchBar(
+                  controller: controller,
+                  hintText: "Username",
+                  onTap: () {
+                    controller.openView();
+                  },
+                  onChanged: (value) {
+                    controller.openView();
+                  },
+                  padding: const MaterialStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.all(5)
+                  ),
+                );
+              },
+              suggestionsBuilder: (context, controller) {
+                List<String> searchUsernames = usernames.where((element) => element.toLowerCase().contains(controller.text.toLowerCase())).toList();
+                return List<ListTile>.generate(searchUsernames.length, (int index) {
+                  return ListTile(
+                    title: Text(searchUsernames[index]),
+                    onTap: () {
+                      setState(() {
+                        controller.closeView(searchUsernames[index]);
+                      });
+                    },
+                  );
+                });
+              },
             ),
           ),
           Padding(
