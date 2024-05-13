@@ -169,7 +169,7 @@ class ApiCourseGateway implements CourseGateway {
       options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'userId': user.id,
-        'pageSize': double.infinity.toInt()
+        'pageSize': 1024
       }
     );
 
