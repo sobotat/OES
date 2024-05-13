@@ -547,9 +547,9 @@ class _CourseItemWidget extends StatelessWidget {
             bodyText: item.name,
           ),
           color: getColor(),
-          onHold: isTeacher ? (context) {
+          onHold: (context) {
             edit(context, canEdit);
-          } : null,
+          },
           actions: [
             canEdit ? Padding(
               padding: const EdgeInsets.all(5),
