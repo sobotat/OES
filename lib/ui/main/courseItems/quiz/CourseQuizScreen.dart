@@ -43,7 +43,7 @@ class CourseQuizScreen extends StatelessWidget {
           if(!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
           return FutureBuilder(
             future: Future(() async {
-              Course? course = await CourseGateway.instance.getCourse(courseId);
+              Course? course = await CourseGateway.instance.get(courseId);
               if (course == null) return false;
               return await course.isTeacherInCourse(AppSecurity.instance.user as User);
             }),

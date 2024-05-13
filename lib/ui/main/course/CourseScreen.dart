@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
+import 'package:oes/src/objects/SharePermission.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/Quiz.dart';
@@ -15,6 +16,7 @@ import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/QuizGateway.dart';
 import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/UserQuizShareGateway.dart';
 import 'package:oes/src/services/NewTabOpener.dart';
 import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
@@ -42,7 +44,7 @@ class CourseScreen extends StatelessWidget {
       builder: (context, _) {
         if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
         return FutureBuilder(
-          future: CourseGateway.instance.getCourse(courseId),
+          future: CourseGateway.instance.get(courseId),
           builder: (context, snapshot) {
             if(!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),),);
             return _Body(course: snapshot.data!);
@@ -73,7 +75,7 @@ class _BodyState extends State<_Body> {
 
   @override
   void initState() {
-    items = CourseGateway.instance.getCourseItems(widget.course.id);
+    items = CourseGateway.instance.getItems(widget.course.id);
     super.initState();
   }
 
@@ -250,14 +252,14 @@ class _BodyState extends State<_Body> {
     return Scaffold(
       appBar: AppAppBar(
         onRefresh: () {
-          items = CourseGateway.instance.getCourseItems(widget.course.id);
+          items = CourseGateway.instance.getItems(widget.course.id);
           refreshKey.currentState?.refresh();
         },
       ),
       body: RefreshWidget(
         key: refreshKey,
         onRefreshed: () {
-          items = CourseGateway.instance.getCourseItems(widget.course.id);
+          items = CourseGateway.instance.getItems(widget.course.id);
           setState(() {});
         },
         child: FutureBuilder(
@@ -486,8 +488,8 @@ class _CourseItemWidget extends StatelessWidget {
     NewTabOpener.open(path);
   }
 
-  void edit(BuildContext context) {
-    if(!isTeacher && item.type != "userquiz") return;
+  void edit(BuildContext context, bool canEdit) {
+    if(!canEdit) return;
     debugPrint('Edit ${item.type} ${item.name}');
     context.goNamed('edit-course-${item.type}', pathParameters: {
       'course_id': course.id.toString(),
@@ -517,37 +519,52 @@ class _CourseItemWidget extends StatelessWidget {
     return Colors.blueAccent;
   }
 
+  Future<bool> canEdit() async {
+    if (item.type == "userquiz") {
+      SharePermission permission = await UserQuizShareGateway.instance.getPermission(item.id, AppSecurity.instance.user!.id);
+      return permission == SharePermission.editor;
+    }
+    return isTeacher;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return IconItem(
-      onClick: (context) => open(context),
-      onMiddleClick: (context) => openNewTab(context),
-      icon: _IconText(
-          text: getIconText(),
-          backgroundColor: getColor()
-      ),
-      body: _ItemBody(
-        bodyText: item.name,
-      ),
-      color: getColor(),
-      onHold: isTeacher ? (context) {
-        edit(context);
-      } : null,
-      actions: [
-        isTeacher || item.type == "userquiz" ? Padding(
-          padding: const EdgeInsets.all(5),
-          child: Button(
-            text: "",
-            toolTip: "Edit",
-            iconSize: 18,
-            maxWidth: 40,
-            icon: Icons.edit,
-            onClick: (context) {
-              edit(context);
-            },
+    return FutureBuilder(
+      future: canEdit(),
+      builder: (context, snapshot) {
+        bool canEdit = snapshot.data ?? false;
+
+        return IconItem(
+          onClick: (context) => open(context),
+          onMiddleClick: (context) => openNewTab(context),
+          icon: _IconText(
+              text: getIconText(),
+              backgroundColor: getColor()
           ),
-        ) : Container(),
-      ],
+          body: _ItemBody(
+            bodyText: item.name,
+          ),
+          color: getColor(),
+          onHold: isTeacher ? (context) {
+            edit(context, canEdit);
+          } : null,
+          actions: [
+            canEdit ? Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                text: "",
+                toolTip: "Edit",
+                iconSize: 18,
+                maxWidth: 40,
+                icon: Icons.edit,
+                onClick: (context) {
+                  edit(context, canEdit);
+                },
+              ),
+            ) : Container(),
+          ],
+        );
+      }
     );
   }
 }

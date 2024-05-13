@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
+import 'package:oes/src/objects/SharePermission.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/objects/courseItems/CourseItem.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/UserQuizShareGateway.dart';
+import 'package:oes/ui/assets/buttons/ShareButton.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
@@ -37,7 +40,7 @@ class CourseUserQuizInfoScreen extends StatelessWidget {
           if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading());
           return FutureBuilder(
             future: Future(() async {
-              var x = await CourseGateway.instance.getCourseItems(courseId);
+              var x = await CourseGateway.instance.getItems(courseId);
               return x.where((element) => element.id == quizId).singleOrNull;
             } as FutureOr Function()),
             builder: (context, snapshot) {
@@ -48,21 +51,31 @@ class CourseUserQuizInfoScreen extends StatelessWidget {
                   Heading(
                     headingText: quiz.name,
                     actions: [
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Button(
-                          icon: Icons.edit,
-                          toolTip: "Edit",
-                          maxWidth: 40,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          onClick: (context) {
-                            context.goNamed('edit-course-userquiz', pathParameters: {
-                              'course_id': courseId.toString(),
-                              'userquiz_id': quizId.toString(),
-                            });
-                          },
-                        ),
+                      ShareButton(
+                        courseId: courseId,
+                        itemId: quizId,
+                        gateway: UserQuizShareGateway.instance,
+                      ),
+                      FutureBuilder(
+                        future: UserQuizShareGateway.instance.getPermission(quiz.id, AppSecurity.instance.user!.id),
+                        builder: (context, snapshot) {
+                          SharePermission permission = snapshot.data ?? SharePermission.viewer;
+                          return permission == SharePermission.editor ? Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Button(
+                              icon: Icons.edit,
+                              toolTip: "Edit",
+                              maxWidth: 40,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              onClick: (context) {
+                                context.goNamed('edit-course-userquiz', pathParameters: {
+                                  'course_id': courseId.toString(),
+                                  'userquiz_id': quizId.toString(),
+                                });
+                              },
+                            ),
+                          ) : Container();
+                        }
                       ),
                     ],
                   ),

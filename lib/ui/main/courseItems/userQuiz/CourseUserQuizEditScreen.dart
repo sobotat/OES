@@ -10,14 +10,18 @@ import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Device.dart';
+import 'package:oes/src/objects/SharePermission.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
 import 'package:oes/src/objects/questions/PickManyQuestion.dart';
 import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
+import 'package:oes/src/restApi/interface/courseItems/UserQuizShareGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
+import 'package:oes/ui/assets/buttons/ShareButton.dart';
 import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
+import 'package:oes/ui/assets/dialogs/ShareDialog.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -55,38 +59,49 @@ class _CourseUserQuizEditScreenState extends State<CourseUserQuizEditScreen> {
           if (!AppSecurity.instance.isInit) return const Material(child: Center(child: WidgetLoading(),),);
           return FutureBuilder(
             future: Future(() async {
-              if (!isNew()) {
-                return await UserQuizGateway.instance.get(widget.quizId);
-              }
-
-              return UserQuiz(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, isVisible: true, questions: [
-                PickOneQuestion(id: 1, name: "Pick One", description: "Description", points: 0, options: [
-                  QuestionOption(id: -1, text: "Option 1", points: 0),
-                  QuestionOption(id: -1, text: "Option 2", points: 0),
-                  QuestionOption(id: -1, text: "Option 3", points: 0)
-                ]),
-                PickManyQuestion(id: 2, name: "Pick Many", description: "Description", points: 0, options: [
-                  QuestionOption(id: -1, text: "Option 1", points: 0),
-                  QuestionOption(id: -1, text: "Option 2", points: 0),
-                  QuestionOption(id: -1, text: "Option 3", points: 0)
-                ])
-              ],);
-            },),
+              if (isNew()) return SharePermission.editor;
+              return await UserQuizShareGateway.instance.getPermission(widget.quizId, AppSecurity.instance.user!.id);
+            }),
             builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                Toast.makeErrorToast(text: "Failed to load UserQuiz");
-                print(snapshot.error);
-                context.pop();
-              }
               if (!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),));
-              UserQuiz quiz = snapshot.data!;
+              if (snapshot.data! != SharePermission.editor) context.pop();
 
-              return _Body(
-                  isNew: isNew(),
-                  courseId: widget.courseId,
-                  quiz: quiz
+              return FutureBuilder(
+                future: Future(() async {
+                  if (!isNew()) {
+                    return await UserQuizGateway.instance.get(widget.quizId);
+                  }
+
+                  return UserQuiz(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, isVisible: true, questions: [
+                    PickOneQuestion(id: 1, name: "Pick One", description: "Description", points: 0, options: [
+                      QuestionOption(id: -1, text: "Option 1", points: 0),
+                      QuestionOption(id: -1, text: "Option 2", points: 0),
+                      QuestionOption(id: -1, text: "Option 3", points: 0)
+                    ]),
+                    PickManyQuestion(id: 2, name: "Pick Many", description: "Description", points: 0, options: [
+                      QuestionOption(id: -1, text: "Option 1", points: 0),
+                      QuestionOption(id: -1, text: "Option 2", points: 0),
+                      QuestionOption(id: -1, text: "Option 3", points: 0)
+                    ])
+                  ],);
+                },),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    Toast.makeErrorToast(text: "Failed to load UserQuiz");
+                    print(snapshot.error);
+                    context.pop();
+                  }
+                  if (!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),));
+                  UserQuiz quiz = snapshot.data!;
+
+                  return _Body(
+                      isNew: isNew(),
+                      courseId: widget.courseId,
+                      quiz: quiz
+                  );
+                },
               );
-            },
+            }
           );
         }
     );
@@ -531,6 +546,11 @@ class _EditorState extends State<_Editor> {
                 },
               ),
             ),
+            !widget.isNew ? ShareButton(
+              courseId: widget.courseId,
+              itemId: widget.quiz.id,
+              gateway: UserQuizShareGateway.instance,
+            ) : Container(),
             !widget.isNew ? Padding(
               padding: const EdgeInsets.all(5),
               child: Button(

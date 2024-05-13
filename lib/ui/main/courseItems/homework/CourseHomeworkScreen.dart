@@ -58,7 +58,7 @@ class CourseHomeworkScreen extends StatelessWidget {
 
               return FutureBuilder(
                 future: Future(() async {
-                  Course? course = await CourseGateway.instance.getCourse(courseId);
+                  Course? course = await CourseGateway.instance.get(courseId);
                   if (course == null) return false;
                   return course.isTeacherInCourse(AppSecurity.instance.user!);
                 }),
@@ -67,7 +67,7 @@ class CourseHomeworkScreen extends StatelessWidget {
                   bool isTeacher = snapshot.data!;
                   if (isTeacher) {
                     return FutureBuilder(
-                      future: CourseGateway.instance.getCourseStudents(courseId),
+                      future: CourseGateway.instance.getStudents(courseId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
                         List<User> users = snapshot.data!;

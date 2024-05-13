@@ -27,7 +27,7 @@ class Course extends ApiObject {
 
   Future<List<User>> get teachers async {
     if (_teachers != null) return _teachers!;
-    _teachers = await CourseGateway.instance.getCourseTeachers(id);
+    _teachers = await CourseGateway.instance.getTeachers(id);
     return _teachers!;
   }
 
@@ -37,7 +37,7 @@ class Course extends ApiObject {
 
   Future<List<User>> get students async {
     if (_students != null) return _students!;
-    _students = await CourseGateway.instance.getCourseStudents(id);
+    _students = await CourseGateway.instance.getStudents(id);
     return _students!;
   }
 

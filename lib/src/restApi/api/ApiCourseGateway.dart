@@ -13,50 +13,41 @@ import 'package:oes/src/restApi/api/http/RequestResult.dart';
 class ApiCourseGateway implements CourseGateway {
 
   String basePath = '${AppApi.instance.apiServerUrl}/api/courses';
-  Map<int, Course> map = {};
 
   @override
-  Future<Course?> getCourse(int id) async {
-
-    // Identity Map
-    Course? course = map[id];
-    if (course != null) return course;
-
+  Future<Course?> get(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id',
         options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-get] ${result.statusCode} -> ${result.message}');
       return null;
     }
 
     if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
-      debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-get] ${result.statusCode} -> ${result.message}');
       return null;
     }
-
-    course = Course.fromJson(result.data);
-    map[id] = course;
-
-    return course;
+    
+    return Course.fromJson(result.data);
   }
 
   @override
-  Future<List<CourseItem>> getCourseItems(int id) async {
+  Future<List<CourseItem>> getItems(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/items',
         options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getItems] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
-    if (result.statusCode != 200 || result.data is! List<dynamic>) {
-      debugPrint('Api Error: [Course-getCourseItems] ${result.statusCode} -> ${result.message}');
+    if (!result.checkOk() || result.data is! List<dynamic>) {
+      debugPrint('Api Error: [Course-getItems] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
@@ -65,7 +56,7 @@ class ApiCourseGateway implements CourseGateway {
       try {
         items.add(CourseItem.fromJson(json));
       } on Exception catch (e) {
-        debugPrint('Api Error: [Course-getCourseItems] $e');
+        debugPrint('Api Error: [Course-getItems] $e');
       }
     }
 
@@ -73,7 +64,7 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<List<User>> getCourseTeachers(int id) async {
+  Future<List<User>> getTeachers(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
         options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
         queryParameters: {
@@ -84,12 +75,12 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-getCourseTeachers] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getTeachers] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
     if (result.statusCode != 200 || result.data is! List<dynamic>) {
-      debugPrint('Api Error: [Course-getCourseTeachers] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getTeachers] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
@@ -98,7 +89,7 @@ class ApiCourseGateway implements CourseGateway {
       try {
         users.add(User.fromJson(json));
       } on Exception catch (e) {
-        debugPrint('Api Error: [Course-getCourseTeachers] $e');
+        debugPrint('Api Error: [Course-getTeachers] $e');
       }
     }
 
@@ -106,7 +97,7 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<List<User>> getCourseStudents(int id) async {
+  Future<List<User>> getStudents(int id) async {
     RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
         options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
         queryParameters: {
@@ -117,12 +108,12 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-getCourseStudents] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getStudents] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
     if (result.statusCode != 200 || result.data is! List<dynamic>) {
-      debugPrint('Api Error: [Course-getCourseStudents] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-getStudents] ${result.statusCode} -> ${result.message}');
       return [];
     }
 
@@ -131,8 +122,41 @@ class ApiCourseGateway implements CourseGateway {
       try {
         users.add(User.fromJson(json));
       } on Exception catch (e) {
-        debugPrint('Api Error: [Course-getCourseStudents] $e');
+        debugPrint('Api Error: [Course-getStudents] $e');
       }
+    }
+
+    return users;
+  }
+
+  @override
+  Future<List<User>> getUsers(int id) async {
+    RequestResult result = await HttpRequest.instance.get('$basePath/$id/users',
+      options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
+      queryParameters: {
+        'courseId': id,
+        'userCourseRoles': [0,1],
+      }
+    );
+
+    if (result.checkUnauthorized()) {
+    AppSecurity.instance.logout();
+    debugPrint('Api Error: [Course-getUsers] ${result.statusCode} -> ${result.message}');
+    return [];
+    }
+
+    if (result.statusCode != 200 || result.data is! List<dynamic>) {
+    debugPrint('Api Error: [Course-getUsers] ${result.statusCode} -> ${result.message}');
+    return [];
+    }
+
+    List<User> users = [];
+    for (Map<String, dynamic> json in result.data) {
+    try {
+    users.add(User.fromJson(json));
+    } on Exception catch (e) {
+    debugPrint('Api Error: [Course-getUsers] $e');
+    }
     }
 
     return users;
@@ -166,7 +190,6 @@ class ApiCourseGateway implements CourseGateway {
       try {
         Course course = Course.fromJson(json);
         courses.add(course);
-        map[course.id] = course;
       } on Exception catch (e) {
         debugPrint('Api Error: [Course-getUserCourses] $e');
       }
@@ -176,7 +199,7 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  Future<bool> updateCourse(Course course) async {
+  Future<bool> update(Course course) async {
 
     List<int> teachers = [];
     for (User user in await course.teachers) {
@@ -204,21 +227,20 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-updateCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-update] ${result.statusCode} -> ${result.message}');
       return false;
     }
 
     if (!result.checkOk()) {
-      debugPrint('Api Error: [Course-updateCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-update] ${result.statusCode} -> ${result.message}');
       return false;
     }
 
-    map[course.id] = course;
     return true;
   }
 
   @override
-  Future<Course?> createCourse(Course course) async {
+  Future<Course?> create(Course course) async {
 
     Map<String, dynamic> data = course.toMap()
       ..remove('id')
@@ -232,35 +254,32 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-createCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-create] ${result.statusCode} -> ${result.message}');
       return null;
     }
 
     if (!result.checkOk() || result.data is! Map<String, dynamic>) {
-      debugPrint('Api Error: [Course-createCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-create] ${result.statusCode} -> ${result.message}');
       return null;
     }
 
-    course = Course.fromJson(result.data);
-    map[course.id] = course;
-
-    return course;
+    return Course.fromJson(result.data);
   }
 
   @override
-  Future<bool> deleteCourse(Course course) async {
+  Future<bool> delete(Course course) async {
     RequestResult result = await HttpRequest.instance.delete('$basePath/${course.id}',
       options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
     );
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-deleteCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-delete] ${result.statusCode} -> ${result.message}');
       return false;
     }
 
     if (!result.checkOk()) {
-      debugPrint('Api Error: [Course-deleteCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-delete] ${result.statusCode} -> ${result.message}');
       return false;
     }
 
@@ -268,12 +287,7 @@ class ApiCourseGateway implements CourseGateway {
   }
 
   @override
-  void clearIdentityMap() {
-    map.clear();
-  }
-
-  @override
-  Future<bool> joinCourse(String code) async {
+  Future<bool> join(String code) async {
 
     RequestResult result = await HttpRequest.instance.put('$basePath/$code/join',
       options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
@@ -281,7 +295,7 @@ class ApiCourseGateway implements CourseGateway {
 
     if (result.checkUnauthorized()) {
       AppSecurity.instance.logout();
-      debugPrint('Api Error: [Course-joinCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-join] ${result.statusCode} -> ${result.message}');
       return false;
     }
 
@@ -290,7 +304,7 @@ class ApiCourseGateway implements CourseGateway {
         return false;
       }
 
-      debugPrint('Api Error: [Course-joinCourse] ${result.statusCode} -> ${result.message}');
+      debugPrint('Api Error: [Course-join] ${result.statusCode} -> ${result.message}');
       return false;
     }
 

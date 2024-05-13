@@ -38,7 +38,7 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
     return Scaffold(
       appBar: const AppAppBar(),
       body: FutureBuilder(
-        future: CourseGateway.instance.getCourse(widget.courseId),
+        future: CourseGateway.instance.get(widget.courseId),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: WidgetLoading());
           Course course = snapshot.data!;
@@ -178,7 +178,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
 
     if (colorChanged) course.color = color;
 
-    await CourseGateway.instance.updateCourse(course);
+    await CourseGateway.instance.update(course);
 
     Toast.makeToast(text: "Course Saved", icon: Icons.save);
 
@@ -189,7 +189,7 @@ class _CourseEditWidgetState extends State<_CourseEditWidget> {
   }
 
   Future<void> delete() async {
-    await CourseGateway.instance.deleteCourse(widget.course);
+    await CourseGateway.instance.delete(widget.course);
     if (widget.onDelete != null) {
       widget.onDelete!();
     }

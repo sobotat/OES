@@ -1,0 +1,5 @@
+
+enum SharePermission{
+  viewer,
+  editor,
+}

@@ -36,7 +36,7 @@ class CourseQuizInfoScreen extends StatelessWidget {
           if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading());
           return FutureBuilder(
             future: Future(() async {
-              Course? course = await CourseGateway.instance.getCourse(courseId);
+              Course? course = await CourseGateway.instance.get(courseId);
               if (course == null) return false;
               return await course.isTeacherInCourse(AppSecurity.instance.user as User);
             }),
@@ -46,7 +46,7 @@ class CourseQuizInfoScreen extends StatelessWidget {
 
               return FutureBuilder(
                 future: Future(() async {
-                  var x = await CourseGateway.instance.getCourseItems(courseId);
+                  var x = await CourseGateway.instance.getItems(courseId);
                   return x.where((element) => element.id == quizId).singleOrNull;
                 } as FutureOr Function()),
                 builder: (context, snapshot) {
@@ -59,7 +59,7 @@ class CourseQuizInfoScreen extends StatelessWidget {
                         actions: [
                           FutureBuilder<bool>(
                               future: Future(() async {
-                                Course? course = await CourseGateway.instance.getCourse(courseId);
+                                Course? course = await CourseGateway.instance.get(courseId);
                                 return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
                               }),
                               builder: (context, snapshot) {

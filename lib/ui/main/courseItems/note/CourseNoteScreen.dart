@@ -50,7 +50,7 @@ class CourseNoteScreen extends StatelessWidget {
                     actions: [
                       FutureBuilder<bool>(
                         future: Future(() async {
-                          Course? course = await CourseGateway.instance.getCourse(courseId);
+                          Course? course = await CourseGateway.instance.get(courseId);
                           return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
                         }),
                         builder: (context, snapshot) {

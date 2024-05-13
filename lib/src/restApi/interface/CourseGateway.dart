@@ -9,18 +9,18 @@ abstract class CourseGateway {
   static final CourseGateway instance = ApiCourseGateway();
 
   Future<List<Course>> getUserCourses(User user);
-  Future<Course?> getCourse(int id);
-  Future<Course?> createCourse(Course course);
-  Future<bool> updateCourse(Course course);
-  Future<bool> deleteCourse(Course course);
+  Future<Course?> get(int id);
+  Future<Course?> create(Course course);
+  Future<bool> update(Course course);
+  Future<bool> delete(Course course);
 
-  Future<bool> joinCourse(String code);
+  Future<bool> join(String code);
   Future<String?> generateCode(Course course);
   Future<String?> getCode(Course course);
 
-  Future<List<CourseItem>> getCourseItems(int id);
-  Future<List<User>> getCourseTeachers(int id);
-  Future<List<User>> getCourseStudents(int id);
+  Future<List<CourseItem>> getItems(int id);
+  Future<List<User>> getTeachers(int id);
+  Future<List<User>> getStudents(int id);
+  Future<List<User>> getUsers(int id);
 
-  void clearIdentityMap();
 }

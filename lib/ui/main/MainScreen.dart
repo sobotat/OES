@@ -264,7 +264,7 @@ class _JoinDialogState extends State<_JoinDialog> {
       return false;
     }
 
-    bool success = await CourseGateway.instance.joinCourse(controller.text.toUpperCase());
+    bool success = await CourseGateway.instance.join(controller.text.toUpperCase());
     if (success && mounted) {
       return true;
     }
@@ -450,7 +450,7 @@ class _CourseCreateDialogState extends State<_CourseCreateDialog> {
       color: color
     );
 
-    await CourseGateway.instance.createCourse(course);
+    await CourseGateway.instance.create(course);
     if (mounted) context.pop();
   }
 
