@@ -317,6 +317,7 @@ class _BodyState extends State<_Body> {
                           return ListView.builder(
                             shrinkWrap: true,
                             itemCount: items.length,
+                            physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               CourseItem item = items[index];
                               return _CourseItemWidget(
@@ -449,6 +450,7 @@ class _TeachersBuilder extends StatelessWidget {
           shrinkWrap: true,
           itemCount: snapshot.data!.length,
           scrollDirection: axis,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             return TeacherWidget(
                 teacher: snapshot.data![index],
