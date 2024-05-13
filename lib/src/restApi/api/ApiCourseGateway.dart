@@ -169,6 +169,7 @@ class ApiCourseGateway implements CourseGateway {
       options: AuthHttpRequestOptions(token: await AppSecurity.instance.getToken()),
       queryParameters: {
         'userId': user.id,
+        'pageSize': double.infinity.toInt()
       }
     );
 
@@ -182,8 +183,6 @@ class ApiCourseGateway implements CourseGateway {
       debugPrint('Api Error: [Course-getUserCourses] ${result.statusCode} -> ${result.message}');
       return [];
     }
-
-    //TODO: Add support for paged data
 
     List<Course> courses = [];
     for (Map<String, dynamic> json in result.data['items']) {
