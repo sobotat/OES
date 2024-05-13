@@ -64,7 +64,24 @@ class _CourseUserQuizEditScreenState extends State<CourseUserQuizEditScreen> {
             }),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Material(child: Center(child: WidgetLoading(),));
-              if (snapshot.data! != SharePermission.editor) context.pop();
+              if (snapshot.data! != SharePermission.editor) {
+                  return Material(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text("You are not Editor", style: TextStyle(fontSize: 30),),
+                        Button(
+                          text: "Back",
+                          onClick: (context) {
+                            context.pop();
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              }
 
               return FutureBuilder(
                 future: Future(() async {
