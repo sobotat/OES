@@ -12,7 +12,7 @@ class AppMarkdown extends StatelessWidget {
     required this.data,
     this.flipBlocksColors = true,
     this.textAlign = WrapAlignment.start,
-    this.testSize = 12,
+    this.testSize = 14,
     super.key
   });
 
