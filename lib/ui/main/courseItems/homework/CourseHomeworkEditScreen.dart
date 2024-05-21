@@ -142,89 +142,95 @@ class _BodyState extends State<_Body> {
 
     return ListView(
       children: [
-        Heading(
-          headingText: "Info",
-            actions: [
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: Button(
-                  icon: Icons.save,
-                  toolTip: "Save",
-                  maxWidth: 40,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onClick: (context) {
-                    save();
-                  },
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Heading(
+              headingText: "Info",
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Button(
+                      icon: Icons.save,
+                      toolTip: "Save",
+                      maxWidth: 40,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      onClick: (context) {
+                        save();
+                      },
+                    ),
+                  ),
+                  !widget.isNew ? Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Button(
+                      icon: Icons.delete,
+                      toolTip: "Delete",
+                      maxWidth: 40,
+                      backgroundColor: Colors.red.shade700,
+                      onClick: (context) {
+                        delete();
+                      },
+                    ),
+                  ) : Container()
+                ]
+            ),
+            BackgroundBody(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      autocorrect: true,
+                      keyboardType: TextInputType.text,
+                      maxLines: 1,
+                      maxLength: 30,
+                      style: const TextStyle(
+                          fontSize: 14
+                      ),
+                      decoration: const InputDecoration(
+                        labelText: "Name",
+                      ),
+                      onChanged: (value) {
+                        widget.homework.name = value;
+                        key.currentState?.setState(() {});
+                      },
+                    ),
+                    TextField(
+                      controller: taskController,
+                      autocorrect: true,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      style: const TextStyle(
+                          fontSize: 14
+                      ),
+                      decoration: const InputDecoration(
+                        labelText: "Task",
+                      ),
+                      onChanged: (value) {
+                        widget.homework.task = value;
+                        key.currentState?.setState(() {});
+                      },
+                    ),
+                    const SizedBox(height: 10,),
+                    _Dates(
+                        homework: widget.homework
+                    ),
+                  ],
                 ),
               ),
-              !widget.isNew ? Padding(
-                padding: const EdgeInsets.all(5),
-                child: Button(
-                  icon: Icons.delete,
-                  toolTip: "Delete",
-                  maxWidth: 40,
-                  backgroundColor: Colors.red.shade700,
-                  onClick: (context) {
-                    delete();
-                  },
-                ),
-              ) : Container()
-            ]
-        ),
-        BackgroundBody(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  autocorrect: true,
-                  keyboardType: TextInputType.text,
-                  maxLines: 1,
-                  maxLength: 30,
-                  style: const TextStyle(
-                      fontSize: 14
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: "Name",
-                  ),
-                  onChanged: (value) {
-                    widget.homework.name = value;
-                    key.currentState?.setState(() {});
-                  },
-                ),
-                TextField(
-                  controller: taskController,
-                  autocorrect: true,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  style: const TextStyle(
-                      fontSize: 14
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: "Task",
-                  ),
-                  onChanged: (value) {
-                    widget.homework.task = value;
-                    key.currentState?.setState(() {});
-                  },
-                ),
-                const SizedBox(height: 10,),
-                _Dates(
-                  homework: widget.homework
-                ),
-              ],
             ),
-          ),
+            const Heading(headingText: "Preview"),
+            BackgroundBody(
+              child: _Preview(
+                homework: widget.homework,
+                key: key,
+              ),
+            )
+          ],
         ),
-        const Heading(headingText: "Preview"),
-        BackgroundBody(
-          child: _Preview(
-            homework: widget.homework,
-            key: key,
-          ),
-        )
       ],
     );
   }

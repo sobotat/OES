@@ -45,42 +45,48 @@ class CourseNoteScreen extends StatelessWidget {
 
               return ListView(
                 children: [
-                  Heading(
-                    headingText: note.name,
-                    actions: [
-                      FutureBuilder<bool>(
-                        future: Future(() async {
-                          Course? course = await CourseGateway.instance.get(courseId);
-                          return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
-                        }),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) return Container();
-                          bool isTeacher = snapshot.data!;
-                          if (!isTeacher) return Container();
-                          return Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Button(
-                              icon: Icons.edit,
-                              toolTip: "Edit",
-                              maxWidth: 40,
-                              backgroundColor: Theme.of(context).colorScheme.secondary,
-                              onClick: (context) {
-                                context.goNamed('edit-course-note', pathParameters: {
-                                  'course_id': courseId.toString(),
-                                  'note_id': noteId.toString(),
-                                });
-                              },
-                            ),
-                          );
-                        }
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Heading(
+                        headingText: note.name,
+                        actions: [
+                          FutureBuilder<bool>(
+                              future: Future(() async {
+                                Course? course = await CourseGateway.instance.get(courseId);
+                                return await course?.isTeacherInCourse(AppSecurity.instance.user!) ?? false;
+                              }),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) return Container();
+                                bool isTeacher = snapshot.data!;
+                                if (!isTeacher) return Container();
+                                return Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Button(
+                                    icon: Icons.edit,
+                                    toolTip: "Edit",
+                                    maxWidth: 40,
+                                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                                    onClick: (context) {
+                                      context.goNamed('edit-course-note', pathParameters: {
+                                        'course_id': courseId.toString(),
+                                        'note_id': noteId.toString(),
+                                      });
+                                    },
+                                  ),
+                                );
+                              }
+                          ),
+                        ],
                       ),
+                      BackgroundBody(
+                        child: AppMarkdown(
+                          data: note.data,
+                          flipBlocksColors: true,
+                        ),
+                      )
                     ],
-                  ),
-                  BackgroundBody(
-                    child: AppMarkdown(
-                      data: note.data,
-                      flipBlocksColors: true,
-                    ),
                   )
                 ],
               );

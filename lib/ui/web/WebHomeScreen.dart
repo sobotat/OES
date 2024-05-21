@@ -17,6 +17,8 @@ import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
+import 'package:oes/ui/assets/templates/RefreshWidget.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class WebHomeScreen extends StatefulWidget {
@@ -27,6 +29,8 @@ class WebHomeScreen extends StatefulWidget {
 }
 
 class _WebHomeScreenState extends State<WebHomeScreen> {
+  GlobalKey<RefreshWidgetState> refreshKey = GlobalKey<RefreshWidgetState>();
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -38,18 +42,31 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
           width > overflow ? const _GoToMain(maxWidth: 150,) : const _GoToMain(),
         ],
       ),
-      body: GradientContainer(
-        borderRadius: BorderRadius.zero,
-        colors: [
-          Theme.of(context).colorScheme.secondary,
-          Theme.of(context).extension<AppCustomColors>()!.accent,
-        ],
-        child: ListView(
-          children: [
-            _Title(width: width, overflow: overflow),
-            const _WhyToUse(),
-            const _Download(),
+      body: RefreshWidget(
+        key: refreshKey,
+        onRefreshed: () {
+          setState(() {});
+          refreshKey.currentState?.refresh();
+        },
+        child: GradientContainer(
+          borderRadius: BorderRadius.zero,
+          colors: [
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).extension<AppCustomColors>()!.accent,
           ],
+          child: ListView(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _Title(width: width, overflow: overflow),
+                  const _WhyToUse(),
+                  const _Download(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -63,23 +80,25 @@ class _WhyToUse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Text("Learn with fun and ease"),
-        // Text("Create your own quiz as student"),
-        // Text("Use it on all Platforms"),
-        _ImageBanner(
-          text: "Modern and Simple UI\nWith Animations",
-          file: 'assets/images/main.png',
-          alignment: _Align.right,
-        ),
-        _ImageBanner(
-          text: "Supported Tests, Homeworks, Online Quizzes and many more",
-          file: 'assets/images/course.png',
-          alignment: _Align.left,
-        ),
-      ],
+    return const SizedContainer(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Text("Learn with fun and ease"),
+          // Text("Create your own quiz as student"),
+          // Text("Use it on all Platforms"),
+          _ImageBanner(
+            text: "Modern and Simple UI\nWith Animations",
+            file: 'assets/images/main.png',
+            alignment: _Align.right,
+          ),
+          _ImageBanner(
+            text: "Supported Tests, Homeworks, Online Quizzes and many more",
+            file: 'assets/images/course.png',
+            alignment: _Align.left,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -106,28 +125,48 @@ class _ImageBanner extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: width > overflow ? 50 : 15,
-          vertical: 20
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        borderRadius: BorderRadius.circular(10)
-      ),
-      child: Builder(
-        builder: (context) {
-          if (alignment == _Align.left) {
+    return SizedContainer(
+      child: Container(
+        margin: EdgeInsets.symmetric(
+            horizontal: width > overflow ? 50 : 15,
+            vertical: 20
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(10)
+        ),
+        child: Builder(
+          builder: (context) {
+            if (alignment == _Align.left) {
+              List<Widget> widgets = [
+                _BannerImage(
+                  file: file,
+                ),
+                _BannerText(
+                  text: text,
+                  align: TextAlign.right,
+                )
+              ];
+      
+              if (width < overflow) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widgets,
+                );
+              }
+              return Row(
+                children: widgets,
+              );
+            }
             List<Widget> widgets = [
+              _BannerText(
+                text: text,
+                align: TextAlign.left,
+              ),
               _BannerImage(
                 file: file,
               ),
-              _BannerText(
-                text: text,
-                align: TextAlign.right,
-              )
             ];
-
             if (width < overflow) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -138,25 +177,7 @@ class _ImageBanner extends StatelessWidget {
               children: widgets,
             );
           }
-          List<Widget> widgets = [
-            _BannerText(
-              text: text,
-              align: TextAlign.left,
-            ),
-            _BannerImage(
-              file: file,
-            ),
-          ];
-          if (width < overflow) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: widgets,
-            );
-          }
-          return Row(
-            children: widgets,
-          );
-        }
+        ),
       ),
     );
   }
@@ -292,38 +313,40 @@ class _Download extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: width > overflow ? 50 : 15,
-        vertical: 20
-      ),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        borderRadius: BorderRadius.circular(10)
-      ),
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text("Download", style: TextStyle(fontSize: 50),),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Flexible(
-                child: _DownloadButton(
-                  fileName: "oes-windows.zip",
-                  icon: AppIcons.icon_windows,
+    return SizedContainer(
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: width > overflow ? 50 : 15,
+          vertical: 20
+        ),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(10)
+        ),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Download", style: TextStyle(fontSize: 50),),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: _DownloadButton(
+                    fileName: "oes-windows.zip",
+                    icon: AppIcons.icon_windows,
+                  ),
                 ),
-              ),
-              Flexible(
-                child: _DownloadButton(
-                  fileName: "oes-android.apk",
-                  icon: AppIcons.icon_android,
+                Flexible(
+                  child: _DownloadButton(
+                    fileName: "oes-android.apk",
+                    icon: AppIcons.icon_android,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -109,85 +109,90 @@ class _TeacherBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Heading(
-          headingText: "Info",
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Button(
-                icon: Icons.print,
-                toolTip: "Print",
-                maxWidth: 40,
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                onClick: (context) {
-                  context.goNamed('print-course-test', pathParameters: {
-                    'course_id': courseId.toString(),
-                    'test_id': testId.toString(),
-                  });
-                },
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Heading(
+              headingText: "Info",
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Button(
+                    icon: Icons.print,
+                    toolTip: "Print",
+                    maxWidth: 40,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    onClick: (context) {
+                      context.goNamed('print-course-test', pathParameters: {
+                        'course_id': courseId.toString(),
+                        'test_id': testId.toString(),
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Button(
+                    icon: Icons.edit,
+                    toolTip: "Edit",
+                    maxWidth: 40,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    onClick: (context) {
+                      context.goNamed('edit-course-test', pathParameters: {
+                        'course_id': courseId.toString(),
+                        'test_id': testId.toString(),
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            BackgroundBody(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableText("Name: ${info.name}"),
+                    const SizedBox(height: 5, width: double.infinity,),
+                    SelectableText("Duration: ${info.duration} minutes"),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Button(
-                icon: Icons.edit,
-                toolTip: "Edit",
-                maxWidth: 40,
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                onClick: (context) {
-                  context.goNamed('edit-course-test', pathParameters: {
-                    'course_id': courseId.toString(),
-                    'test_id': testId.toString(),
-                  });
+            const Heading(
+                headingText: "Students"
+            ),
+            BackgroundBody(
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  User user = users[index];
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconItem(
+                        icon: const Icon(Icons.person),
+                        color: Colors.green.shade700,
+                        body: Text("${user.firstName} ${user.lastName} (${user.username})"),
+                        onClick: (context) async {
+                          context.goNamed("review-course-test", pathParameters: {
+                            "course_id": courseId.toString(),
+                            "test_id": testId.toString(),
+                            "user_id": user.id.toString(),
+                          });
+                        },
+                      ),
+                    ],
+                  );
                 },
               ),
             )
           ],
         ),
-        BackgroundBody(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SelectableText("Name: ${info.name}"),
-                const SizedBox(height: 5,),
-                SelectableText("Duration: ${info.duration} minutes"),
-              ],
-            ),
-          ),
-        ),
-        const Heading(
-            headingText: "Students"
-        ),
-        BackgroundBody(
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              User user = users[index];
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconItem(
-                    icon: const Icon(Icons.person),
-                    color: Colors.green.shade700,
-                    body: Text("${user.firstName} ${user.lastName} (${user.username})"),
-                    onClick: (context) async {
-                      context.goNamed("review-course-test", pathParameters: {
-                        "course_id": courseId.toString(),
-                        "test_id": testId.toString(),
-                        "user_id": user.id.toString(),
-                      });
-                    },
-                  ),
-                ],
-              );
-            },
-          ),
-        )
       ],
     );
   }

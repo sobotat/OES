@@ -73,9 +73,15 @@ class CourseHomeworkScreen extends StatelessWidget {
                         List<User> users = snapshot.data!;
                         return ListView(
                           children: [
-                            _TeacherBody(
-                              homework: homework,
-                              users: users,
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _TeacherBody(
+                                  homework: homework,
+                                  users: users,
+                                ),
+                              ],
                             ),
                           ],
                         );
@@ -89,11 +95,17 @@ class CourseHomeworkScreen extends StatelessWidget {
                       List<HomeworkSubmission> submissions = snapshot.data!;
                       return ListView(
                         children: [
-                          _StudentBody(
-                            homework: homework,
-                            courseId: courseId,
-                            homeworkId: homeworkId,
-                            submissions: submissions
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _StudentBody(
+                                homework: homework,
+                                courseId: courseId,
+                                homeworkId: homeworkId,
+                                submissions: submissions
+                              ),
+                            ],
                           ),
                         ],
                       );

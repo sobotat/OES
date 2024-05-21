@@ -15,6 +15,7 @@ import 'package:oes/ui/assets/buttons/ShareButton.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseUserQuizInfoScreen extends StatelessWidget {
@@ -48,55 +49,63 @@ class CourseUserQuizInfoScreen extends StatelessWidget {
               CourseItem quiz = snapshot.data;
               return ListView(
                 children: [
-                  Heading(
-                    headingText: quiz.name,
-                    actions: [
-                      ShareButton(
-                        courseId: courseId,
-                        itemId: quizId,
-                        gateway: UserQuizShareGateway.instance,
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Heading(
+                        headingText: quiz.name,
+                        actions: [
+                          ShareButton(
+                            courseId: courseId,
+                            itemId: quizId,
+                            gateway: UserQuizShareGateway.instance,
+                          ),
+                          FutureBuilder(
+                            future: UserQuizShareGateway.instance.getPermission(quiz.id, AppSecurity.instance.user!.id),
+                            builder: (context, snapshot) {
+                              SharePermission permission = snapshot.data ?? SharePermission.viewer;
+                              return permission == SharePermission.editor ? Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Button(
+                                  icon: Icons.edit,
+                                  toolTip: "Edit",
+                                  maxWidth: 40,
+                                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                                  onClick: (context) {
+                                    context.goNamed('edit-course-userquiz', pathParameters: {
+                                      'course_id': courseId.toString(),
+                                      'userquiz_id': quizId.toString(),
+                                    });
+                                  },
+                                ),
+                              ) : Container();
+                            }
+                          ),
+                        ],
                       ),
-                      FutureBuilder(
-                        future: UserQuizShareGateway.instance.getPermission(quiz.id, AppSecurity.instance.user!.id),
-                        builder: (context, snapshot) {
-                          SharePermission permission = snapshot.data ?? SharePermission.viewer;
-                          return permission == SharePermission.editor ? Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Button(
-                              icon: Icons.edit,
-                              toolTip: "Edit",
-                              maxWidth: 40,
-                              backgroundColor: Theme.of(context).colorScheme.secondary,
-                              onClick: (context) {
-                                context.goNamed('edit-course-userquiz', pathParameters: {
-                                  'course_id': courseId.toString(),
-                                  'userquiz_id': quizId.toString(),
-                                });
-                              },
-                            ),
-                          ) : Container();
-                        }
-                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: width > overflow ? 50 : 15,
+                          vertical: 20,
+                        ),
+                        child: SizedContainer(
+                          child: Button(
+                            maxWidth: double.infinity,
+                            maxHeight: 100,
+                            backgroundColor: Colors.green.shade700,
+                            text: "Start UserQuiz",
+                            onClick: (context) {
+                              context.goNamed("start-course-userquiz", pathParameters: {
+                                "course_id": courseId.toString(),
+                                "userquiz_id": quizId.toString(),
+                              });
+                            },
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width > overflow ? 50 : 15,
-                      vertical: 20,
-                    ),
-                    child: Button(
-                      maxWidth: double.infinity,
-                      maxHeight: 100,
-                      backgroundColor: Colors.green.shade700,
-                      text: "Start UserQuiz",
-                      onClick: (context) {
-                        context.goNamed("start-course-userquiz", pathParameters: {
-                          "course_id": courseId.toString(),
-                          "userquiz_id": quizId.toString(),
-                        });
-                      },
-                    ),
-                  )
                 ],
               );
             },

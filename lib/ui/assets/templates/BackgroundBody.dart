@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oes/config/AppSettings.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 
 class BackgroundBody extends StatelessWidget {
   const BackgroundBody({
@@ -14,6 +16,7 @@ class BackgroundBody extends StatelessWidget {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
+    var largeScreenOverflow = 1800;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -28,7 +31,9 @@ class BackgroundBody extends StatelessWidget {
           ),
           color: Theme.of(context).colorScheme.secondary,
         ),
-        child: child,
+        child: SizedContainer(
+          child: child,
+        ),
       ),
     );
   }

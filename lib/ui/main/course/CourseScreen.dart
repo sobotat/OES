@@ -27,6 +27,7 @@ import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/RefreshWidget.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseScreen extends StatelessWidget {
@@ -401,30 +402,32 @@ class _Description extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         horizontal: width > overflow ? 50 : 15,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          course.description != '' ? Align(
-            alignment: width > overflow ? Alignment.centerLeft : Alignment.center,
-            child: SelectableText(
-              course.description,
+      child: SizedContainer(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            course.description != '' ? Align(
+              alignment: width > overflow ? Alignment.centerLeft : Alignment.center,
+              child: SelectableText(
+                course.description,
+              ),
+            ) : Container(),
+            course.description != '' ? const SizedBox(height: 20,) : Container(),
+            SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: width > overflow ? MainAxisAlignment.start : MainAxisAlignment.center,
+                children: [
+                  width > overflow ? const Text("Teachers:  ", style: TextStyle(fontWeight: FontWeight.bold)) : Container(),
+                  _TeachersBuilder(
+                    course: course,
+                    axis: Axis.horizontal,
+                  ),
+                ],
+              ),
             ),
-          ) : Container(),
-          course.description != '' ? const SizedBox(height: 20,) : Container(),
-          SizedBox(
-            height: 40,
-            child: Row(
-              mainAxisAlignment: width > overflow ? MainAxisAlignment.start : MainAxisAlignment.center,
-              children: [
-                width > overflow ? const Text("Teachers:  ", style: TextStyle(fontWeight: FontWeight.bold)) : Container(),
-                _TeachersBuilder(
-                  course: course,
-                  axis: Axis.horizontal,
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:oes/config/AppSettings.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 
 class Heading extends StatelessWidget {
   const Heading({
@@ -27,26 +29,28 @@ class Heading extends StatelessWidget {
         right: width > overflow ? 50 : 15,
         top: height > overflow / 2 ? 40 : 5,
       ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: SelectableText(
-                  headingText,
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    fontSize: 25,
+      child: SizedContainer(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: SelectableText(
+                    headingText,
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      fontSize: 25,
+                    ),
                   ),
                 ),
-              ),
-              actions != null ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: actions!,
-              ) : Container(),
-            ],
-          ),
-          const HeadingLine(),
-        ],
+                actions != null ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: actions!,
+                ) : Container(),
+              ],
+            ),
+            const HeadingLine(),
+          ],
+        ),
       ),
     );
   }
@@ -59,13 +63,15 @@ class HeadingLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 2,
-      child: GradientContainer(
-        colors: [
-          Theme.of(context).extension<AppCustomColors>()!.accent,
-          Theme.of(context).colorScheme.primary,
-        ],
+    return SizedContainer(
+      child: SizedBox(
+        height: 2,
+        child: GradientContainer(
+          colors: [
+            Theme.of(context).extension<AppCustomColors>()!.accent,
+            Theme.of(context).colorScheme.primary,
+          ],
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oes/config/AppApi.dart';
 import 'package:oes/config/AppRouter.dart';
+import 'package:oes/config/AppSettings.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/config/DarkTheme.dart';
 import 'package:oes/config/LightTheme.dart';
@@ -27,10 +28,12 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key}) {
-    AppApi.instance.init().then((value) {
-      AppSecurity.instance.init();
-      NetworkChecker.instance.init();
-      AppRouter.instance.setNetworkListener();
+    AppSettings.instance.load().then((value) {
+      AppApi.instance.init().then((value) {
+        AppSecurity.instance.init();
+        NetworkChecker.instance.init();
+        AppRouter.instance.setNetworkListener();
+      });
     });
   }
 

@@ -146,82 +146,88 @@ class _BodyState extends State<_Body> {
   Widget build(BuildContext context) {
     return ListView(
         children: [
-          Heading(
-            headingText: widget.homework.name,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: Button(
-                  icon: progress == -1 && !failedUpload ? Icons.done_all : null,
-                  text: progress == -1 ? !failedUpload ? "" : "Failed" : progress == 101 ? "Uploaded" : "${progress.round()}%",
-                  toolTip: "Submit",
-                  maxWidth: progress == -1 && !failedUpload ? 40 : 100,
-                  backgroundColor: !failedUpload ? Colors.green.shade700 : Colors.red.shade700,
-                  onClick: (context) {
-                    if (progress == -1 || progress == 101) submit();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(5),
-                child: Button(
-                  icon: Icons.arrow_back,
-                  toolTip: "Back",
-                  maxWidth: 40,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onClick: (context) {
-                    widget.onSubmitted();
-                  },
-                ),
-              ),
-            ],
-          ),
-          BackgroundBody(
-            child: AppMarkdown(
-              data: widget.homework.task,
-            ),
-          ),
-          const Heading(headingText: "Text"),
-          BackgroundBody(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      controller: editorController,
-                      autocorrect: true,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      style: const TextStyle(
-                          fontSize: 14
-                      ),
-                      onChanged: (value) {
-                        setState(() {});
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Heading(
+                headingText: widget.homework.name,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Button(
+                      icon: progress == -1 && !failedUpload ? Icons.done_all : null,
+                      text: progress == -1 ? !failedUpload ? "" : "Failed" : progress == 101 ? "Uploaded" : "${progress.round()}%",
+                      toolTip: "Submit",
+                      maxWidth: progress == -1 && !failedUpload ? 40 : 100,
+                      backgroundColor: !failedUpload ? Colors.green.shade700 : Colors.red.shade700,
+                      onClick: (context) {
+                        if (progress == -1 || progress == 101) submit();
                       },
                     ),
                   ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: AppMarkdown(
-                      data: editorController.text,
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Button(
+                      icon: Icons.arrow_back,
+                      toolTip: "Back",
+                      maxWidth: 40,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      onClick: (context) {
+                        widget.onSubmitted();
+                      },
                     ),
                   ),
-                )
-              ],
-            ),
-          ),
-          const Heading(headingText: "File"),
-          BackgroundBody(
-              child: _Files(
-                homeworkId: widget.homework.id,
-                key: key,
-              )
+                ],
+              ),
+              BackgroundBody(
+                child: AppMarkdown(
+                  data: widget.homework.task,
+                ),
+              ),
+              const Heading(headingText: "Text"),
+              BackgroundBody(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: TextField(
+                          controller: editorController,
+                          autocorrect: true,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          style: const TextStyle(
+                              fontSize: 14
+                          ),
+                          onChanged: (value) {
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: AppMarkdown(
+                          data: editorController.text,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const Heading(headingText: "File"),
+              BackgroundBody(
+                  child: _Files(
+                    homeworkId: widget.homework.id,
+                    key: key,
+                  )
+              ),
+            ],
           ),
         ]
     );
