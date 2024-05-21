@@ -7,6 +7,7 @@ import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 import 'package:oes/ui/assets/widgets/SignedDeviceWidget.dart';
 
@@ -19,86 +20,90 @@ class UserDetailScreen extends StatelessWidget {
       appBar: const AppAppBar(
         title: Text('User Detail'),
       ),
-      body: SafeArea(
-        child: LayoutBuilder(
-            builder: (context, constrain) {
-              if (constrain.maxWidth <= 550) {
-                return ListView(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      margin: const EdgeInsets.all(10),
-                      alignment: Alignment.center,
-                      child: const _ProfilePhoto(),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.all(10),
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: _UserInfo(),
-                    ),
-                    const SizedBox(
-                      height: 500,
-                      child: _Devices(),
-                    ),
-                  ],
-                );
-              }
-              else {
-                return ListView(
-                  children: [
-                    SizedBox(
-                      height: 650,
-                      child: Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
-                                alignment: Alignment.center,
-                                margin: const EdgeInsets.all(10),
-                                child: _UserInfo(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  Container(
+      body: Center(
+        child: SizedContainer(
+          child: SafeArea(
+            child: LayoutBuilder(
+                builder: (context, constrain) {
+                  if (constrain.maxWidth <= 550) {
+                    return ListView(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          margin: const EdgeInsets.all(10),
+                          alignment: Alignment.center,
+                          child: const _ProfilePhoto(),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _UserInfo(),
+                        ),
+                        const SizedBox(
+                          height: 500,
+                          child: _Devices(),
+                        ),
+                      ],
+                    );
+                  }
+                  else {
+                    return ListView(
+                      children: [
+                        SizedBox(
+                          height: 650,
+                          child: Padding(
+                            padding: const EdgeInsets.all(30),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
-                                    margin: const EdgeInsets.all(10),
                                     alignment: Alignment.center,
-                                    child: const _ProfilePhoto(),
+                                    margin: const EdgeInsets.all(10),
+                                    child: _UserInfo(),
                                   ),
-                                  const Expanded(
-                                    child: _Devices(),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
+                                        margin: const EdgeInsets.all(10),
+                                        alignment: Alignment.center,
+                                        child: const _ProfilePhoto(),
+                                      ),
+                                      const Expanded(
+                                        child: _Devices(),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            )
-                          ],
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-            }
+                      ],
+                    );
+                  }
+                }
+            ),
+          ),
         ),
       ),
     );
