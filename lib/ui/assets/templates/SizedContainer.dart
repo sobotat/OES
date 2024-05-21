@@ -17,7 +17,7 @@ class SizedContainer extends StatelessWidget {
 
     return ConstrainedBox(
       constraints: width > largeScreenOverflow && AppSettings.instance.optimizeUIForLargeScreens ? BoxConstraints(
-        maxWidth: largeScreenOverflow as double,
+        maxWidth: largeScreenOverflow.toDouble(),
       ) : const BoxConstraints(),
       child: child,
     );
