@@ -228,7 +228,6 @@ class _QuestionState extends State<_Question> {
                       double calculatedHeight = (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1);
                       Widget w = Button(
                         text: option.text,
-                        textFit: BoxFit.fill,
                         minHeight: calculatedHeight,
                         maxHeight: double.infinity,
                         maxWidth: double.infinity,
