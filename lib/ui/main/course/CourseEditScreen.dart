@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/config/AppTheme.dart';
+import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/PagedData.dart';
 import 'package:oes/src/objects/User.dart';
@@ -15,6 +16,7 @@ import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/SizedContainer.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 
 class CourseEditScreen extends StatefulWidget {
@@ -37,60 +39,72 @@ class _CourseEditScreenState extends State<CourseEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppAppBar(),
-      body: FutureBuilder(
-        future: CourseGateway.instance.get(widget.courseId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: WidgetLoading());
-          Course course = snapshot.data!;
+      body: ListenableBuilder(
+        listenable: AppSecurity.instance,
+        builder: (context, _) {
+          if (!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
+          return FutureBuilder(
+            future: CourseGateway.instance.get(widget.courseId),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Center(child: WidgetLoading());
+              Course course = snapshot.data!;
 
-          return ListView(
-            children: [
-              Heading(
-                headingText: "Edit Course",
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Button(
-                      icon: Icons.save,
-                      toolTip: "Save",
-                      maxWidth: 40,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      onClick: (context) {
-                        print("Sending Save");
-                        editWidgetStateKey.currentState?.save();
-                      },
-                    ),
+              return ListView(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Heading(
+                        headingText: "Edit Course",
+                        actions: [
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Button(
+                              icon: Icons.save,
+                              toolTip: "Save",
+                              maxWidth: 40,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              onClick: (context) {
+                                print("Sending Save");
+                                editWidgetStateKey.currentState?.save();
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Button(
+                              icon: Icons.delete,
+                              toolTip: "Delete",
+                              maxWidth: 40,
+                              backgroundColor: Colors.red.shade700,
+                              onClick: (context) {
+                                print("Sending Delete");
+                                editWidgetStateKey.currentState?.delete();
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                      BackgroundBody(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _CourseEditWidget(
+                            key: editWidgetStateKey,
+                            course: course,
+                            onDelete: () => context.pop(true),
+                            onUpdated: () => context.pop(true),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10,)
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Button(
-                      icon: Icons.delete,
-                      toolTip: "Delete",
-                      maxWidth: 40,
-                      backgroundColor: Colors.red.shade700,
-                      onClick: (context) {
-                        print("Sending Delete");
-                        editWidgetStateKey.currentState?.delete();
-                      },
-                    ),
-                  )
                 ],
-              ),
-              BackgroundBody(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _CourseEditWidget(
-                    key: editWidgetStateKey,
-                    course: course,
-                    onDelete: () => context.pop(true),
-                    onUpdated: () => context.pop(true),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10,)
-            ],
+              );
+            },
           );
-        },
+        }
       ),
     );
   }
