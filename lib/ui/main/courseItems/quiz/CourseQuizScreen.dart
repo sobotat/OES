@@ -407,10 +407,15 @@ class _QuestionState extends State<_Question> {
           child: Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(20),
-            child: AppMarkdown(
-              data: widget.question.description,
-              textAlign: widget.question.description.contains("#") ? WrapAlignment.start : WrapAlignment.center,
-              testSize: widget.isTeacher ? 35 : 25,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                AppMarkdown(
+                  data: widget.question.description,
+                  textAlign: widget.question.description.contains("#") ? WrapAlignment.start : WrapAlignment.center,
+                  testSize: widget.isTeacher ? 35 : 25,
+                ),
+              ]
             )
           ),
         ),
@@ -418,98 +423,106 @@ class _QuestionState extends State<_Question> {
           padding: EdgeInsets.symmetric(
             horizontal: width > overflow ? 50 : 15
           ),
-          child: !widget.isTeacher && !widget.submitted ? Column(
-            children: [
-              Center(
-                child: Builder(
-                  builder: (context) {
-                    List<Widget> childrenLeft = [];
-                    List<Widget> childrenRight = [];
-                    
-                    bool isLeft = true;
-                    for(QuestionOption option in widget.question.options) {
-                      Widget w = Button(
-                        text: option.text,
-                        textFit: BoxFit.fill,
-                        maxHeight: (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1),
-                        maxWidth: double.infinity,
-                        backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-                        borderColor: selected.contains(option) ? Colors.green.shade700 : null,
-                        borderWidth: 4,
-                        onClick: (context) {
-                          if(selected.contains(option)) {
-                            selected.remove(option);
-                            setState(() {});
-                            return;
-                          }
-                          if(widget.question is PickOneQuestion) {
-                            selected.clear();
-                          }
-                          selected.add(option);
-                          setState(() {});
+          child: !widget.isTeacher && !widget.submitted ? ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: height / 3,
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Center(
+                  child: Builder(
+                    builder: (context) {
+                      List<Widget> childrenLeft = [];
+                      List<Widget> childrenRight = [];
 
-                          if (widget.question.type == "pick-one") {
-                            List<AnswerOption> options = [];
-                            for (QuestionOption o in selected) {
-                              AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
-                              options.add(option);
+                      bool isLeft = true;
+                      for(QuestionOption option in widget.question.options) {
+
+                        double calculatedHeight = (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1);
+                        Widget w = Button(
+                          text: option.text,
+                          textFit: BoxFit.fill,
+                          maxHeight: calculatedHeight,
+                          maxWidth: double.infinity,
+                          backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+                          borderColor: selected.contains(option) ? Colors.green.shade700 : null,
+                          borderWidth: 4,
+                          onClick: (context) {
+                            if(selected.contains(option)) {
+                              selected.remove(option);
+                              setState(() {});
+                              return;
                             }
-                            widget.onSubmit(options);
-                          }
-                        },
+                            if(widget.question is PickOneQuestion) {
+                              selected.clear();
+                            }
+                            selected.add(option);
+                            setState(() {});
+
+                            if (widget.question.type == "pick-one") {
+                              List<AnswerOption> options = [];
+                              for (QuestionOption o in selected) {
+                                AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
+                                options.add(option);
+                              }
+                              widget.onSubmit(options);
+                            }
+                          },
+                        );
+
+                        if(isLeft || width < overflow) {
+                          childrenLeft.add(w);
+                          childrenLeft.add(const SizedBox(height: 20,));
+                        } else {
+                          childrenRight.add(w);
+                          childrenRight.add(const SizedBox(height: 20,));
+                        }
+
+                        isLeft = !isLeft;
+                      }
+
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: childrenLeft,
+                            ),
+                          ),
+                          width >= overflow ? const SizedBox(width: 20,) : Container(),
+                          width >= overflow ? Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: childrenRight,
+                            ),
+                          ) : Container(),
+                        ],
                       );
-                      
-                      if(isLeft || width < overflow) {
-                        childrenLeft.add(w);
-                        childrenLeft.add(const SizedBox(height: 20,));
-                      } else {
-                        childrenRight.add(w);
-                        childrenRight.add(const SizedBox(height: 20,));
-                      }
-
-                      isLeft = !isLeft;
                     }
-
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: childrenLeft,
-                          ),
-                        ),
-                        width >= overflow ? const SizedBox(width: 20,) : Container(),
-                        width >= overflow ? Flexible(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: childrenRight,
-                          ),
-                        ) : Container(),
-                      ],
-                    );
-                  }
+                  ),
                 ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  widget.question.type != "pick-one" ? Button(
-                    text: "Submit",
-                    maxWidth: double.infinity,
-                    backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-                    onClick: (context) {
-                      List<AnswerOption> options = [];
-                      for (QuestionOption o in selected) {
-                        AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
-                        options.add(option);
-                      }
-                      widget.onSubmit(options);
-                    },
-                  ) : Container()
-                ],
-              ),
-            ],
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    widget.question.type != "pick-one" ? Button(
+                      text: "Submit",
+                      maxWidth: double.infinity,
+                      backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+                      onClick: (context) {
+                        List<AnswerOption> options = [];
+                        for (QuestionOption o in selected) {
+                          AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
+                          options.add(option);
+                        }
+                        widget.onSubmit(options);
+                      },
+                    ) : Container()
+                  ],
+                ),
+              ],
+            ),
           ) :
           widget.isTeacher ? Column(
             mainAxisSize: MainAxisSize.min,
