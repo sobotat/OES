@@ -215,6 +215,7 @@ class _QuestionState extends State<_Question> {
 
                     Widget w = Button(
                       text: option.text,
+                      textFit: BoxFit.fill,
                       maxHeight: (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1),
                       maxWidth: double.infinity,
                       backgroundColor: widget.showResults ? (option.points > 0 ? Colors.green.shade700 : Colors.red.shade700 ) : Theme.of(context).extension<AppCustomColors>()!.accent,
