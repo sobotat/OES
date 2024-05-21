@@ -76,6 +76,12 @@ class AppMarkdown extends StatelessWidget {
           p: TextStyle(
             fontSize: testSize
           ),
+          listBullet: TextStyle(
+            fontSize: testSize
+          ),
+          tableBody: TextStyle(
+            fontSize: testSize
+          ),
           horizontalRuleDecoration: BoxDecoration(
             border: Border.symmetric(horizontal: BorderSide(
               color: Colors.grey.shade700,
