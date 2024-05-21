@@ -156,6 +156,7 @@ class _ShareDialogState extends State<ShareDialog> {
                           }
                           return isEditor ? _Input(
                             courseId: widget.courseId,
+                            users: users ?? [],
                             addUser: (username) => addUser(username),
                           ) : _LeaveButton(
                             leave: () => leave(),
@@ -205,11 +206,13 @@ class _LeaveButton extends StatelessWidget {
 class _Input extends StatefulWidget {
   const _Input({
     required this.courseId,
+    required this.users,
     required this.addUser,
     super.key,
   });
 
   final int courseId;
+  final List<ShareUser> users;
   final Function(String username) addUser;
 
   @override
@@ -265,7 +268,12 @@ class _InputState extends State<_Input> {
                 );
               },
               suggestionsBuilder: (context, controller) {
-                List<String> searchUsernames = usernames.where((element) => element.toLowerCase().contains(controller.text.toLowerCase())).toList();
+                List<String> addedUsers = widget.users.map((e) => e.username).toList();
+                addedUsers.add(AppSecurity.instance.user!.username);
+                List<String> searchUsernames = usernames
+                    .where((element) => element.toLowerCase().contains(controller.text.toLowerCase()))
+                    .where((element) => !addedUsers.contains(element))
+                    .toList();
                 return List<ListTile>.generate(searchUsernames.length, (int index) {
                   return ListTile(
                     title: Text(searchUsernames[index]),
