@@ -37,7 +37,7 @@ try {
 }
 
 # Build the Flutter web
-Run-Command "flutter build web" $true
+Run-Command "flutter build web --wasm" $true
 
 # Build the Flutter APK
 Run-Command "flutter build apk" $true

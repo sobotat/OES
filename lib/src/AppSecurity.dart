@@ -5,7 +5,7 @@ import 'package:oes/src/objects/Device.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/services/DeviceInfo.dart';
-import 'package:oes/src/services/SecureStorage.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 
 class AppSecurity extends ChangeNotifier {
 
@@ -21,7 +21,7 @@ class AppSecurity extends ChangeNotifier {
       return;
     }
 
-    String? token = await SecureStorage.instance.get('token');
+    String? token = await LocalStorage.instance.get('token');
     if (token != null) {
       if (!AppApi.instance.haveApiUrl()) {
         debugPrint("Did not get Organization Url -> Redirecting to Sign-In");
@@ -93,7 +93,7 @@ class AppSecurity extends ChangeNotifier {
   }
 
   Future<String> getToken() async {
-    return (await SecureStorage.instance.get("token")) ?? "";
+    return (await LocalStorage.instance.get("token")) ?? "";
   }
 
   bool isLoggedIn(){

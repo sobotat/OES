@@ -10,7 +10,7 @@ import 'package:oes/src/restApi/interface/UserGateway.dart';
 import 'package:oes/src/restApi/api/http/HttpRequest.dart';
 import 'package:oes/src/restApi/api/http/HttpRequestOptions.dart';
 import 'package:oes/src/restApi/api/http/RequestResult.dart';
-import 'package:oes/src/services/SecureStorage.dart';
+import 'package:oes/src/services/LocalStorage.dart';
 
 class ApiUserGateway implements UserGateway {
 
@@ -28,13 +28,13 @@ class ApiUserGateway implements UserGateway {
 
     if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
       debugPrint('Api Error: [User-loginWithPassword] ${result.statusCode} -> ${result.message}');
-      await SecureStorage.instance.remove('token');
+      await LocalStorage.instance.remove('token');
       return null;
     }
 
     try {
       User user = User.fromJson(result.data);
-      await SecureStorage.instance.set('token', result.data['token']);
+      await LocalStorage.instance.set('token', result.data['token']);
 
       return user;
     } on Exception {
@@ -50,13 +50,13 @@ class ApiUserGateway implements UserGateway {
 
     if (result.statusCode != 200 || result.data is! Map<String, dynamic>) {
       debugPrint('Api Error: [User-loginWithToken] ${result.statusCode} -> ${result.message}');
-      await SecureStorage.instance.remove('token');
+      await LocalStorage.instance.remove('token');
       return null;
     }
 
     try {
       User user = User.fromJson(result.data);
-      await SecureStorage.instance.set('token', result.data['token']);
+      await LocalStorage.instance.set('token', result.data['token']);
 
       return user;
     } on Exception {
@@ -66,7 +66,7 @@ class ApiUserGateway implements UserGateway {
 
   @override
   Future<void> logout(String token) async {
-    // SecureStorage.instance.remove('token');
+    // LocalStorage.instance.remove('token');
 
     await HttpRequest.instance.post('$basePath/auth/tokenLogout',
         options: AuthHttpRequestOptions(token: token)
