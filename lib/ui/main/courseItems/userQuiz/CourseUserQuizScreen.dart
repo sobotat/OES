@@ -99,9 +99,10 @@ class _BodyState extends State<_Body> {
               showResult = true;
               setState(() {});
             },
-            showNext: () {
+            showNext: (bool haveBadAnswer) {
               showResult = false;
-              questionsStack.removeAt(0);
+              Question oldQuestion = questionsStack.removeAt(0);
+              if(haveBadAnswer) questionsStack.add(oldQuestion);
               setState(() {});
             },
           ) : Center(
@@ -157,7 +158,7 @@ class _Question extends StatefulWidget {
   final Question question;
   final bool showResults;
   final Function(List<AnswerOption> options) onSubmit;
-  final Function() showNext;
+  final Function(bool haveBadAnswer) showNext;
 
   @override
   State<_Question> createState() => _QuestionState();
@@ -217,7 +218,15 @@ class _QuestionState extends State<_Question> {
           showResults: widget.showResults,
           onSubmit: () => submit(),
           onShowNext: () {
-            widget.showNext();
+            bool everythingOk = true;
+            for(QuestionOption option in widget.question.options) {
+              bool isSelected = selected.contains(option);
+              if((isSelected && option.points <= 0) || (!isSelected && option.points > 0)) {
+                everythingOk = false;
+                break;
+              }
+            }
+            widget.showNext(!everythingOk);
             setState(() {});
           },
         )
