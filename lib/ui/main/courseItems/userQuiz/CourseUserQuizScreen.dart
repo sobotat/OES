@@ -166,7 +166,6 @@ class _Question extends StatefulWidget {
 class _QuestionState extends State<_Question> {
 
   List<QuestionOption> selected = [];
-  Timer? nextQuestionTimer;
 
   @override
   void dispose() {
@@ -174,19 +173,18 @@ class _QuestionState extends State<_Question> {
     super.dispose();
   }
 
-  void setTimer() {
-    nextQuestionTimer = Timer(const Duration(seconds: 5), () {
-      nextQuestionTimer = null;
-      widget.showNext();
-    });
+  void submit() {
+    List<AnswerOption> options = [];
+    for (QuestionOption o in selected) {
+      AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
+      options.add(option);
+    }
+    widget.onSubmit(options);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
-    var overflow = 950;
-
     return Column(
       children: [
         Expanded(
@@ -205,126 +203,184 @@ class _QuestionState extends State<_Question> {
             )
           ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: width > overflow ? 50 : 15
-          ),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: height / 3
-            ),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Builder(
-                  builder: (context) {
-                    List<Widget> childrenLeft = [];
-                    List<Widget> childrenRight = [];
-
-                    bool isLeft = true;
-                    for(QuestionOption option in widget.question.options) {
-                      bool isSelected = selected.contains(option);
-
-                      double calculatedHeight = (height / 4) / (widget.question.options.length / 2) / (width < overflow ? 2 : 1);
-                      Widget w = Button(
-                        text: option.text,
-                        minHeight: calculatedHeight,
-                        maxHeight: double.infinity,
-                        maxWidth: double.infinity,
-                        backgroundColor: widget.showResults ? (option.points > 0 ? Colors.green.shade700 : Colors.red.shade700 ) : Theme.of(context).extension<AppCustomColors>()!.accent,
-                        borderColor: widget.showResults ? (isSelected ? Colors.green : Colors.red ) : isSelected ? Colors.green.shade700 : null,
-                        borderWidth: widget.showResults ? 8 : 4,
-                        onClick: (context) {
-                          if (widget.showResults) return;
-                          if(selected.contains(option)) {
-                            selected.remove(option);
-                            setState(() {});
-                            return;
-                          }
-                          if(widget.question is PickOneQuestion) {
-                            selected.clear();
-                          }
-                          selected.add(option);
-                          setState(() {});
-
-                          if (widget.question.type == "pick-one") {
-                            List<AnswerOption> options = [];
-                            for (QuestionOption o in selected) {
-                              AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
-                              options.add(option);
-                            }
-                            setTimer();
-                            widget.onSubmit(options);
-                          }
-                        },
-                      );
-
-                      if(isLeft || width < overflow) {
-                        childrenLeft.add(w);
-                        childrenLeft.add(const SizedBox(height: 20,));
-                      } else {
-                        childrenRight.add(w);
-                        childrenRight.add(const SizedBox(height: 20,));
-                      }
-
-                      isLeft = !isLeft;
-                    }
-
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: childrenLeft,
-                          ),
-                        ),
-                        width >= overflow ? const SizedBox(width: 20,) : Container(),
-                        width >= overflow ? Flexible(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: childrenRight,
-                          ),
-                        ) : Container(),
-                      ],
-                    );
-                  }
-                ),
-                !widget.showResults && widget.question.type != "pick-one" ? Button(
-                  text: "Submit",
-                  maxWidth: double.infinity,
-                  backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-                  onClick: (context) {
-                    List<AnswerOption> options = [];
-                    for (QuestionOption o in selected) {
-                      AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
-                      options.add(option);
-                    }
-                    setTimer();
-                    widget.onSubmit(options);
-                  },
-                ) : Container(),
-                nextQuestionTimer != null ? Button(
-                    text: nextQuestionTimer!.isActive ? "Pause" : "Continue",
-                    maxWidth: double.infinity,
-                    backgroundColor: nextQuestionTimer!.isActive ? Colors.red.shade700 : Theme.of(context).colorScheme.secondary,
-                    icon: nextQuestionTimer!.isActive ? Icons.pause : Icons.play_arrow_outlined,
-                    onClick: (context) {
-                      if(nextQuestionTimer!.isActive) {
-                        nextQuestionTimer!.cancel();
-                        setState(() {});
-                        return;
-                      }
-                      nextQuestionTimer = null;
-                      widget.showNext();
-                    }
-                ) : Container(),
-              ],
-            ),
-          ),
+        _QuestionSelector(
+          question: widget.question,
+          showResults: widget.showResults,
+          selected: selected,
+          onUpdated: () {
+            setState(() {});
+          },
+          onSubmit: () => submit(),
         ),
-        const SizedBox(height: 10,)
+        _QuestionButtons(
+          questionType: widget.question.type,
+          showResults: widget.showResults,
+          onSubmit: () => submit(),
+          onShowNext: () {
+            widget.showNext();
+            setState(() {});
+          },
+        )
       ],
+    );
+  }
+}
+
+class _QuestionButtons extends StatelessWidget {
+  const _QuestionButtons({
+    required this.questionType,
+    required this.showResults,
+    required this.onSubmit,
+    required this.onShowNext,
+    super.key
+  });
+
+  final String questionType;
+  final bool showResults;
+  final Function() onShowNext;
+  final Function() onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return IntrinsicHeight(
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: width > overflow ? 50 : 15,
+            vertical: 15
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            !showResults && questionType != "pick-one" ? Button(
+              text: "Submit",
+              maxWidth: double.infinity,
+              backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+              onClick: (context) => onSubmit(),
+            ) : Container(),
+            showResults ? Button(
+                text: "Continue",
+                maxWidth: double.infinity,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                icon: Icons.play_arrow_outlined,
+                onClick: (context) {
+                  onShowNext();
+                }
+            ) : Container(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class _QuestionSelector extends StatelessWidget {
+  const _QuestionSelector({
+    required this.question,
+    required this.showResults,
+    required this.selected,
+    required this.onUpdated,
+    required this.onSubmit,
+    super.key
+  });
+
+  final Question question;
+  final bool showResults;
+  final List<QuestionOption> selected;
+  final Function() onUpdated;
+  final Function() onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    var overflow = 950;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: width > overflow ? 50 : 15
+      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight: height / 3
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Builder(
+                builder: (context) {
+                  List<Widget> childrenLeft = [];
+                  List<Widget> childrenRight = [];
+
+                  bool isLeft = true;
+                  for(QuestionOption option in question.options) {
+                    bool isSelected = selected.contains(option);
+
+                    double calculatedHeight = (height / 4) / (question.options.length / 2) / (width < overflow ? 2 : 1);
+                    Widget w = Button(
+                      text: option.text,
+                      minHeight: calculatedHeight,
+                      maxHeight: double.infinity,
+                      maxWidth: double.infinity,
+                      backgroundColor: showResults ? (option.points > 0 ? Colors.green.shade700 : Colors.red.shade700 ) : Theme.of(context).extension<AppCustomColors>()!.accent,
+                      borderColor: showResults ? (isSelected ? Colors.green : Colors.red ) : isSelected ? Colors.green.shade700 : null,
+                      borderWidth: showResults ? 8 : 4,
+                      onClick: (context) {
+                        if (showResults) return;
+                        if(selected.contains(option)) {
+                          selected.remove(option);
+                          onUpdated();
+                          return;
+                        }
+                        if(question is PickOneQuestion) {
+                          selected.clear();
+                        }
+                        selected.add(option);
+                        onUpdated();
+
+                        if (question.type == "pick-one") {
+                          onSubmit();
+                        }
+                      },
+                    );
+
+                    if(isLeft || width < overflow) {
+                      childrenLeft.add(w);
+                      childrenLeft.add(const SizedBox(height: 20,));
+                    } else {
+                      childrenRight.add(w);
+                      childrenRight.add(const SizedBox(height: 20,));
+                    }
+
+                    isLeft = !isLeft;
+                  }
+
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: childrenLeft,
+                        ),
+                      ),
+                      width >= overflow ? const SizedBox(width: 20,) : Container(),
+                      width >= overflow ? Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: childrenRight,
+                        ),
+                      ) : Container(),
+                    ],
+                  );
+                }
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
