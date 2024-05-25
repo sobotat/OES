@@ -45,12 +45,12 @@ class AppMarkdown extends StatelessWidget {
         },
         styleSheet: MarkdownStyleSheet(
           h1: TextStyle(
-              fontSize: testSize + 10,
+              fontSize: testSize + 12,
               color: Theme.of(context).extension<AppCustomColors>()!.accent,
               fontWeight: FontWeight.bold
           ),
           h2: TextStyle(
-              fontSize: testSize + 8,
+              fontSize: testSize + 10,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h3: TextStyle(
@@ -62,11 +62,11 @@ class AppMarkdown extends StatelessWidget {
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h5: TextStyle(
-              fontSize: testSize + 3,
+              fontSize: testSize + 2,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           h6: TextStyle(
-              fontSize: testSize + 2,
+              fontSize: testSize + 1,
               color: Theme.of(context).extension<AppCustomColors>()!.accent
           ),
           textAlign: textAlign,
