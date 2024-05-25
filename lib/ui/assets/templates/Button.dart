@@ -120,7 +120,7 @@ class Button extends StatelessWidget {
                             text,
                             softWrap: true,
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 15,
                               color: activeTextColor,
                               fontFamily: fontFamily,
                             ),
