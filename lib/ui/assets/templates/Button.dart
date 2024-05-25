@@ -27,7 +27,6 @@ class Button extends StatelessWidget {
     this.borderRadius,
     this.borderColor,
     this.borderWidth = 2,
-    this.textFit = BoxFit.none,
     super.key
   });
   
@@ -54,7 +53,6 @@ class Button extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Color? borderColor;
   final double borderWidth;
-  final BoxFit textFit;
 
   @override
   Widget build(BuildContext context) {
@@ -118,16 +116,13 @@ class Button extends StatelessWidget {
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.all(10),
-                          child: FittedBox(
-                            fit: textFit,
-                            child: Text(
-                              text,
-                              softWrap: true,
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: activeTextColor,
-                                fontFamily: fontFamily,
-                              ),
+                          child: Text(
+                            text,
+                            softWrap: true,
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: activeTextColor,
+                              fontFamily: fontFamily,
                             ),
                           ),
                         ),
