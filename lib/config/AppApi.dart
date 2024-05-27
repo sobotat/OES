@@ -20,23 +20,25 @@ class AppApi extends ChangeNotifier {
     } else {
       _apiServerUrl = value;
     }
-    notifyListeners();
   }
 
   Future<void> init() async {
     String? organizationName = await LocalStorage.instance.get("organization");
     if (organizationName == null) {
       isInit = true;
+      notifyListeners();
       return;
     }
 
     Organization? organization = await OrganizationGateway.instance.get(organizationName);
     if (organization == null) {
       isInit = true;
+      notifyListeners();
       return;
     }
     setOrganization(organization);
     isInit = true;
+    notifyListeners();
   }
 
   Future<void> setOrganization(Organization organization) async {
