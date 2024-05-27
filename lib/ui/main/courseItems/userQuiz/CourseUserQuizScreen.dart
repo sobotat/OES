@@ -29,23 +29,30 @@ class CourseUserQuizScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppAppBar(),
-      body: ListenableBuilder(
-        listenable: AppSecurity.instance,
-        builder: (context, child) {
-          if(!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
-          return FutureBuilder(
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
+    return ListenableBuilder(
+      listenable: AppSecurity.instance,
+      builder: (context, child) {
+        if(!AppSecurity.instance.isInit) return const Center(child: WidgetLoading(),);
+        return FutureBuilder(
             future: UserQuizGateway.instance.get(quizId),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const Center(child: WidgetLoading(),);
-              return _Body(
-                userQuiz: snapshot.data!,
+              UserQuiz userQuiz = snapshot.data!;
+
+              return Scaffold(
+                appBar: AppAppBar(
+                  title: width > overflow ? Text(userQuiz.name) : null,
+                ),
+                body: _Body(
+                  userQuiz: userQuiz,
+                ),
               );
             }
-          );
-        },
-      ),
+        );
+      },
     );
   }
 }
@@ -66,6 +73,7 @@ class _BodyState extends State<_Body> {
 
   List<Question> questionsStack = [];
   bool showResult = false;
+  bool haveBadAnswer = false;
 
   @override
   void initState() {
@@ -80,6 +88,13 @@ class _BodyState extends State<_Body> {
       q.options.shuffle();
     }
     showResult = false;
+  }
+
+  void showNext() {
+    showResult = false;
+    Question oldQuestion = questionsStack.removeAt(0);
+    if(haveBadAnswer) questionsStack.add(oldQuestion);
+    setState(() {});
   }
 
   @override
@@ -100,10 +115,8 @@ class _BodyState extends State<_Body> {
               setState(() {});
             },
             showNext: (bool haveBadAnswer) {
-              showResult = false;
-              Question oldQuestion = questionsStack.removeAt(0);
-              if(haveBadAnswer) questionsStack.add(oldQuestion);
-              setState(() {});
+              this.haveBadAnswer = haveBadAnswer;
+              showNext();
             },
           ) : Center(
             child: Container(
