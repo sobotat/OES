@@ -314,7 +314,7 @@ class _QuestionSelector extends StatelessWidget {
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: height / 3
+            maxHeight: height / 2.5
         ),
         child: ListView(
           shrinkWrap: true,
