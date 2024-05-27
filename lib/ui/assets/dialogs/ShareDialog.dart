@@ -32,13 +32,13 @@ class ShareDialog extends StatefulWidget {
 
 class _ShareDialogState extends State<ShareDialog> {
 
-  Future<void> addUser(String username) async {
+  Future<bool> addUser(String username) async {
     List<User> users = await CourseGateway.instance.getUsers(widget.courseId);
     User? user = users.where((element) => element.username == username).firstOrNull;
 
     if (user == null) {
       Toast.makeErrorToast(text: "User not found in Course");
-      return;
+      return false;
     }
 
     bool success = false;
@@ -58,10 +58,11 @@ class _ShareDialogState extends State<ShareDialog> {
     if (success) {
       Toast.makeSuccessToast(text: "User Added");
       setState(() {});
-      return;
+      return true;
     }
     Toast.makeErrorToast(text: "Failed to add User");
     setState(() {});
+    return false;
   }
 
   Future<bool> updateUser(ShareUser user) async {
@@ -157,7 +158,9 @@ class _ShareDialogState extends State<ShareDialog> {
                           return isEditor ? _Input(
                             courseId: widget.courseId,
                             users: users ?? [],
-                            addUser: (username) => addUser(username),
+                            addUser: (username) async {
+                              return await addUser(username);
+                            },
                           ) : _LeaveButton(
                             leave: () => leave(),
                           );
@@ -213,7 +216,7 @@ class _Input extends StatefulWidget {
 
   final int courseId;
   final List<ShareUser> users;
-  final Function(String username) addUser;
+  final Future<bool> Function(String username) addUser;
 
   @override
   State<_Input> createState() => _InputState();
@@ -246,45 +249,56 @@ class _InputState extends State<_Input> {
       child: Row(
         children: [
           Flexible(
-            child: SearchAnchor(
-              searchController: controller,
-              viewConstraints: const BoxConstraints(
-                maxWidth: 300,
-                maxHeight: 400
-              ),
-              builder: (context, controller) {
-                return SearchBar(
-                  controller: controller,
-                  hintText: "Username",
-                  onTap: () {
-                    controller.openView();
-                  },
-                  onChanged: (value) {
-                    controller.openView();
-                  },
-                  padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.all(5)
-                  ),
-                );
-              },
-              suggestionsBuilder: (context, controller) {
-                List<String> addedUsers = widget.users.map((e) => e.username).toList();
-                addedUsers.add(AppSecurity.instance.user!.username);
-                List<String> searchUsernames = usernames
-                    .where((element) => element.toLowerCase().contains(controller.text.toLowerCase()))
-                    .where((element) => !addedUsers.contains(element))
-                    .toList();
-                return List<ListTile>.generate(searchUsernames.length, (int index) {
-                  return ListTile(
-                    title: Text(searchUsernames[index]),
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: SearchAnchor(
+                searchController: controller,
+                viewConstraints: const BoxConstraints(
+                  maxWidth: 300,
+                  maxHeight: 400
+                ),
+                viewShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                builder: (context, controller) {
+                  return SearchBar(
+                    controller: controller,
+                    hintText: "Username",
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                     onTap: () {
-                      setState(() {
-                        controller.closeView(searchUsernames[index]);
-                      });
+                      controller.openView();
                     },
+                    onChanged: (value) {
+                      controller.openView();
+                    },
+                    padding: const MaterialStatePropertyAll<EdgeInsets>(
+                        EdgeInsets.all(5)
+                    ),
                   );
-                });
-              },
+                },
+                suggestionsBuilder: (context, controller) {
+                  List<String> addedUsers = widget.users.map((e) => e.username).toList();
+                  addedUsers.add(AppSecurity.instance.user!.username);
+                  List<String> searchUsernames = usernames
+                      .where((element) => element.toLowerCase().contains(controller.text.toLowerCase()))
+                      .where((element) => !addedUsers.contains(element))
+                      .toList();
+                  return List<ListTile>.generate(searchUsernames.length, (int index) {
+                    return ListTile(
+                      title: Text(searchUsernames[index]),
+                      onTap: () {
+                        setState(() {
+                          controller.closeView(searchUsernames[index]);
+                        });
+                      },
+                    );
+                  });
+                },
+              ),
             ),
           ),
           Padding(
@@ -293,10 +307,13 @@ class _InputState extends State<_Input> {
               icon: Icons.add,
               toolTip: "Add",
               maxWidth: 40,
-              maxHeight: 60,
+              maxHeight: double.infinity,
               backgroundColor: Colors.green.shade700,
-              onClick: (context) {
-                widget.addUser(controller.text.trim());
+              onClick: (context) async {
+                bool added = await widget.addUser(controller.text.trim());
+                if(added) {
+                  controller.clear();
+                }
               },
             ),
           )
