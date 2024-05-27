@@ -94,7 +94,6 @@ class _BodyState extends State<_Body> {
     showResult = false;
     Question oldQuestion = questionsStack.removeAt(0);
     if(haveBadAnswer) {
-      oldQuestion.setWithAnswerOptions([]);
       oldQuestion.options.shuffle();
       questionsStack.add(oldQuestion);
     }
@@ -244,6 +243,7 @@ class _QuestionState extends State<_Question> {
               }
             }
             widget.showNext(!everythingOk);
+            selected.clear();
             setState(() {});
           },
         )
