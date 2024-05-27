@@ -93,7 +93,11 @@ class _BodyState extends State<_Body> {
   void showNext() {
     showResult = false;
     Question oldQuestion = questionsStack.removeAt(0);
-    if(haveBadAnswer) questionsStack.add(oldQuestion);
+    if(haveBadAnswer) {
+      oldQuestion.setWithAnswerOptions([]);
+      oldQuestion.options.shuffle();
+      questionsStack.add(oldQuestion);
+    }
     setState(() {});
   }
 

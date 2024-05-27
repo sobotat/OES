@@ -37,6 +37,7 @@ class PickOneQuestion extends Question {
 
   @override
   void setWithAnswerOptions(List<AnswerOption> answers) {
+    this.answer = null;
     if (answers.isEmpty) return;
     AnswerOption answer = answers.first;
     for(int i = 0; i < options.length; i++) {
