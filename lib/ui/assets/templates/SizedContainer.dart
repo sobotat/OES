@@ -13,7 +13,7 @@ class SizedContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var largeScreenOverflow = 1800;
+    var largeScreenOverflow = 1400;
 
     return ConstrainedBox(
       constraints: width > largeScreenOverflow && AppSettings.instance.optimizeUIForLargeScreens ? BoxConstraints(
