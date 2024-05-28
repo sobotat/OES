@@ -13,6 +13,7 @@ class AppAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.leading,
     this.actions = const [],
     this.onRefresh,
+    this.hideSettings = false,
     super.key
   });
 
@@ -20,6 +21,7 @@ class AppAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Widget? leading;
   final List<Widget> actions;
   final Function()? onRefresh;
+  final bool hideSettings;
 
   @override
   final Size preferredSize = const Size.fromHeight(65); // default is 56.0 kToolbarHeight
@@ -67,7 +69,7 @@ class _AppAppBarState extends State<AppAppBar> {
                       const UserInfoButton(width: 150),
                       const SignOutButton(),
                       const ThemeModeButton(),
-                      const SettingButton(),
+                      !widget.hideSettings ? const SettingButton() : Container(),
                     ],
                   ),
                 ),

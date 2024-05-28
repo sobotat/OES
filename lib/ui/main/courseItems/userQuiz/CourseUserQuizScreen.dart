@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oes/config/AppSettings.dart';
 import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/courseItems/UserQuiz.dart';
@@ -93,7 +94,7 @@ class _BodyState extends State<_Body> {
   void showNext() {
     showResult = false;
     Question oldQuestion = questionsStack.removeAt(0);
-    if(haveBadAnswer) {
+    if(haveBadAnswer && AppSettings.instance.enableQuestionRepeating) {
       oldQuestion.options.shuffle();
       questionsStack.add(oldQuestion);
     }

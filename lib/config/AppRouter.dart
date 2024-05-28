@@ -27,6 +27,7 @@ import 'package:oes/ui/network/NoApiScreen.dart';
 import 'package:oes/ui/network/NoInternetScreen.dart';
 import 'package:oes/ui/security/Sign-In.dart';
 import 'package:oes/ui/security/Sign-Out.dart';
+import 'package:oes/ui/settings/SettingScreen.dart';
 import 'package:oes/ui/test/TestScreen.dart';
 import 'package:oes/ui/web/WebHomeScreen.dart';
 
@@ -80,6 +81,16 @@ class AppRouter {
           _setActiveUri(context, state);
           return const WebHomeScreen();
         },
+        routes: [
+          GoRoute(
+            path: 'setting',
+            name: 'setting',
+            builder: (context, state) {
+              _setActiveUri(context, state);
+              return const SettingScreen();
+            },
+          ),
+        ]
       ),
       GoRoute(
         path: '/sign-in',
