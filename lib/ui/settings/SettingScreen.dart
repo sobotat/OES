@@ -27,8 +27,11 @@ class _SettingScreenState extends State<SettingScreen> {
         setState(() {});
       },
       child: Scaffold(
-        appBar: const AppAppBar(
+        appBar: AppAppBar(
           hideSettings: true,
+          onRefresh: () {
+            refreshKey.currentState?.refresh();
+          },
         ),
         body: ListView(
           children: [
