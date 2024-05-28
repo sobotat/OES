@@ -48,28 +48,27 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
           setState(() {});
           refreshKey.currentState?.refresh();
         },
-        child: SizedContainer(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: GradientContainer(
-              borderRadius: BorderRadius.circular(10),
-              colors: [
-                Theme.of(context).colorScheme.secondary,
-                Theme.of(context).extension<AppCustomColors>()!.accent,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: GradientContainer(
+
+            borderRadius: BorderRadius.circular(10),
+            colors: [
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).extension<AppCustomColors>()!.accent,
+            ],
+            child: ListView(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _Title(width: width, overflow: overflow),
+                    const _WhyToUse(),
+                    const _Download(),
+                  ],
+                ),
               ],
-              child: ListView(
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _Title(width: width, overflow: overflow),
-                      const _WhyToUse(),
-                      const _Download(),
-                    ],
-                  ),
-                ],
-              ),
             ),
           ),
         ),
@@ -234,7 +233,7 @@ class _BannerText extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Flexible(child: Text(text, textAlign: align, style: const TextStyle(fontSize: 40),)),
+            Flexible(child: Text(text, textAlign: align, style: const TextStyle(fontSize: 30),)),
           ],
         ),
       )
