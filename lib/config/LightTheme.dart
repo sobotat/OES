@@ -8,7 +8,7 @@ class LightTheme extends AppTheme {
   static final AppTheme instance = LightTheme();
 
   final Color _primary = const Color.fromRGBO(241, 244, 249, 1);
-  final Color _secondary = const Color.fromRGBO(221, 231, 240, 1);
+  final Color _secondary = const Color.fromRGBO(218, 226, 234, 1);
   final Color _accent = const Color.fromRGBO(74, 118, 155, 1);
   final Color _background = const Color.fromRGBO(250, 250, 250, 1);
   final Color _textColorLight = const Color.fromRGBO(250, 250, 250, 1);
