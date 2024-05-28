@@ -60,7 +60,7 @@ class _BoolSetting extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(text),
-        Checkbox(
+        Switch(
           value: value,
           onChanged: (value) {
             onChanged(value);
