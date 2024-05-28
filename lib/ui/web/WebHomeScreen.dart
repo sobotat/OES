@@ -29,7 +29,6 @@ class WebHomeScreen extends StatefulWidget {
 }
 
 class _WebHomeScreenState extends State<WebHomeScreen> {
-  GlobalKey<RefreshWidgetState> refreshKey = GlobalKey<RefreshWidgetState>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,34 +41,27 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
           width > overflow ? const _GoToMain(maxWidth: 150,) : const _GoToMain(),
         ],
       ),
-      body: RefreshWidget(
-        key: refreshKey,
-        onRefreshed: () {
-          setState(() {});
-          refreshKey.currentState?.refresh();
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: GradientContainer(
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: GradientContainer(
 
-            borderRadius: BorderRadius.circular(10),
-            colors: [
-              Theme.of(context).colorScheme.secondary,
-              Theme.of(context).extension<AppCustomColors>()!.accent,
+          borderRadius: BorderRadius.circular(10),
+          colors: [
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).extension<AppCustomColors>()!.accent,
+          ],
+          child: ListView(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _Title(width: width, overflow: overflow),
+                  const _WhyToUse(),
+                  const _Download(),
+                ],
+              ),
             ],
-            child: ListView(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _Title(width: width, overflow: overflow),
-                    const _WhyToUse(),
-                    const _Download(),
-                  ],
-                ),
-              ],
-            ),
           ),
         ),
       ),
