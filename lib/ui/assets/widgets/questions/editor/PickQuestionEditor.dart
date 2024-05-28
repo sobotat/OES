@@ -197,7 +197,6 @@ class _PointsState extends State<_Points> {
           if (widget.option.allowSwitchForPoints) {
             return Switch(
               value: widget.pointsController.text == "1",
-              activeColor: Theme.of(context).extension<AppCustomColors>()!.accent,
               onChanged: (value) {
                 widget.pointsController.text = value ? "1" : "0";
                 widget.option.onUpdated(widget.option.index);

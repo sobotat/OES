@@ -25,6 +25,7 @@ class LightTheme extends AppTheme {
         primary: _primary,
         secondary: _secondary,
         background: _background,
+        surface: _background
       ),
       extensions: [
         AppCustomColors(
@@ -70,6 +71,22 @@ class LightTheme extends AppTheme {
           )
         ),
       ),
+      checkboxTheme: CheckboxThemeData(
+        checkColor: WidgetStateProperty.resolveWith((states) {
+          return states.contains(WidgetState.selected) ? _accent : Colors.grey;
+        }),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          return states.contains(WidgetState.selected) ? _accent : Colors.grey;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          Color lightAccent = _accent.withRed(_accent.red + 50)
+                                     .withBlue(_accent.blue + 50)
+                                     .withGreen(_accent.green + 50);
+          return states.contains(WidgetState.selected) ? lightAccent : Colors.transparent;
+        },)
+      )
     );
   }
 }
