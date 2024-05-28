@@ -184,7 +184,7 @@ class _CoursesState extends State<_Courses> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: Button(
-                icon: Icons.edit,
+                icon: Icons.password,
                 toolTip: "Join",
                 maxWidth: 40,
                 backgroundColor: Theme.of(context).colorScheme.secondary,
