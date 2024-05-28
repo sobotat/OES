@@ -56,7 +56,6 @@ class _ShareDialogState extends State<ShareDialog> {
     }
 
     if (success) {
-      Toast.makeSuccessToast(text: "User Added");
       setState(() {});
       return true;
     }
@@ -75,7 +74,6 @@ class _ShareDialogState extends State<ShareDialog> {
     }
 
     if (success) {
-      Toast.makeSuccessToast(text: "User Updated");
       setState(() {});
       return true;
     }
@@ -94,7 +92,6 @@ class _ShareDialogState extends State<ShareDialog> {
     }
 
     if (success) {
-      Toast.makeSuccessToast(text: "User Removed");
       setState(() {});
       return true;
     }
