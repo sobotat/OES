@@ -48,24 +48,29 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
           setState(() {});
           refreshKey.currentState?.refresh();
         },
-        child: GradientContainer(
-          borderRadius: BorderRadius.zero,
-          colors: [
-            Theme.of(context).colorScheme.secondary,
-            Theme.of(context).extension<AppCustomColors>()!.accent,
-          ],
-          child: ListView(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: SizedContainer(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: GradientContainer(
+              borderRadius: BorderRadius.circular(10),
+              colors: [
+                Theme.of(context).colorScheme.secondary,
+                Theme.of(context).extension<AppCustomColors>()!.accent,
+              ],
+              child: ListView(
                 children: [
-                  _Title(width: width, overflow: overflow),
-                  const _WhyToUse(),
-                  const _Download(),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _Title(width: width, overflow: overflow),
+                      const _WhyToUse(),
+                      const _Download(),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -144,7 +149,7 @@ class _ImageBanner extends StatelessWidget {
                 ),
                 _BannerText(
                   text: text,
-                  align: TextAlign.right,
+                  align: TextAlign.left,
                 )
               ];
       
@@ -229,7 +234,7 @@ class _BannerText extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(text, textAlign: align, style: const TextStyle(fontSize: 16),),
+            Flexible(child: Text(text, textAlign: align, style: const TextStyle(fontSize: 40),)),
           ],
         ),
       )
