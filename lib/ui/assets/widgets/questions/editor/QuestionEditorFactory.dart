@@ -8,11 +8,13 @@ class QuestionEditorFactory extends StatelessWidget {
   const QuestionEditorFactory({
     required this.question,
     required this.onUpdated,
+    this.allowSwitchForPoints = false,
     super.key
   });
 
   final Question question;
   final Function() onUpdated;
+  final bool allowSwitchForPoints;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +22,9 @@ class QuestionEditorFactory extends StatelessWidget {
       case 'pick-one':
       case 'pick-many':
         return PickQuestionEditor(
-            question: question,
-            onUpdated: onUpdated
+          question: question,
+          onUpdated: onUpdated,
+          allowSwitchForPoints: allowSwitchForPoints,
         );
       case 'open':
         return OpenQuestionEditor(

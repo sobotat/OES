@@ -749,6 +749,7 @@ class _QuestionEditorState extends State<_QuestionEditor> {
               const SizedBox(height: 20,),
               QuestionEditorFactory(
                 question: widget.question,
+                allowSwitchForPoints: true,
                 onUpdated: () {
                   widget.onUpdated(widget.index);
                 },

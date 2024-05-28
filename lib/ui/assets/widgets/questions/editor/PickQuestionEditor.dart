@@ -12,17 +12,20 @@ class PickQuestionEditor extends StatefulWidget {
   const PickQuestionEditor({
     required this.question,
     required this.onUpdated,
+    required this.allowSwitchForPoints,
     super.key
   });
 
   final Question question;
   final Function() onUpdated;
+  final bool allowSwitchForPoints;
 
   @override
   State<PickQuestionEditor> createState() => _PickQuestionEditorState();
 }
 
 class _PickQuestionEditorState extends State<PickQuestionEditor> {
+
   void recalculatePoints() {
     switch(widget.question.type) {
       case "pick-one":
@@ -48,6 +51,7 @@ class _PickQuestionEditorState extends State<PickQuestionEditor> {
           itemBuilder: (context, index) {
             return _PickOptions(
               index: index,
+              allowSwitchForPoints: widget.allowSwitchForPoints,
               option: widget.question.options[index],
               onUpdated: (index) {
                 recalculatePoints();
@@ -87,6 +91,7 @@ class _PickOptions extends StatefulWidget {
     required this.option,
     required this.onUpdated,
     required this.onDeleted,
+    required this.allowSwitchForPoints,
     super.key,
   });
 
@@ -94,6 +99,7 @@ class _PickOptions extends StatefulWidget {
   final QuestionOption option;
   final Function(int index) onUpdated;
   final Function(int index) onDeleted;
+  final bool allowSwitchForPoints;
 
   @override
   State<_PickOptions> createState() => _PickOptionsState();
@@ -142,27 +148,9 @@ class _PickOptionsState extends State<_PickOptions> {
             ),
           ),
           const SizedBox(width: 5,),
-          SizedBox(
-            width: 75,
-            child: TextField(
-              controller: pointsController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: "Points +/-",
-              ),
-              maxLines: 1,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r"^(-?[0-9]*)?$"))
-              ],
-              onChanged: (value) {
-                if (value.isEmpty || value == "-") {
-                  widget.option.points = 0;
-                  return;
-                }
-                widget.option.points = int.parse(value);
-                widget.onUpdated(widget.index);
-              },
-            ),
+          _Points(
+            pointsController: pointsController,
+            option: widget,
           ),
           Padding(
             padding: const EdgeInsets.all(5),
@@ -181,6 +169,64 @@ class _PickOptionsState extends State<_PickOptions> {
       height: null,
       color: color,
       backgroundColor: Theme.of(context).colorScheme.secondary,
+    );
+  }
+}
+
+class _Points extends StatefulWidget {
+  const _Points({
+    super.key,
+    required this.pointsController,
+    required this.option,
+  });
+
+  final TextEditingController pointsController;
+  final _PickOptions option;
+
+  @override
+  State<_Points> createState() => _PointsState();
+}
+
+class _PointsState extends State<_Points> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 75,
+      child: Builder(
+        builder: (context) {
+          if (widget.option.allowSwitchForPoints) {
+            return Switch(
+              value: widget.pointsController.text == "1",
+              activeColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+              onChanged: (value) {
+                widget.pointsController.text = value ? "1" : "0";
+                widget.option.onUpdated(widget.option.index);
+                setState(() {});
+              },
+            );
+          }
+
+          return TextField(
+            controller: widget.pointsController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: "Points +/-",
+            ),
+            maxLines: 1,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"^(-?[0-9]*)?$"))
+            ],
+            onChanged: (value) {
+              if (value.isEmpty || value == "-") {
+                widget.option.option.points = 0;
+                return;
+              }
+              widget.option.option.points = int.parse(value);
+              widget.option.onUpdated(widget.option.index);
+            },
+          );
+        }
+      ),
     );
   }
 }
