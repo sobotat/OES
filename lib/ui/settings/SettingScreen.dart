@@ -53,6 +53,8 @@ class _SettingScreenState extends State<SettingScreen> {
                           onChanged: (value) async {
                             AppSettings.instance.optimizeUIForLargeScreens = value ?? true;
                             await AppSettings.instance.save();
+
+                            setState(() {});
                             refreshKey.currentState?.refresh();
                           },
                         ),
