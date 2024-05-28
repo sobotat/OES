@@ -21,19 +21,19 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshWidget(
-      key: refreshKey,
-      onRefreshed: () {
-        setState(() {});
-      },
-      child: Scaffold(
-        appBar: AppAppBar(
-          hideSettings: true,
-          onRefresh: () {
-            refreshKey.currentState?.refresh();
-          },
-        ),
-        body: ListView(
+    return Scaffold(
+      appBar: AppAppBar(
+        hideSettings: true,
+        onRefresh: () {
+          refreshKey.currentState?.refresh();
+        },
+      ),
+      body: RefreshWidget(
+        key: refreshKey,
+        onRefreshed: () {
+          setState(() {});
+        },
+        child: ListView(
           children: [
             Column(
               mainAxisSize: MainAxisSize.min,
