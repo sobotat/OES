@@ -72,6 +72,11 @@ class AppRouter {
         name: '/',
         redirect: (context, state) {
           removeAuthRedirect(context, state);
+
+          // Check if Active redirect
+          String uriNoParams = state.uri.toString().split('?')[0];
+          if (uriNoParams != state.matchedLocation) return null;
+
           if (!kIsWeb) {
             return '/main';
           }
