@@ -5,6 +5,7 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
 import 'package:oes/ui/assets/templates/Heading.dart';
+import 'package:oes/ui/assets/templates/RefreshWidget.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({
@@ -16,53 +17,60 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  GlobalKey<RefreshWidgetState> refreshKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppAppBar(
-        hideSettings: true,
-      ),
-      body: ListView(
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Heading(headingText: "Setting"),
-              BackgroundBody(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const _Heading(text: "UI"),
-                      _BoolSetting(
-                        text: "Optimize For Large Screens",
-                        value: AppSettings.instance.optimizeUIForLargeScreens,
-                        onChanged: (value) async {
-                          AppSettings.instance.optimizeUIForLargeScreens = value ?? true;
-                          await AppSettings.instance.save();
-                          setState(() {});
-                        },
-                      ),
-                      const _Heading(text: "User-Quiz"),
-                      _BoolSetting(
-                        text: "Enable Repeating Question",
-                        value: AppSettings.instance.enableQuestionRepeating,
-                        onChanged: (value) async {
-                          AppSettings.instance.enableQuestionRepeating = value ?? true;
-                          await AppSettings.instance.save();
-                          setState(() {});
-                        },
-                      )
-                    ],
+    return RefreshWidget(
+      key: refreshKey,
+      onRefreshed: () {
+        setState(() {});
+      },
+      child: Scaffold(
+        appBar: const AppAppBar(
+          hideSettings: true,
+        ),
+        body: ListView(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Heading(headingText: "Setting"),
+                BackgroundBody(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const _Heading(text: "UI"),
+                        _BoolSetting(
+                          text: "Optimize For Large Screens",
+                          value: AppSettings.instance.optimizeUIForLargeScreens,
+                          onChanged: (value) async {
+                            AppSettings.instance.optimizeUIForLargeScreens = value ?? true;
+                            await AppSettings.instance.save();
+                            refreshKey.currentState?.refresh();
+                          },
+                        ),
+                        const _Heading(text: "User-Quiz"),
+                        _BoolSetting(
+                          text: "Enable Repeating Question",
+                          value: AppSettings.instance.enableQuestionRepeating,
+                          onChanged: (value) async {
+                            AppSettings.instance.enableQuestionRepeating = value ?? true;
+                            await AppSettings.instance.save();
+                            setState(() {});
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
