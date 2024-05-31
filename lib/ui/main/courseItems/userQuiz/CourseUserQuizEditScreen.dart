@@ -542,18 +542,6 @@ class _EditorState extends State<_Editor> {
             Padding(
               padding: const EdgeInsets.all(5),
               child: Button(
-                icon: Icons.save,
-                toolTip: "Save",
-                maxWidth: 40,
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                onClick: (context) {
-                  save();
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Button(
                 icon: Icons.download,
                 toolTip: "Export",
                 maxWidth: 40,
@@ -568,6 +556,18 @@ class _EditorState extends State<_Editor> {
               itemId: widget.quiz.id,
               gateway: UserQuizShareGateway.instance,
             ) : Container(),
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Button(
+                icon: Icons.save,
+                toolTip: "Save",
+                maxWidth: 40,
+                backgroundColor: Colors.green.shade400,
+                onClick: (context) {
+                  save();
+                },
+              ),
+            ),
             !widget.isNew ? Padding(
               padding: const EdgeInsets.all(5),
               child: Button(

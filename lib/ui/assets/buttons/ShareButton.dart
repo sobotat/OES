@@ -23,7 +23,7 @@ class ShareButton extends StatelessWidget {
         icon: Icons.share_outlined,
         toolTip: "Share",
         maxWidth: 40,
-        backgroundColor: Colors.green.shade400,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         onClick: (context) {
           showDialog(
             context: context,
