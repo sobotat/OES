@@ -103,12 +103,14 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    double progress = 1 - questionsStack.length / widget.userQuiz.questions.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          height: 3,
-          color: Colors.blueAccent,
+        LinearProgressIndicator(
+          value: progress,
+          color: Color.lerp(Colors.red, Colors.green, progress),
         ),
         Expanded(
           child: questionsStack.isNotEmpty ? _Question(
