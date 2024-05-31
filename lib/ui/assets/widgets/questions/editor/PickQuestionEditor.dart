@@ -199,6 +199,7 @@ class _PointsState extends State<_Points> {
               value: widget.pointsController.text == "1",
               onChanged: (value) {
                 widget.pointsController.text = value ? "1" : "0";
+                widget.option.option.points = value ? 1 : 0;
                 widget.option.onUpdated(widget.option.index);
                 setState(() {});
               },
