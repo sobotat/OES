@@ -236,11 +236,20 @@ class _QuestionState extends State<_Question> {
           onSubmit: () => submit(),
           onShowNext: () {
             bool everythingOk = true;
+            String qType = widget.question.type;
+
             for(QuestionOption option in widget.question.options) {
               bool isSelected = selected.contains(option);
-              if((isSelected && option.points <= 0) || (!isSelected && option.points > 0)) {
-                everythingOk = false;
-                break;
+              if(qType == "pick-one") {
+                if(isSelected && option.points <= 0) {
+                  everythingOk = false;
+                  break;
+                }
+              } else {
+                if((isSelected && option.points <= 0) || (!isSelected && option.points > 0)) {
+                  everythingOk = false;
+                  break;
+                }
               }
             }
             widget.showNext(!everythingOk);
