@@ -41,29 +41,36 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
           width > overflow ? const _GoToMain(maxWidth: 150,) : const _GoToMain(),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: GradientContainer(
-
-          borderRadius: BorderRadius.circular(10),
-          colors: [
-            Theme.of(context).colorScheme.secondary,
-            Theme.of(context).extension<AppCustomColors>()!.accent,
-          ],
-          child: ListView(
+      body: ListView(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _Title(width: width, overflow: overflow),
-                  const _WhyToUse(),
-                  const _Download(),
-                ],
+              SizedContainer(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: GradientContainer(
+                    borderRadius: BorderRadius.circular(10),
+                    colors: [
+                      Theme.of(context).colorScheme.secondary,
+                      Theme.of(context).extension<AppCustomColors>()!.accent,
+                    ],
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _Title(width: width, overflow: overflow),
+                        const _WhyToUse(),
+                        const _Download(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
