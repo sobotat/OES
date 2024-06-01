@@ -13,6 +13,7 @@ import 'package:oes/src/objects/questions/PickOneQuestion.dart';
 import 'package:oes/src/objects/questions/Question.dart';
 import 'package:oes/src/objects/questions/QuestionOption.dart';
 import 'package:oes/src/restApi/interface/courseItems/UserQuizGateway.dart';
+import 'package:oes/ui/assets/templates/AnimatedProgressIndicator.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -103,14 +104,15 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
-    double progress = 1 - questionsStack.length / widget.userQuiz.questions.length;
+    double progress = 1 - (questionsStack.length - (showResult ? 1 : 0)) / widget.userQuiz.questions.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        LinearProgressIndicator(
+        AnimatedProgressIndicator(
           value: progress,
-          color: Color.lerp(Colors.red, Colors.green, progress),
+          startColor: Theme.of(context).extension<AppCustomColors>()!.accent,
+          endColor: Colors.green,
         ),
         Expanded(
           child: questionsStack.isNotEmpty ? _Question(
