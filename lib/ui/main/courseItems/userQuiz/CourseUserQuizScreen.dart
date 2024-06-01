@@ -89,16 +89,20 @@ class _BodyState extends State<_Body> {
     for(Question q in questionsStack) {
       q.options.shuffle();
     }
+
     showResult = false;
+    haveBadAnswer = false;
   }
 
   void showNext() {
-    showResult = false;
     Question oldQuestion = questionsStack.removeAt(0);
     if(haveBadAnswer && AppSettings.instance.enableQuestionRepeating) {
       oldQuestion.options.shuffle();
       questionsStack.add(oldQuestion);
     }
+
+    showResult = false;
+    haveBadAnswer = false;
     setState(() {});
   }
 
@@ -118,11 +122,12 @@ class _BodyState extends State<_Body> {
           child: questionsStack.isNotEmpty ? _Question(
             question: questionsStack.first,
             showResults: showResult,
-            onSubmit: (options) {
+            onSubmit: (options, haveBadAnswer) {
+              this.haveBadAnswer = haveBadAnswer;
               showResult = true;
               setState(() {});
             },
-            showNext: (bool haveBadAnswer) {
+            showNext: (haveBadAnswer) {
               this.haveBadAnswer = haveBadAnswer;
               showNext();
             },
@@ -178,7 +183,7 @@ class _Question extends StatefulWidget {
 
   final Question question;
   final bool showResults;
-  final Function(List<AnswerOption> options) onSubmit;
+  final Function(List<AnswerOption> options, bool haveBadAnswer) onSubmit;
   final Function(bool haveBadAnswer) showNext;
 
   @override
@@ -201,8 +206,29 @@ class _QuestionState extends State<_Question> {
       AnswerOption option = AnswerOption(questionId: widget.question.id, id: o.id, text: o.text);
       options.add(option);
     }
-    widget.onSubmit(options);
+    widget.onSubmit(options, haveBadAnswer());
     setState(() {});
+  }
+
+  bool haveBadAnswer() {
+    bool everythingOk = true;
+    String qType = widget.question.type;
+
+    for(QuestionOption option in widget.question.options) {
+      bool isSelected = selected.contains(option);
+      if(qType == "pick-one") {
+        if(isSelected && option.points <= 0) {
+          everythingOk = false;
+          break;
+        }
+      } else {
+        if((isSelected && option.points <= 0) || (!isSelected && option.points > 0)) {
+          everythingOk = false;
+          break;
+        }
+      }
+    }
+    return !everythingOk;
   }
 
   @override
@@ -239,24 +265,8 @@ class _QuestionState extends State<_Question> {
           showResults: widget.showResults,
           onSubmit: () => submit(),
           onShowNext: () {
-            bool everythingOk = true;
-            String qType = widget.question.type;
 
-            for(QuestionOption option in widget.question.options) {
-              bool isSelected = selected.contains(option);
-              if(qType == "pick-one") {
-                if(isSelected && option.points <= 0) {
-                  everythingOk = false;
-                  break;
-                }
-              } else {
-                if((isSelected && option.points <= 0) || (!isSelected && option.points > 0)) {
-                  everythingOk = false;
-                  break;
-                }
-              }
-            }
-            widget.showNext(!everythingOk);
+            widget.showNext(haveBadAnswer());
             selected.clear();
             setState(() {});
           },
