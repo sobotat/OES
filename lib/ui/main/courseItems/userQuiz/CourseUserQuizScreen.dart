@@ -104,7 +104,7 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
-    double progress = 1 - (questionsStack.length - (showResult ? 1 : 0)) / widget.userQuiz.questions.length;
+    double progress = 1 - (questionsStack.length - (showResult && !haveBadAnswer ? 1 : 0)) / widget.userQuiz.questions.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
