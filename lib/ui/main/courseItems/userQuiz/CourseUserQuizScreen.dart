@@ -127,8 +127,7 @@ class _BodyState extends State<_Body> {
               showResult = true;
               setState(() {});
             },
-            showNext: (haveBadAnswer) {
-              this.haveBadAnswer = haveBadAnswer;
+            showNext: () {
               showNext();
             },
           ) : Center(
@@ -184,7 +183,7 @@ class _Question extends StatefulWidget {
   final Question question;
   final bool showResults;
   final Function(List<AnswerOption> options, bool haveBadAnswer) onSubmit;
-  final Function(bool haveBadAnswer) showNext;
+  final Function() showNext;
 
   @override
   State<_Question> createState() => _QuestionState();
@@ -266,7 +265,7 @@ class _QuestionState extends State<_Question> {
           onSubmit: () => submit(),
           onShowNext: () {
 
-            widget.showNext(haveBadAnswer());
+            widget.showNext();
             selected.clear();
             setState(() {});
           },
