@@ -48,23 +48,20 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedContainer(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: GradientContainer(
-                    borderRadius: BorderRadius.circular(10),
-                    colors: [
-                      Theme.of(context).colorScheme.secondary,
-                      Theme.of(context).extension<AppCustomColors>()!.accent,
+                child: GradientContainer(
+                  borderRadius: BorderRadius.circular(10),
+                  colors: [
+                    Theme.of(context).colorScheme.secondary,
+                    Theme.of(context).extension<AppCustomColors>()!.accent,
+                  ],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _Title(width: width, overflow: overflow),
+                      const _WhyToUse(),
+                      const _Download(),
                     ],
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _Title(width: width, overflow: overflow),
-                        const _WhyToUse(),
-                        const _Download(),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -83,25 +80,18 @@ class _WhyToUse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedContainer(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Text("Learn with fun and ease"),
-          // Text("Create your own quiz as student"),
-          // Text("Use it on all Platforms"),
-          _ImageBanner(
-            text: "Modern and Simple UI\nWith Animations",
-            file: 'assets/images/main.png',
-            alignment: _Align.right,
-          ),
-          _ImageBanner(
-            text: "Supported Tests, Homeworks, Online Quizzes and many more",
-            file: 'assets/images/course.png',
-            alignment: _Align.left,
-          ),
-        ],
-      ),
+    return const Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _ImageBanner(
+          text: "Modern and Simple UI\nWith Animations",
+          file: 'assets/images/main.png',
+        ),
+        _ImageBanner(
+          text: "Supported Tests, Homeworks, Online Quizzes and many more",
+          file: 'assets/images/course.png',
+        ),
+      ],
     );
   }
 }
@@ -115,12 +105,10 @@ class _ImageBanner extends StatelessWidget {
   const _ImageBanner({
     required this.text,
     required this.file,
-    this.alignment = _Align.right,
     super.key
   });
 
   final String text;
-  final _Align alignment;
   final String file;
 
   @override
@@ -128,59 +116,36 @@ class _ImageBanner extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
 
-    return SizedContainer(
-      child: Container(
-        margin: EdgeInsets.symmetric(
-            horizontal: width > overflow ? 50 : 15,
-            vertical: 20
-        ),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
-          borderRadius: BorderRadius.circular(10)
-        ),
-        child: Builder(
-          builder: (context) {
-            if (alignment == _Align.left) {
-              List<Widget> widgets = [
-                _BannerImage(
-                  file: file,
-                ),
-                _BannerText(
-                  text: text,
-                  align: TextAlign.left,
-                )
-              ];
-      
-              if (width < overflow) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: widgets,
-                );
-              }
-              return Row(
-                children: widgets,
-              );
-            }
-            List<Widget> widgets = [
-              _BannerText(
-                text: text,
-                align: TextAlign.left,
-              ),
-              _BannerImage(
-                file: file,
-              ),
-            ];
-            if (width < overflow) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: widgets,
-              );
-            }
-            return Row(
+    return Container(
+      margin: EdgeInsets.symmetric(
+          horizontal: width > overflow ? 50 : 15,
+          vertical: 20
+      ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondary,
+        borderRadius: BorderRadius.circular(10)
+      ),
+      child: Builder(
+        builder: (context) {
+          List<Widget> widgets = [
+            _BannerText(
+              text: text,
+            ),
+            _BannerImage(
+              file: file,
+            ),
+          ];
+
+          if (width < overflow) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
               children: widgets,
             );
           }
-        ),
+          return Row(
+            children: widgets,
+          );
+        }
       ),
     );
   }
@@ -217,11 +182,9 @@ class _BannerText extends StatelessWidget {
   const _BannerText({
     super.key,
     required this.text,
-    required this.align,
   });
 
   final String text;
-  final TextAlign align;
 
   @override
   Widget build(BuildContext context) {
@@ -229,10 +192,9 @@ class _BannerText extends StatelessWidget {
       flex: 1,
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Row(
           children: [
-            Flexible(child: Text(text, textAlign: align, style: const TextStyle(fontSize: 30),)),
+            Flexible(child: SelectableText(text, style: const TextStyle(fontSize: 30),)),
           ],
         ),
       )

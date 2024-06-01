@@ -24,30 +24,24 @@ class GradientContainer extends StatelessWidget {
     return ListenableBuilder(
       listenable: AppTheme.activeThemeMode,
       builder: (context, child) {
-        return Stack(
-          children: [
-            ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 5,
-                  sigmaY: 7,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: borderRadius ?? BorderRadius.circular(10),
-                    gradient: LinearGradient(
-                      colors: colors,
-                      begin: begin,
-                      end:  end,
-                    ),
-                  ),
+        return ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 5,
+              sigmaY: 7,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: borderRadius ?? BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  colors: colors,
+                  begin: begin,
+                  end:  end,
                 ),
               ),
+              child: this.child,
             ),
-            Center(
-                child: this.child ?? Container(),
-            ),
-          ],
+          ),
         );
       },
     );

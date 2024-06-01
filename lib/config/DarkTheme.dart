@@ -7,17 +7,10 @@ class DarkTheme extends AppTheme {
 
   static final AppTheme instance = DarkTheme();
 
-  // final Color _primary = const Color.fromRGBO(26, 27, 30, 1.0);
-  // final Color _secondary = const Color.fromRGBO(17, 18, 21, 1.0);
-  // final Color _accent = const Color.fromRGBO(185, 208, 225, 1);
-  // final Color _background = const Color.fromRGBO(28, 29, 32, 1.0);
-  // final Color _textColorLight = const Color.fromRGBO(250, 250, 250, 1);
-  // final Color _textColorDark = const Color.fromRGBO(5, 5, 5, 1);
-
-  final Color _primary = const Color.fromRGBO(37, 40, 53, 1.0);
-  final Color _secondary = const Color.fromRGBO(27, 30, 43, 1.0);
+  final Color _primary = const Color.fromRGBO(26, 27, 30, 1.0);
+  final Color _secondary = const Color.fromRGBO(17, 18, 21, 1.0);
   final Color _accent = const Color.fromRGBO(185, 208, 225, 1);
-  final Color _background = const Color.fromRGBO(3, 6, 20, 1.0);
+  final Color _background = const Color.fromRGBO(28, 29, 32, 1.0);
   final Color _textColorLight = const Color.fromRGBO(250, 250, 250, 1);
   final Color _textColorDark = const Color.fromRGBO(5, 5, 5, 1);
 
