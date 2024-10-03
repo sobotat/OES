@@ -89,11 +89,16 @@ class _WhyToUse extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _ImageBanner(
-            text: "Modern and Fun\nEasy creation of Tests and Quizzes",
+            text: """Modern and Fun
+Easy creation of Tests and Quizzes""",
             file: 'assets/images/main.png',
           ),
           _ImageBanner(
-            text: "**Support For:** \n- Tests\n- Homeworks\n- Online Quizzes\n- and many more",
+            text: """**Support For:** 
+- Tests
+- Homeworks
+- Online Quizzes
+- and many more""",
             file: 'assets/images/course.png',
           ),
         ],
