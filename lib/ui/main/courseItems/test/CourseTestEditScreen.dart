@@ -335,6 +335,7 @@ class _AddButton extends StatelessWidget {
     return FloatingActionButton(
       heroTag: 'add',
       tooltip: 'Add Question',
+      backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
       child: const Icon(Icons.add),
       onPressed: () {
         showSelectDialog(context);
