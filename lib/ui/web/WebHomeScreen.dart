@@ -391,7 +391,7 @@ class _DownloadButtonState extends State<_DownloadButton> {
       return;
     }
 
-    RequestResult result = await HttpRequest.instance.get("$baseUrl/$fileName",
+    RequestResult result = await HttpRequest.instance.get(baseUrl,
       options: HttpRequestOptions(
           responseType: HttpResponseType.bytes
       ),
@@ -410,11 +410,25 @@ class _DownloadButtonState extends State<_DownloadButton> {
       return;
     }
 
-    await download(Stream.fromIterable(result.data as List<int>), path);
+    const int chunkSize = 1024 * 64; // Define a chunk size (64 KB)
+    Stream<int> dataStream = streamDataInChunks(result.data as List<int>, chunkSize);
+
+    await download(dataStream, path);
     Toast.makeSuccessToast(text: "File Downloaded", duration: ToastDuration.large);
     setState(() {
       progress = -1;
     });
+  }
+
+  Stream<int> streamDataInChunks(List<int> data, int chunkSize) async* {
+    for (int i = 0; i < data.length; i += chunkSize) {
+      // Yield each chunk of the list as individual integers
+      final chunk = data.sublist(i, i + chunkSize > data.length ? data.length : i + chunkSize);
+      for (int value in chunk) {
+        yield value;
+        await Future.delayed(Duration(milliseconds: 1));  // Yield control for UI updates
+      }
+    }
   }
 
   @override
