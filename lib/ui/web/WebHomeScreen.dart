@@ -47,22 +47,20 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedContainer(
-                child: GradientContainer(
-                  borderRadius: BorderRadius.circular(10),
-                  colors: [
-                    Theme.of(context).colorScheme.secondary,
-                    Theme.of(context).extension<AppCustomColors>()!.accent,
+              GradientContainer(
+                borderRadius: BorderRadius.circular(10),
+                colors: [
+                  Theme.of(context).colorScheme.secondary,
+                  Theme.of(context).extension<AppCustomColors>()!.accent,
+                ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _Title(width: width, overflow: overflow),
+                    const _WhyToUse(),
+                    const _Download(),
                   ],
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _Title(width: width, overflow: overflow),
-                      const _WhyToUse(),
-                      const _Download(),
-                    ],
-                  ),
                 ),
               ),
             ],
@@ -80,18 +78,20 @@ class _WhyToUse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _ImageBanner(
-          text: "Modern and Simple UI\nWith Animations",
-          file: 'assets/images/main.png',
-        ),
-        _ImageBanner(
-          text: "Supported Tests, Homeworks, Online Quizzes and many more",
-          file: 'assets/images/course.png',
-        ),
-      ],
+    return const SizedContainer(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ImageBanner(
+            text: "Modern and Simple UI\nWith Animations",
+            file: 'assets/images/main.png',
+          ),
+          _ImageBanner(
+            text: "Supported Tests, Homeworks, Online Quizzes and many more",
+            file: 'assets/images/course.png',
+          ),
+        ],
+      ),
     );
   }
 }
