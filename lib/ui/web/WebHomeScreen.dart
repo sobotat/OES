@@ -15,6 +15,7 @@ import 'package:oes/src/services/DeviceInfo.dart';
 import 'package:oes/src/services/NewTabOpener.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
+import 'package:oes/ui/assets/templates/AppMarkdown.dart';
 import 'package:oes/ui/assets/templates/Gradient.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/RefreshWidget.dart';
@@ -48,21 +49,26 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GradientContainer(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
                 colors: [
-                  Theme.of(context).colorScheme.secondary,
                   Theme.of(context).extension<AppCustomColors>()!.accent,
+                  Theme.of(context).colorScheme.secondary,
                 ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomRight,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _Title(width: width, overflow: overflow),
-                    const _WhyToUse(),
-                    const _Download(),
                   ],
                 ),
               ),
+              const _WhyToUse(),
+              const _Download(),
             ],
           ),
         ],
@@ -83,11 +89,11 @@ class _WhyToUse extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _ImageBanner(
-            text: "Modern and Simple UI\nWith Animations",
+            text: "Modern and Fun\nEasy creation of Tests and Quizzes",
             file: 'assets/images/main.png',
           ),
           _ImageBanner(
-            text: "Supported Tests, Homeworks, Online Quizzes and many more",
+            text: "**Support For:** \n- Tests\n- Homeworks\n- Online Quizzes\n- and many more",
             file: 'assets/images/course.png',
           ),
         ],
@@ -194,7 +200,11 @@ class _BannerText extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            Flexible(child: SelectableText(text, style: const TextStyle(fontSize: 30),)),
+            Flexible(child:
+              AppMarkdown(
+                data: text,
+                testSize: 18,
+            )),
           ],
         ),
       )
@@ -220,16 +230,28 @@ class _Title extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 700,
+            height: 400,
             child: Center(
-              child: Text(width > overflow ? 'Online E-Learning System' : 'Online\nE-Learning\nSystem',
-                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  fontSize: width > overflow ? 50 : 35,
-                  letterSpacing: 15,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
-                ),
-                textAlign: TextAlign.center
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Introducing',
+                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                          fontSize: width > overflow ? 30 : 15,
+                          color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
+                      ),
+                      textAlign: TextAlign.center
+                  ),
+                  Text(width > overflow ? 'Online E-Learning System' : 'Online\nE-Learning\nSystem',
+                    style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                      fontSize: width > overflow ? 50 : 35,
+                      letterSpacing: 15,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.getActiveTheme().calculateTextColor(Theme.of(context).colorScheme.secondary, context)
+                    ),
+                    textAlign: TextAlign.center
+                  ),
+                ],
               ),
             ),
           ),

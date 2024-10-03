@@ -81,9 +81,9 @@ class LightTheme extends AppTheme {
           return states.contains(WidgetState.selected) ? _accent : Colors.grey;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          Color lightAccent = _accent.withRed(_accent.red + 30)
-                                     .withBlue(_accent.blue + 30)
-                                     .withGreen(_accent.green + 30);
+          Color lightAccent = _accent.withRed(_accent.red + 20)
+                                     .withBlue(_accent.blue + 20)
+                                     .withGreen(_accent.green + 20);
 
           return states.contains(WidgetState.selected) ? lightAccent : Colors.transparent;
         },)
