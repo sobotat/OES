@@ -53,7 +53,7 @@ class IconItem extends StatelessWidget {
             }
           },
           child: Material(
-            elevation: 10,
+            elevation: 4,
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
               onTap: () {

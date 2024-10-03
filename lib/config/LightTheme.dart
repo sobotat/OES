@@ -7,9 +7,9 @@ class LightTheme extends AppTheme {
 
   static final AppTheme instance = LightTheme();
 
-  final Color _primary = const Color.fromRGBO(241, 244, 249, 1);
-  final Color _secondary = const Color.fromRGBO(218, 226, 234, 1);
-  final Color _accent = const Color.fromRGBO(74, 118, 155, 1);
+  final Color _primary = const Color.fromRGBO(240, 240, 240, 1);
+  final Color _secondary = const Color.fromRGBO(246, 246, 246, 1.0);
+  final Color _accent = const Color.fromRGBO(227, 96, 42, 1);
   final Color _background = const Color.fromRGBO(250, 250, 250, 1);
   final Color _textColorLight = const Color.fromRGBO(250, 250, 250, 1);
   final Color _textColorDark = const Color.fromRGBO(5, 5, 5, 1);
@@ -81,9 +81,10 @@ class LightTheme extends AppTheme {
           return states.contains(WidgetState.selected) ? _accent : Colors.grey;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          Color lightAccent = _accent.withRed(_accent.red + 50)
-                                     .withBlue(_accent.blue + 50)
-                                     .withGreen(_accent.green + 50);
+          Color lightAccent = _accent.withRed(_accent.red + 30)
+                                     .withBlue(_accent.blue + 30)
+                                     .withGreen(_accent.green + 30);
+
           return states.contains(WidgetState.selected) ? lightAccent : Colors.transparent;
         },)
       )

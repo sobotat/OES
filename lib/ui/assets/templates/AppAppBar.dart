@@ -24,7 +24,7 @@ class AppAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool hideSettings;
 
   @override
-  final Size preferredSize = const Size.fromHeight(65); // default is 56.0 kToolbarHeight
+  final Size preferredSize = const Size.fromHeight(55); // default is 56.0 kToolbarHeight
 
   @override
   State<AppAppBar> createState() => _AppAppBarState();
@@ -37,55 +37,46 @@ class _AppAppBarState extends State<AppAppBar> {
     var width = MediaQuery.of(context).size.width;
     var overflow = 950;
 
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: AppBar(
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: widget.title,
-        leading: widget.leading,
-        actions: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
-              vertical: 0,
-            ),
-            child: width > overflow ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: widget.actions,
-                      ),
-                      widget.onRefresh != null ? RefreshButton(onRefresh: widget.onRefresh!) : Container(),
-                      const UserInfoButton(width: 150),
-                      const SignOutButton(),
-                      const ThemeModeButton(),
-                      !widget.hideSettings ? const SettingButton() : Container(),
-                    ],
-                  ),
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      elevation: 0.5,
+      scrolledUnderElevation: 0.5,
+      title: widget.title,
+      leading: widget.leading,
+      actions: [
+        Container(
+          child: width > overflow ? Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: widget.actions,
+                    ),
+                    widget.onRefresh != null ? RefreshButton(onRefresh: widget.onRefresh!) : Container(),
+                    const UserInfoButton(width: 150),
+                    const SignOutButton(),
+                    const ThemeModeButton(),
+                    !widget.hideSettings ? const SettingButton() : Container(),
+                  ],
                 ),
-              ],
-            ) : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                widget.onRefresh != null ? RefreshButton(onRefresh: widget.onRefresh!) : Container(),
-                SmallMenu(
-                  actions: widget.actions,
-                ),
-              ],
-            ),
+              ),
+            ],
+          ) : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.onRefresh != null ? RefreshButton(onRefresh: widget.onRefresh!) : Container(),
+              SmallMenu(
+                actions: widget.actions,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

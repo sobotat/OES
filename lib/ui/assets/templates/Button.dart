@@ -66,7 +66,7 @@ class Button extends StatelessWidget {
         }
       },
       child: Material(
-        elevation: 10,
+        elevation: 4,
         borderRadius: borderRadius ?? BorderRadius.circular(10),
         child: InkWell(
           onTap: onClick != null ? () {
