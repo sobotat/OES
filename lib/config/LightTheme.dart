@@ -35,6 +35,7 @@ class LightTheme extends AppTheme {
         ),
       ],
       useMaterial3: true,
+      applyElevationOverlayColor: false,
       textTheme: GoogleFonts.outfitTextTheme(Theme.of(context).textTheme.apply(
         bodyColor: _textColorDark,
         decorationColor: _textColorDark,
