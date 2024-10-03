@@ -396,7 +396,7 @@ class _DownloadButtonState extends State<_DownloadButton> {
       return;
     }
 
-    RequestResult result = await HttpRequest.instance.get(baseUrl,
+    RequestResult result = await HttpRequest.instance.get("$baseUrl/$fileName",
       options: HttpRequestOptions(
           responseType: HttpResponseType.bytes
       ),
