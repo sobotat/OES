@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oes/src/AppSecurity.dart';
+import 'package:oes/ui/assets/buttons/BackToWeb.dart';
 import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
@@ -39,19 +40,24 @@ class _SignOutState extends State<SignOut> {
                     ),
                   ),
                   Button(
-                    text: kIsWeb ? 'Back To Home' : 'Back To Sign-In',
-                    onClick: (context) => context.goNamed('/'),
+                    text: 'Continue',
+                    onClick: (context) {
+                      context.goNamed('sign-in', queryParameters: {
+                        "path": "/",
+                      });
+                    },
                   ),
                 ],
               ),
             ),
-            const Align(
+            Align(
               alignment: Alignment.topRight,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ThemeModeButton(),
-                  SettingButton()
+                  kIsWeb ? const BackToWeb() : Container(),
+                  const ThemeModeButton(),
+                  const SettingButton()
                 ],
               ),
             )

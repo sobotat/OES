@@ -8,6 +8,7 @@ import 'package:oes/src/objects/Course.dart';
 import 'package:oes/src/objects/User.dart';
 import 'package:oes/src/restApi/interface/CourseGateway.dart';
 import 'package:oes/src/services/NewTabOpener.dart';
+import 'package:oes/ui/assets/buttons/BackToWeb.dart';
 import 'package:oes/ui/assets/dialogs/Toast.dart';
 import 'package:oes/ui/assets/templates/AppAppBar.dart';
 import 'package:oes/ui/assets/templates/BackgroundBody.dart';
@@ -36,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppAppBar(
         actions: kIsWeb ? ([
-          const _BackToWeb(),
+          const BackToWeb(),
         ]) : [],
         onRefresh: () {
           refreshKey.currentState?.refresh();
@@ -76,53 +77,6 @@ class _MainScreenState extends State<MainScreen> {
       //     ),
       //   ],
       // ),
-    );
-  }
-}
-
-class _BackToWeb extends StatelessWidget {
-  const _BackToWeb({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
-    if (width <= overflow) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 10,
-        ),
-        child: Button(
-          text: 'To Web',
-          onClick: (context) {
-            context.goNamed('/');
-          },
-          onMiddleClick: (context) {
-            NewTabOpener.open(context.namedLocation("/"));
-          },
-        ),
-      );
-    }
-
-    return SizedBox(
-      width: 50,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 10,
-        ),
-        child: Button(
-          icon: AppIcons.icon_web,
-          iconSize: 18,
-          onClick: (context) {
-            context.goNamed('/');
-          },
-        ),
-      ),
     );
   }
 }

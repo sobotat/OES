@@ -8,12 +8,14 @@ import 'package:oes/config/AppTheme.dart';
 import 'package:oes/src/AppSecurity.dart';
 import 'package:oes/src/objects/Organization.dart';
 import 'package:oes/src/restApi/interface/OrganizationGateway.dart';
+import 'package:oes/ui/assets/buttons/BackToWeb.dart';
 import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SignIn extends StatefulWidget {
   const SignIn({this.path = '/', super.key});
@@ -48,13 +50,14 @@ class _SignInState extends State<SignIn> {
       body: SafeArea(
         child: Column(
           children: [
-            const Align(
+            Align(
               alignment: Alignment.topRight,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ThemeModeButton(),
-                  SettingButton()
+                  kIsWeb ? const BackToWeb() : Container(),
+                  const ThemeModeButton(),
+                  const SettingButton()
                 ],
               ),
             ),
