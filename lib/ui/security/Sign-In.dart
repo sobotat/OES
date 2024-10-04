@@ -10,6 +10,7 @@ import 'package:oes/src/objects/Organization.dart';
 import 'package:oes/src/restApi/interface/OrganizationGateway.dart';
 import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
+import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
 import 'package:oes/ui/assets/templates/PopupDialog.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
@@ -45,16 +46,25 @@ class _SignInState extends State<SignIn> {
 
     return Scaffold(
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Center(
+            const Align(
+              alignment: Alignment.topRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ThemeModeButton(),
+                  SettingButton()
+                ],
+              ),
+            ),
+            Flexible(
               child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).colorScheme.secondary,
+                padding: const EdgeInsets.all(30),
+                margin: const EdgeInsets.all(10),
+                constraints: const BoxConstraints(
+                  maxWidth: 800,
                 ),
-                padding: const EdgeInsets.all(50),
-                margin: const EdgeInsets.all(20),
                 child: Builder(
                   builder: (context) {
                     if (organization == null) {
@@ -69,32 +79,17 @@ class _SignInState extends State<SignIn> {
                         },
                       );
                     }
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _Login(
-                          path: path,
-                          orientation: orientation,
-                          onSelectOrganization: () {
-                            setState(() {
-                              organization = null;
-                            });
-                          },
-                        ),
-                      ],
+                    return _Login(
+                      path: path,
+                      orientation: orientation,
+                      onSelectOrganization: () {
+                        setState(() {
+                          organization = null;
+                        });
+                      },
                     );
                   },
                 ),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ThemeModeButton(),
-                  SettingButton()
-                ],
               ),
             ),
           ],
@@ -132,15 +127,42 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: widget.orientation == Orientation.landscape ? 800 : 400,
-        maxHeight: 500,
-      ),
-      child: Column(
-        children: [
-          const Text('Organizations', style: TextStyle(fontSize: 35)),
-          Flexible(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Select your', style: TextStyle(fontSize: 20)
+            ),
+            Text(
+              'Organizations', style: TextStyle(fontSize: 30)
+            ),
+          ],
+        ),
+        const SizedBox(height: 30,),
+        TextField(
+          controller: filterController,
+          decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            labelText: "Search"
+          ),
+          onChanged: (value) {
+            setState(() {});
+          },
+        ),
+        Flexible(
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              vertical: 10,
+            ),
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.secondary
+            ),
             child: FutureBuilder(
               future: OrganizationGateway.instance.getAll(filterController.text),
               builder: (context, snapshot) {
@@ -150,18 +172,16 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
                   itemCount: organizations.length,
                   itemBuilder: (context, index) {
                     Organization organization = organizations[index];
-                    return IntrinsicHeight(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Button(
-                          text: organization.name,
-                          toolTip: organization.url,
-                          minHeight: 50,
-                          maxHeight: double.infinity,
-                          onClick: (context) {
-                            widget.onSelected(organization);
-                          },
-                        ),
+                    return Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Button(
+                        borderRadius: BorderRadius.circular(5),
+                        text: organization.name,
+                        toolTip: organization.url,
+                        minHeight: 30,
+                        onClick: (context) {
+                          widget.onSelected(organization);
+                        },
                       ),
                     );
                   },
@@ -169,17 +189,8 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
               }
             ),
           ),
-          TextField(
-            controller: filterController,
-            decoration: const InputDecoration(
-              labelText: "Search"
-            ),
-            onChanged: (value) {
-              setState(() {});
-            },
-          )
-        ],
-      ),
+        )
+      ],
     );
   }
 }
@@ -204,13 +215,15 @@ class _LoginState extends State<_Login> {
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool signing = false;
   bool wrongPassword = false;
 
   Future<void> login(String username, String password) async {
-    setState(() {
-      signing = true;
-    });
+    showDialog(
+      context: context,
+      useSafeArea: true,
+      barrierDismissible: false,
+      builder: (context) => const LoadingDialog(),
+    );
 
     bool success = await AppSecurity.instance.login(username,password,);
 
@@ -228,16 +241,12 @@ class _LoginState extends State<_Login> {
         },);
       }
 
-      setState(() {
-        signing = false;
-      });
+      if(mounted) context.pop();
       return;
     }
 
-    if (context.mounted) {
-      setState(() {
-        signing = false;
-      });
+    if (mounted) {
+      context.pop();
       context.go(widget.path);
     }
   }
@@ -251,103 +260,98 @@ class _LoginState extends State<_Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxWidth: widget.orientation == Orientation.landscape ? 800 : 400,
-      ),
-      child: Builder(builder: (context) {
-        // Portrait
-        if (widget.orientation == Orientation.portrait) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const _Heading(),
-              _Input(
-                usernameController: usernameController,
-                passwordController: passwordController,
-                loginFunction: () {
+    return Builder(builder: (context) {
+      // Portrait
+      if (widget.orientation == Orientation.portrait) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const _Heading(),
+            const SizedBox(height: 30,),
+            _Input(
+              usernameController: usernameController,
+              passwordController: passwordController,
+              loginFunction: () {
 
-                },
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 10
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    _LoginButton(
-                      wrongPassword: wrongPassword,
-                      loginFunction: () {
-                        login(usernameController.text, passwordController.text);
-                      },
-                      signing: signing,
-                    ),
-                    const SizedBox(height: 10,),
-                    Button(
-                      text: "Select Organization",
-                      maxWidth: double.infinity,
-                      onClick: (context) {
-                        widget.onSelectOrganization();
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ],
-          );
-        }
-        // Landscape
-        else {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+              child: Column(
                 children: [
-                  const Expanded(child: _Heading()),
-                  Expanded(
-                    flex: 2,
-                    child: _Input(
-                      usernameController: usernameController,
-                      passwordController: passwordController,
-                      loginFunction: () {
-                        login(usernameController.text, passwordController.text);
-                      },
-                    ),
+                  _LoginButton(
+                    wrongPassword: wrongPassword,
+                    loginFunction: () {
+                      login(usernameController.text, passwordController.text);
+                    },
+                  ),
+                  const SizedBox(height: 10,),
+                  Button(
+                    text: "Select Organization",
+                    maxWidth: double.infinity,
+                    onClick: (context) {
+                      widget.onSelectOrganization();
+                    },
                   )
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 40,
-                  bottom: 10,
-                ),
-                child: Column(
-                  children: [
-                    _LoginButton(
-                      wrongPassword: wrongPassword,
-                      loginFunction: () {
-                        login(usernameController.text, passwordController.text);
-                      },
-                      signing: signing,
-                    ),
-                    const SizedBox(height: 10,),
-                    Button(
-                      text: "Select Organization",
-                      maxWidth: double.infinity,
-                      onClick: (context) {
-                        widget.onSelectOrganization();
-                      },
-                    )
-                  ],
-                ),
+            ),
+          ],
+        );
+      }
+      // Landscape
+      else {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                const Expanded(child: _Heading()),
+                Expanded(
+                  flex: 2,
+                  child: _Input(
+                    usernameController: usernameController,
+                    passwordController: passwordController,
+                    loginFunction: () {
+                      login(usernameController.text, passwordController.text);
+                    },
+                  ),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 40,
+                bottom: 10,
               ),
-            ],
-          );
-        }
-      }),
-    );
+              child: Column(
+                children: [
+                  _LoginButton(
+                    wrongPassword: wrongPassword,
+                    loginFunction: () {
+                      login(usernameController.text, passwordController.text);
+                    },
+                  ),
+                  const SizedBox(height: 10,),
+                  Button(
+                    icon: Icons.home_work_rounded,
+                    text: "Back to Organizations",
+                    maxWidth: double.infinity,
+                    onClick: (context) {
+                      widget.onSelectOrganization();
+                    },
+                  )
+                ],
+              ),
+            ),
+          ],
+        );
+      }
+    });
   }
 }
 
@@ -356,13 +360,11 @@ class _LoginState extends State<_Login> {
 class _LoginButton extends StatelessWidget {
   const _LoginButton({
     required this.loginFunction,
-    required this.signing,
     required this.wrongPassword,
     super.key,
   });
 
   final Function() loginFunction;
-  final bool signing;
   final bool wrongPassword;
 
   @override
@@ -370,16 +372,9 @@ class _LoginButton extends StatelessWidget {
     return Button(
       maxWidth: double.infinity,
       text: 'Sign-In',
+      icon: Icons.login,
       backgroundColor: wrongPassword ? Colors.red.shade700 : null,
       onClick: (context) => loginFunction(),
-      child: !signing ? null : SizedBox(
-        width: 25,
-        height: 25,
-        child: CircularProgressIndicator(
-          strokeWidth: 3,
-          color: Theme.of(context).extension<AppCustomColors>()!.accent,
-        ),
-      ),
     );
   }
 }
@@ -391,14 +386,28 @@ class _Heading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-        padding: EdgeInsets.all(30),
-        child: Text('Sign In', style: TextStyle(fontSize: 40))
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Sign In', style: TextStyle(fontSize: 30)
+            ),
+            Text(
+              'Your Profile', style: TextStyle(fontSize: 20)
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
 
-class _Input extends StatelessWidget {
+class _Input extends StatefulWidget {
   const _Input({
     required this.usernameController,
     required this.passwordController,
@@ -411,32 +420,71 @@ class _Input extends StatelessWidget {
   final Function() loginFunction;
 
   @override
+  State<_Input> createState() => _InputState();
+}
+
+class _InputState extends State<_Input> {
+
+  bool hiddenPassword = true;
+
+  @override
   Widget build(BuildContext context) {
-    return AutofillGroup(
-      child: Column(
-        children: [
-          TextField(
-            controller: usernameController,
-            autofillHints: const [AutofillHints.username],
-            decoration: const InputDecoration(
-              labelText: 'Username',
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).colorScheme.secondary
+      ),
+      padding: const EdgeInsets.only(
+        left: 10,
+        right: 10,
+        bottom: 10
+      ),
+      child: AutofillGroup(
+        child: Column(
+          children: [
+            TextField(
+              controller: widget.usernameController,
+              autofillHints: const [AutofillHints.username],
+              decoration: const InputDecoration(
+                labelText: 'Username',
+              ),
 
-            textInputAction: TextInputAction.go,
-            onSubmitted: (value) => loginFunction(),
-          ),
-          TextField(
-            controller: passwordController,
-            obscureText: true,
-            autofillHints: const [AutofillHints.password],
-            decoration: const InputDecoration(
-              labelText: 'Password',
+              textInputAction: TextInputAction.go,
+              onSubmitted: (value) => widget.loginFunction(),
             ),
-
-            textInputAction: TextInputAction.go,
-            onSubmitted: (value) => loginFunction(),
-          ),
-        ],
+            Row(
+              children: [
+                Flexible(
+                  child: TextField(
+                    controller: widget.passwordController,
+                    obscureText: hiddenPassword,
+                    autofillHints: const [AutofillHints.password],
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                    ),
+                    textInputAction: TextInputAction.go,
+                    onSubmitted: (value) => widget.loginFunction(),
+                    onChanged: (value) {
+                      setState(() {
+                        hiddenPassword = true;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 5,),
+                Button(
+                  icon: hiddenPassword ? Icons.remove_red_eye_outlined : Icons.remove_red_eye,
+                  maxWidth: 40,
+                  onClick: (context) {
+                    setState(() {
+                      hiddenPassword = !hiddenPassword;
+                    });
+                  },
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -83,9 +83,9 @@ class Button extends StatelessWidget {
             child: Container(
               constraints: BoxConstraints(
                 minWidth: minWidth ?? maxWidth ?? 200,
-                minHeight: minHeight ?? maxHeight ?? 35,
+                minHeight: minHeight ?? maxHeight ?? 38,
                 maxWidth: maxWidth ?? 200,
-                maxHeight: maxHeight ?? 35,
+                maxHeight: maxHeight ?? 38,
               ),
               child: Ink(
                 decoration: BoxDecoration(
