@@ -398,7 +398,7 @@ class _Heading extends StatelessWidget {
               'Sign In', style: TextStyle(fontSize: 30)
             ),
             Text(
-              'Your Profile', style: TextStyle(fontSize: 20)
+              'To Your Profile', style: TextStyle(fontSize: 20)
             ),
           ],
         ),

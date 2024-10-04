@@ -90,6 +90,7 @@ class _WhyToUse extends StatelessWidget {
         children: [
           _ImageBanner(
             text: """Modern and Fun
+
 Easy creation of Tests and Quizzes""",
             file: 'assets/images/main.png',
           ),
