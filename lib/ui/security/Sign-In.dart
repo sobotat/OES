@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +12,7 @@ import 'package:oes/ui/assets/buttons/SettingButton.dart';
 import 'package:oes/ui/assets/buttons/ThemeModeButton.dart';
 import 'package:oes/ui/assets/dialogs/LoadingDialog.dart';
 import 'package:oes/ui/assets/templates/Button.dart';
-import 'package:oes/ui/assets/templates/PopupDialog.dart';
+import 'package:oes/ui/assets/templates/IconItem.dart';
 import 'package:oes/ui/assets/templates/WidgetLoading.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -177,13 +176,33 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
                     Organization organization = organizations[index];
                     return Padding(
                       padding: const EdgeInsets.all(5),
-                      child: Button(
-                        borderRadius: BorderRadius.circular(5),
-                        text: organization.name,
-                        toolTip: organization.url,
-                        minHeight: 30,
+                      child: IconItem(
+                        icon: const Icon(Icons.add_business_rounded),
+                        body: Text(organization.name),
+                        color: Theme.of(context).extension<AppCustomColors>()!.accent,
+                        padding: EdgeInsets.zero,
                         onClick: (context) {
                           widget.onSelected(organization);
+                        },
+                        onHold: (context) {
+                          showAdaptiveDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) {
+                              return AlertDialog.adaptive(
+                                title: const Text("Organization Info"),
+                                content: Text("URL: ${organization.url}"),
+                                actions: [
+                                  TextButton(
+                                    child: const Text("Ok"),
+                                    onPressed: () {
+                                      if(mounted) context.pop();
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                          );
                         },
                       ),
                     );

@@ -6,15 +6,15 @@ import 'package:oes/ui/assets/templates/Button.dart';
 
 class BackToWeb extends StatelessWidget {
   const BackToWeb({
+    this.onlyIcon = true,
     super.key,
   });
 
+  final bool onlyIcon;
+
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var overflow = 950;
-
-    if (width <= overflow) {
+    if (!onlyIcon) {
       return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 5,

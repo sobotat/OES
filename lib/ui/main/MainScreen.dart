@@ -34,10 +34,15 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var overflow = 950;
+
     return Scaffold(
       appBar: AppAppBar(
         actions: kIsWeb ? ([
-          const BackToWeb(),
+          BackToWeb(
+            onlyIcon: width > overflow,
+          ),
         ]) : [],
         onRefresh: () {
           refreshKey.currentState?.refresh();
