@@ -194,7 +194,12 @@ class _OrganizationSelectorState extends State<_OrganizationSelector> {
                                 content: Text("URL: ${organization.url}"),
                                 actions: [
                                   TextButton(
-                                    child: const Text("Ok"),
+                                    child: Text(
+                                      "Ok",
+                                      style: TextStyle(
+                                        color: Theme.of(context).extension<AppCustomColors>()!.accent,
+                                      ),
+                                    ),
                                     onPressed: () {
                                       if(mounted) context.pop();
                                     },
