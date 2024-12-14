@@ -114,7 +114,7 @@ class _CourseUserQuizEditScreenState extends State<CourseUserQuizEditScreen> {
                   return _Body(
                       isNew: isNew(),
                       courseId: widget.courseId,
-                      quiz: quiz
+                      quiz: quiz,
                   );
                 },
               );
@@ -146,6 +146,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   late TabController tabController;
   Timer updateTimer = Timer(const Duration(seconds: 1), () { });
   GlobalKey<_PreviewState> previewKey = GlobalKey<_PreviewState>();
+  GlobalKey<_EditorState> editorKey = GlobalKey<_EditorState>();
 
   @override
   void initState() {
@@ -255,6 +256,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                     shrinkWrap: true,
                     children: [
                       _Editor(
+                        key: editorKey,
                         isNew: widget.isNew,
                         courseId: widget.courseId,
                         quiz: widget.quiz,
@@ -278,14 +280,47 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           ),
         ],
       ),
-      floatingActionButton: _AddButton(
-        onSelectedType: (type) {
-          addQuestion(type);
-        },
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _SaveFloatingButton(
+            saveMethod: () {
+              editorKey.currentState?.save();
+            },
+          ),
+          _AddButton(
+            onSelectedType: (type) {
+              addQuestion(type);
+            },
+          ),
+        ],
       ),
     );
   }
 }
+
+class _SaveFloatingButton extends StatelessWidget {
+  const _SaveFloatingButton({
+    required this.saveMethod,
+    super.key
+  });
+
+  final Function() saveMethod;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      heroTag: 'save',
+      tooltip: 'Save',
+      backgroundColor: Colors.green.shade400,
+      child: const Icon(Icons.save),
+      onPressed: () {
+        saveMethod();
+      },
+    );
+  }
+}
+
 
 class _AddButton extends StatelessWidget {
   const _AddButton({
