@@ -528,10 +528,7 @@ class _EditorState extends State<_Editor> {
 
     if (response != null) {
       Toast.makeSuccessToast(text: "UserQuiz was Saved", duration: ToastDuration.short);
-      if (mounted) {
-        context.pop();
-        context.pop();
-      }
+      if (mounted) context.pop();
       return;
     }
 
