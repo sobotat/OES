@@ -12,9 +12,11 @@ class UserQuiz extends CourseItem {
     required super.createdById,
     required super.isVisible,
     required this.questions,
+    this.shuffleQuestions = false,
   }) : super(type: 'userquiz');
 
   List<Question> questions;
+  bool shuffleQuestions;
 
   @override
   Map<String, dynamic> toMap() {

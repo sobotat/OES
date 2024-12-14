@@ -85,7 +85,11 @@ class _BodyState extends State<_Body> {
 
   void resetQuestions() {
     questionsStack = List.from(widget.userQuiz.questions);
-    questionsStack.shuffle();
+
+    if(widget.userQuiz.shuffleQuestions) {
+      questionsStack.shuffle();
+    }
+
     for(Question q in questionsStack) {
       q.options.shuffle();
     }
