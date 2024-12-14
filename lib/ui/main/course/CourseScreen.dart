@@ -313,7 +313,7 @@ class _BodyState extends State<_Body> {
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) return const WidgetLoading();
                           List<CourseItem> items = snapshot.data!;
-                          items.sort((a, b) => b.created.compareTo(a.created),);
+                          items.sort((a, b) => b.name.compareTo(a.name),);
 
                           return ListView.builder(
                             shrinkWrap: true,
