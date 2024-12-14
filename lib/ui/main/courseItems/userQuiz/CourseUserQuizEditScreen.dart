@@ -528,13 +528,13 @@ class _EditorState extends State<_Editor> {
                                     await UserQuizGateway.instance.update(widget.quiz);
 
     if (response != null) {
-      Toast.makeSuccessToast(text: "UserQuiz was Saved", duration: ToastDuration.short);
       if (mounted) context.pop();
+      Toast.makeSuccessToast(text: "UserQuiz was Saved", duration: ToastDuration.short);
       return;
     }
 
-    Toast.makeErrorToast(text: "Failed to Save UserQuiz", duration: ToastDuration.large);
     if (mounted) context.pop();
+    Toast.makeErrorToast(text: "Failed to Save UserQuiz", duration: ToastDuration.large);
   }
 
   Future<void> delete() async {
