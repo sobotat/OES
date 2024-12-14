@@ -225,10 +225,20 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
             )
           ],
         ),
-        floatingActionButton: _AddButton(
-          onSelectedType: (type) {
-            addQuestion(type);
-          },
+        floatingActionButton: Column(
+          children: [
+            _SaveFloatingButton(
+              saveMethod: () {
+                editorKey.currentState?.save();
+              },
+            ),
+            const SizedBox(height: 10,),
+            _AddButton(
+              onSelectedType: (type) {
+                addQuestion(type);
+              },
+            ),
+          ],
         ),
       );
     }
@@ -288,6 +298,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
               editorKey.currentState?.save();
             },
           ),
+          const SizedBox(height: 10,),
           _AddButton(
             onSelectedType: (type) {
               addQuestion(type);
@@ -313,7 +324,10 @@ class _SaveFloatingButton extends StatelessWidget {
       heroTag: 'save',
       tooltip: 'Save',
       backgroundColor: Colors.green.shade400,
-      child: const Icon(Icons.save),
+      child: const Icon(
+        Icons.save,
+        color: Colors.white,
+      ),
       onPressed: () {
         saveMethod();
       },
@@ -392,7 +406,10 @@ class _AddButton extends StatelessWidget {
       heroTag: 'add',
       tooltip: 'Add Question',
       backgroundColor: Theme.of(context).extension<AppCustomColors>()!.accent,
-      child: const Icon(Icons.add),
+      child: const Icon(
+        Icons.add,
+        color: Colors.white,
+      ),
       onPressed: () {
         showSelectDialog(context);
       },
