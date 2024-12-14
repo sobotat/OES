@@ -226,6 +226,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           ],
         ),
         floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             _SaveFloatingButton(
               saveMethod: () {
