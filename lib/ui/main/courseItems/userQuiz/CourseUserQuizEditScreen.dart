@@ -206,6 +206,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                 Flexible(
                   flex: 1,
                   child: _Editor(
+                    key: editorKey,
                     isNew: widget.isNew,
                     courseId: widget.courseId,
                     quiz: widget.quiz,
