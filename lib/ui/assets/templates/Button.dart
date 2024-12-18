@@ -9,6 +9,7 @@ class Button extends StatelessWidget {
   const Button({
     this.icon,
     this.text = '',
+    this.textSize = 13,
     this.child,
     this.toolTip,
     this.toolTipWaitDuration,
@@ -32,6 +33,7 @@ class Button extends StatelessWidget {
   
   final IconData? icon;
   final String text;
+  final double textSize;
   final Widget? child;
   final String? toolTip;
   final Duration? toolTipWaitDuration;
@@ -120,7 +122,7 @@ class Button extends StatelessWidget {
                             text,
                             softWrap: true,
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: textSize,
                               color: activeTextColor,
                               fontFamily: fontFamily,
                             ),
