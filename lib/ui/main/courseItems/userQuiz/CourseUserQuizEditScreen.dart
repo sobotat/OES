@@ -89,7 +89,7 @@ class _CourseUserQuizEditScreenState extends State<CourseUserQuizEditScreen> {
                     return await UserQuizGateway.instance.get(widget.quizId);
                   }
 
-                  return UserQuiz(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, isVisible: true, questions: [
+                  return UserQuiz(id: -1, name: "", created: DateTime.now(), createdById: AppSecurity.instance.user!.id, isVisible: true, shuffleQuestions: false, questions: [
                     PickOneQuestion(id: 1, name: "Pick One", description: "Description", points: 0, options: [
                       QuestionOption(id: -1, text: "Option 1", points: 0),
                       QuestionOption(id: -1, text: "Option 2", points: 0),
@@ -866,6 +866,28 @@ class _InfoState extends State<_Info> {
                 },
               ),
             ),
+            const SizedBox(height: 10,),
+            Flexible(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Shuffle Questions',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  Switch(
+                    value: widget.quiz.shuffleQuestions,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.quiz.shuffleQuestions = !widget.quiz.shuffleQuestions;
+                      });
+                    },
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),

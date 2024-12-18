@@ -12,7 +12,7 @@ class UserQuiz extends CourseItem {
     required super.createdById,
     required super.isVisible,
     required this.questions,
-    this.shuffleQuestions = false,
+    required this.shuffleQuestions,
   }) : super(type: 'userquiz');
 
   List<Question> questions;
@@ -39,6 +39,7 @@ class UserQuiz extends CourseItem {
       created: DateTime.tryParse(json['created'])!,
       createdById: json['createdById'],
       isVisible: json['isVisible'],
+      shuffleQuestions: json['shouldShuffleQuestions'] ?? false,
       questions: questionsList,
     );
   }
