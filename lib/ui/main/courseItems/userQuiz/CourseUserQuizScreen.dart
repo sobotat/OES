@@ -248,7 +248,7 @@ class _QuestionState extends State<_Question> {
                 AppMarkdown(
                   data: widget.question.description,
                   textAlign: widget.question.description.contains("#") ? WrapAlignment.start : WrapAlignment.center,
-                  testSize: 25,
+                  testSize: 28,
                 ),
               ]
             )
@@ -373,14 +373,16 @@ class _QuestionSelector extends StatelessWidget {
                     bool isSelected = selected.contains(option);
 
                     double calculatedHeight = (height / 4) / (question.options.length / 2) / (width < overflow ? 2 : 1);
+                    Color backgroundColor = Theme.of(context).colorScheme.primary;
                     Widget w = Button(
                       text: option.text,
+                      textSize: 16,
                       minHeight: calculatedHeight,
                       maxHeight: double.infinity,
                       maxWidth: double.infinity,
-                      backgroundColor: showResults ? (option.points > 0 ? Colors.green.shade700 : Colors.red.shade700 ) : Theme.of(context).extension<AppCustomColors>()!.accent,
-                      borderColor: showResults ? (isSelected ? Colors.green : Colors.red ) : isSelected ? Colors.green.shade700 : null,
-                      borderWidth: showResults ? 8 : 4,
+                      backgroundColor: showResults ? (option.points > 0 ? Colors.green.shade700 : Colors.red.shade700 ) : backgroundColor,
+                      borderColor: showResults ? (isSelected ? Colors.green : Colors.red ) : isSelected ? Colors.green.shade700 : backgroundColor,
+                      borderWidth: 8,
                       onClick: (context) {
                         if (showResults) return;
                         if(selected.contains(option)) {
