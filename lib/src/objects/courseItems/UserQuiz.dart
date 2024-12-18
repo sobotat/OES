@@ -11,8 +11,8 @@ class UserQuiz extends CourseItem {
     required super.created,
     required super.createdById,
     required super.isVisible,
-    required this.questions,
     required this.shuffleQuestions,
+    required this.questions,
   }) : super(type: 'userquiz');
 
   List<Question> questions;
@@ -21,6 +21,7 @@ class UserQuiz extends CourseItem {
   @override
   Map<String, dynamic> toMap() {
     return super.toMap()..addAll({
+      'shouldShuffleQuestions': shuffleQuestions,
       'questions': questions.map((e) => e.toMap()).toList(),
     });
   }
